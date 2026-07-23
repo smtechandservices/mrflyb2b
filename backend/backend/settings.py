@@ -86,11 +86,15 @@ if os.getenv("DATABASE_URL"):
     }
 else:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "mrfly_db",
+        "USER": "mrfly_user",
+        "PASSWORD": "Mrfly@123",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
+}
 
 
 # Password validation
@@ -173,4 +177,4 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Razorpay Configuration
 RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID', 'rzp_test_XXXXXXXXXXXXXX')
-RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET', 'XXXXXXXXXXXXXXXXXXXXXXXX')
+RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET', 'XXXXXXXXXXXXXXXXXXXXXXXX')
