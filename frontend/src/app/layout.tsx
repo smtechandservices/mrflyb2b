@@ -4,30 +4,33 @@ import "./globals.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { LayoutContent } from "@/components/LayoutContent";
+import { BRAND } from "@/config/brand";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const description = `Experience the journey like never before with ${BRAND.name}. Book flights to destinations worldwide with ease.`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
-  title: "Trip N Roll Travel",
-  description: "Experience the journey like never before with TripNRoll. Book flights to destinations worldwide with ease.",
+  title: BRAND.name,
+  description,
   icons: {
-    icon: '/logo.png',
-    shortcut: '/logo.png',
-    apple: '/logo.png',
+    icon: BRAND.logo,
+    shortcut: BRAND.logo,
+    apple: BRAND.logo,
   },
   openGraph: {
-    title: "Trip N Roll Travel",
-    description: "Experience the journey like never before with TripNRoll. Book flights to destinations worldwide with ease.",
-    images: ['/logo.png'],
-    siteName: 'TripNRoll',
+    title: BRAND.name,
+    description,
+    images: [BRAND.logo],
+    siteName: BRAND.name,
     type: 'website',
   },
   twitter: {
     card: 'summary',
-    title: "Trip N Roll Travel",
-    description: "Experience the journey like never before with TripNRoll.",
-    images: ['/logo.png'],
+    title: BRAND.name,
+    description,
+    images: [BRAND.logo],
   },
 };
 

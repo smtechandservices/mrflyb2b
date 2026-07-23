@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { BRAND } from '@/config/brand';
 
 export default function SignupPage() {
     const [email, setEmail] = useState('');
@@ -179,8 +180,8 @@ export default function SignupPage() {
                     <div className="flex justify-center mb-6">
                         <div className="h-20 w-20 relative">
                             <Image
-                                src="/logo.png"
-                                alt="TripnRoll Logo"
+                                src={BRAND.logo}
+                                alt={`${BRAND.name} Logo`}
                                 fill
                                 className="object-contain"
                             />
@@ -191,8 +192,8 @@ export default function SignupPage() {
                         {step === 'details' ? 'Create Account' : 'Verify Email'}
                     </h1>
                     <p className="text-slate-600 mb-8 text-center">
-                        {step === 'details' 
-                            ? 'Join TripnRoll for exclusive deals' 
+                        {step === 'details'
+                            ? `Join ${BRAND.name} for exclusive deals`
                             : (
                                 <>
                                     We&apos;ve sent a 6-digit code to <span className="font-semibold text-slate-800">{email}</span>.

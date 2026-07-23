@@ -4,6 +4,7 @@ import { submitContactMessage } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import { Mail, Phone, MapPin, Send, Instagram, Facebook, X as XIcon, Clock, MessageSquare, HelpCircle, Youtube, Linkedin } from 'lucide-react';
 import Swal from 'sweetalert2';
+import { BRAND } from '@/config/brand';
 
 export default function ContactPage() {
     const { user } = useAuth();
@@ -132,8 +133,7 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-slate-800 text-lg">Email Us</h3>
-                                    <p className="text-slate-500">Info@tripnrolltravel.com</p>
-                                    <p className="text-slate-500">Tripnrolltravel@gmail.com</p>
+                                    <p className="text-slate-500">{BRAND.contactEmail}</p>
                                 </div>
                             </div>
 
@@ -143,8 +143,9 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-slate-800 text-lg">Call Us</h3>
-                                    <p className="text-slate-500">+91 8368282440</p>
-                                    <p className="text-slate-500">+91 8700701646</p>
+                                    {BRAND.phones.map((phone) => (
+                                        <p key={phone} className="text-slate-500">{phone}</p>
+                                    ))}
                                 </div>
                             </div>
 
@@ -155,10 +156,8 @@ export default function ContactPage() {
                                 <div>
                                     <h3 className="font-bold text-slate-800 text-lg">Visit Us</h3>
                                     <p className="text-slate-500">
-                                        Shop no-15, MMTC STC Shopping Complex, <br />
-                                        Near Shri Aurobindo College, Shivalik Enclave, <br />
-                                        Navjeewan Vihar, Malviya Nagar, <br />
-                                        New Delhi - 110017 <br />
+                                        Shop No 16, Balaji Market, <br />
+                                        Kashmiri Gate, Delhi <br />
                                     </p>
                                 </div>
                             </div>
@@ -183,16 +182,16 @@ export default function ContactPage() {
                                     <h3 className="font-bold">Follow Us</h3>
                                 </div>
                                 <div className="flex gap-4">
-                                    <a href="https://www.instagram.com/tripnrolltravel/" target="_blank" className="p-3 bg-slate-100 rounded-full text-slate-600 hover:bg-pink-100 hover:text-pink-600 transition-colors cursor-pointer">
+                                    <a href={BRAND.social.instagram} target="_blank" className="p-3 bg-slate-100 rounded-full text-slate-600 hover:bg-pink-100 hover:text-pink-600 transition-colors cursor-pointer">
                                         <Instagram size={20} />
                                     </a>
-                                    <a href="https://www.facebook.com/TripNRollindia/" target="_blank" className="p-3 bg-slate-100 rounded-full text-slate-600 hover:bg-blue-100 hover:text-blue-600 transition-colors cursor-pointer">
+                                    <a href={BRAND.social.facebook} target="_blank" className="p-3 bg-slate-100 rounded-full text-slate-600 hover:bg-blue-100 hover:text-blue-600 transition-colors cursor-pointer">
                                         <Facebook size={20} />
                                     </a>
-                                    <a href="https://www.youtube.com/@tripnrolltravels" target="_blank" className="p-3 bg-slate-100 rounded-full text-slate-600 hover:bg-red-100 hover:text-red-600 transition-colors cursor-pointer">
+                                    <a href={BRAND.social.youtube} target="_blank" className="p-3 bg-slate-100 rounded-full text-slate-600 hover:bg-red-100 hover:text-red-600 transition-colors cursor-pointer">
                                         <Youtube size={20} />
                                     </a>
-                                    <a href="https://www.linkedin.com/company/tripnroll-travel-and-consultancy/" target="_blank" className="p-3 bg-slate-100 rounded-full text-slate-600 hover:bg-blue-100 hover:text-blue-700 transition-colors cursor-pointer">
+                                    <a href={BRAND.social.linkedin} target="_blank" className="p-3 bg-slate-100 rounded-full text-slate-600 hover:bg-blue-100 hover:text-blue-700 transition-colors cursor-pointer">
                                         <Linkedin size={20} />
                                     </a>
                                 </div>
@@ -215,7 +214,7 @@ export default function ContactPage() {
                     <div className="grid gap-6">
                         {[
                             {
-                                q: "Is online check-in available through Trip N Roll?",
+                                q: `Is online check-in available through ${BRAND.name}?`,
                                 a: "While you book your flights here, online check-in should be completed directly on the airline's website using the PNR provided in your booking confirmation."
                             },
                             {

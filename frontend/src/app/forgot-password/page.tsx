@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { BRAND } from '@/config/brand';
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState('');
@@ -181,7 +182,7 @@ export default function ForgotPasswordPage() {
                 <div className="bg-white/95 backdrop-blur-lg p-8 md:p-10 rounded-3xl shadow-2xl border border-white/20">
                     <div className="flex justify-center mb-6">
                         <div className="h-20 w-20 relative">
-                            <Image src="/logo.png" alt="TripnRoll Logo" fill className="object-contain" />
+                            <Image src={BRAND.logo} alt={`${BRAND.name} Logo`} fill className="object-contain" />
                         </div>
                     </div>
 

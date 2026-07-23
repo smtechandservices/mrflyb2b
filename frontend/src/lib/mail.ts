@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { BRAND } from '../config/brand';
 
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -16,9 +17,9 @@ const YEAR = new Date().getFullYear();
 const footer = `
     <div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #e2e8f0;">
         <p style="font-size:12px;color:#94a3b8;margin:0;line-height:20px;">
-            &copy; ${YEAR} TripnRoll Travel. All rights reserved.<br>
-            You are receiving this email because of activity on your TripnRoll Travel account.<br>
-            <a href="mailto:info@tripnrolltravel.com" style="color:#94a3b8;text-decoration:underline;">info@tripnrolltravel.com</a>
+            &copy; ${YEAR} ${BRAND.name}. All rights reserved.<br>
+            You are receiving this email because of activity on your ${BRAND.name} account.<br>
+            <a href="mailto:${BRAND.contactEmail}" style="color:#94a3b8;text-decoration:underline;">${BRAND.contactEmail}</a>
         </p>
     </div>
 `;
@@ -27,12 +28,12 @@ export async function sendOTPEmail(email: string, otp: string) {
     await transporter.sendMail({
         from: FROM,
         to: email,
-        subject: `Your Trip N Roll Travel verification code: ${otp}`,
-        text: `Your Trip N Roll Travel verification code is: ${otp}\n\nThis code will expire in 10 minutes.\n\nIf you did not request this, please ignore this email.\n\n-- Trip N Roll Travel`,
+        subject: `Your ${BRAND.name} verification code: ${otp}`,
+        text: `Your ${BRAND.name} verification code is: ${otp}\n\nThis code will expire in 10 minutes.\n\nIf you did not request this, please ignore this email.\n\n-- ${BRAND.name}`,
         html: `
             <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:580px;margin:0 auto;padding:40px 20px;color:#334155;">
                 <div style="text-align:center;margin-bottom:28px;">
-                    <h1 style="color:#059669;margin:0;font-size:26px;font-weight:800;letter-spacing:-0.025em;">Trip N Roll Travel</h1>
+                    <h1 style="color:#059669;margin:0;font-size:26px;font-weight:800;letter-spacing:-0.025em;">${BRAND.name}</h1>
                 </div>
 
                 <div style="background:#ffffff;border-radius:16px;padding:32px;border:1px solid #e2e8f0;">
@@ -46,7 +47,7 @@ export async function sendOTPEmail(email: string, otp: string) {
                     </div>
 
                     <p style="font-size:13px;color:#64748b;margin:0;">
-                        If you did not create an account with Trip N Roll Travel, you can safely ignore this email.
+                        If you did not create an account with ${BRAND.name}, you can safely ignore this email.
                     </p>
                 </div>
 
@@ -61,12 +62,12 @@ export async function sendPasswordResetEmail(email: string, otp: string) {
     await transporter.sendMail({
         from: FROM,
         to: email,
-        subject: `Reset your Trip N Roll Travel password`,
-        text: `Your Trip N Roll Travel password reset code is: ${otp}\n\nThis code will expire in 10 minutes.\n\nIf you did not request a password reset, please ignore this email.\n\n-- Trip N Roll Travel`,
+        subject: `Reset your ${BRAND.name} password`,
+        text: `Your ${BRAND.name} password reset code is: ${otp}\n\nThis code will expire in 10 minutes.\n\nIf you did not request a password reset, please ignore this email.\n\n-- ${BRAND.name}`,
         html: `
             <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:580px;margin:0 auto;padding:40px 20px;color:#334155;">
                 <div style="text-align:center;margin-bottom:28px;">
-                    <h1 style="color:#059669;margin:0;font-size:26px;font-weight:800;letter-spacing:-0.025em;">Trip N Roll Travel</h1>
+                    <h1 style="color:#059669;margin:0;font-size:26px;font-weight:800;letter-spacing:-0.025em;">${BRAND.name}</h1>
                 </div>
 
                 <div style="background:#ffffff;border-radius:16px;padding:32px;border:1px solid #e2e8f0;">
@@ -97,12 +98,12 @@ export async function sendBookingTicketEmail(email: string, bookingId: string, t
     const mailOptions: any = {
         from: FROM,
         to: email,
-        cc: 'info@tripnrolltravel.com',
-        subject: `Booking Confirmed — ${bookingId} | Trip N Roll Travel`,
+        cc: BRAND.contactEmail,
+        subject: `Booking Confirmed — ${bookingId} | ${BRAND.name}`,
         text: [
             `Hi,`,
             ``,
-            `Your booking with Trip N Roll Travel has been confirmed.`,
+            `Your booking with ${BRAND.name} has been confirmed.`,
             ``,
             `Booking Reference: ${bookingId}`,
             ``,
@@ -115,20 +116,20 @@ export async function sendBookingTicketEmail(email: string, bookingId: string, t
             `- Carry a valid government-issued photo ID while travelling.`,
             `- Check the reporting time for your flight with the airline.`,
             ``,
-            `For support, contact us at info@tripnrolltravel.com`,
+            `For support, contact us at ${BRAND.contactEmail}`,
             ``,
-            `-- Trip N Roll Travel`,
+            `-- ${BRAND.name}`,
         ].join('\n'),
         html: `
             <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:580px;margin:0 auto;padding:40px 20px;color:#334155;">
                 <div style="text-align:center;margin-bottom:28px;">
-                    <h1 style="color:#059669;margin:0;font-size:26px;font-weight:800;letter-spacing:-0.025em;">Trip N Roll Travel</h1>
+                    <h1 style="color:#059669;margin:0;font-size:26px;font-weight:800;letter-spacing:-0.025em;">${BRAND.name}</h1>
                 </div>
 
                 <div style="background:#ffffff;border-radius:16px;padding:32px;border:1px solid #e2e8f0;">
                     <h2 style="margin-top:0;color:#1e293b;font-size:20px;font-weight:700;">Booking Confirmed</h2>
                     <p style="font-size:15px;line-height:24px;color:#475569;margin-bottom:24px;">
-                        Thank you for choosing Trip N Roll Travel. Your booking has been successfully confirmed.
+                        Thank you for choosing ${BRAND.name}. Your booking has been successfully confirmed.
                     </p>
 
                     <div style="background:#f8fafc;border-radius:12px;padding:18px 20px;border:1px solid #e2e8f0;margin-bottom:24px;">
@@ -182,8 +183,8 @@ export async function sendAdminRefundRequestEmail(
 ) {
     await transporter.sendMail({
         from: FROM,
-        to: 'info@tripnrolltravel.com',
-        subject: `[TripNRoll] Refund Request — ${bookingRef}`,
+        to: BRAND.contactEmail,
+        subject: `[${BRAND.name}] Refund Request — ${bookingRef}`,
         text: [
             `A refund request has been submitted.`,
             ``,
@@ -197,7 +198,7 @@ export async function sendAdminRefundRequestEmail(
         html: `
             <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:580px;margin:0 auto;padding:40px 20px;color:#334155;">
                 <div style="text-align:center;margin-bottom:28px;">
-                    <h1 style="color:#059669;margin:0;font-size:26px;font-weight:800;letter-spacing:-0.025em;">Trip N Roll Travel</h1>
+                    <h1 style="color:#059669;margin:0;font-size:26px;font-weight:800;letter-spacing:-0.025em;">${BRAND.name}</h1>
                 </div>
                 <div style="background:#ffffff;border-radius:16px;padding:32px;border:1px solid #e2e8f0;">
                     <h2 style="margin-top:0;color:#dc2626;font-size:18px;font-weight:700;">Refund Request Submitted</h2>
@@ -227,8 +228,8 @@ export async function sendAdminTopUpRequestEmail(
     const methodLabel = method === 'RAZORPAY' ? 'Razorpay (auto-approved)' : 'Manual (pending approval)';
     await transporter.sendMail({
         from: FROM,
-        to: 'info@tripnrolltravel.com',
-        subject: `[TripNRoll] Wallet Top-Up Request — ₹${amount.toLocaleString('en-IN')} from ${userName}`,
+        to: BRAND.contactEmail,
+        subject: `[${BRAND.name}] Wallet Top-Up Request — ₹${amount.toLocaleString('en-IN')} from ${userName}`,
         text: [
             `A wallet top-up request has been submitted.`,
             ``,
@@ -245,7 +246,7 @@ export async function sendAdminTopUpRequestEmail(
         html: `
             <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:580px;margin:0 auto;padding:40px 20px;color:#334155;">
                 <div style="text-align:center;margin-bottom:28px;">
-                    <h1 style="color:#059669;margin:0;font-size:26px;font-weight:800;letter-spacing:-0.025em;">Trip N Roll Travel</h1>
+                    <h1 style="color:#059669;margin:0;font-size:26px;font-weight:800;letter-spacing:-0.025em;">${BRAND.name}</h1>
                 </div>
                 <div style="background:#ffffff;border-radius:16px;padding:32px;border:1px solid #e2e8f0;">
                     <h2 style="margin-top:0;color:#0284c7;font-size:18px;font-weight:700;">Wallet Top-Up Request</h2>
@@ -272,14 +273,14 @@ export async function sendAdminTopUpRequestEmail(
 export async function sendEnquiryNotificationEmail(name: string, email: string, message: string) {
     await transporter.sendMail({
         from: FROM,
-        to: 'info@tripnrolltravel.com',
+        to: BRAND.contactEmail,
         replyTo: email,
         subject: `New enquiry from ${name}`,
-        text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}\n\n-- Trip N Roll Travel Contact Form`,
+        text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}\n\n-- ${BRAND.name} Contact Form`,
         html: `
             <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:580px;margin:0 auto;padding:40px 20px;color:#334155;">
                 <div style="text-align:center;margin-bottom:28px;">
-                    <h1 style="color:#059669;margin:0;font-size:26px;font-weight:800;letter-spacing:-0.025em;">Trip N Roll Travel</h1>
+                    <h1 style="color:#059669;margin:0;font-size:26px;font-weight:800;letter-spacing:-0.025em;">${BRAND.name}</h1>
                 </div>
                 <div style="background:#ffffff;border-radius:16px;padding:32px;border:1px solid #e2e8f0;">
                     <h2 style="margin-top:0;color:#1e293b;font-size:18px;font-weight:700;">New Enquiry</h2>

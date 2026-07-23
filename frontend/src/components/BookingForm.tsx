@@ -10,6 +10,7 @@ import { useAuth } from '@/context/AuthContext';
 import Swal from 'sweetalert2';
 import Script from 'next/script';
 import DatePicker from 'react-datepicker';
+import { BRAND } from '@/config/brand';
 
 const safeDate = (dateStr: string | null | undefined): Date | null => {
     if (!dateStr) return null;
@@ -476,7 +477,7 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                         key: orderData.key,
                         amount: orderData.amount,
                         currency: orderData.currency,
-                        name: "TripNRoll",
+                        name: BRAND.name,
                         description: `Flight Booking: ${flightId}`,
                         order_id: orderData.order_id,
                         handler: async function (response: any) {
@@ -792,7 +793,7 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                             <Wallet size={24} />
                         </div>
                         <div>
-                            <div className="font-bold text-slate-800">Trip N Roll Wallet</div>
+                            <div className="font-bold text-slate-800">{BRAND.name} Wallet</div>
                             <div className="text-sm text-slate-500 mt-1">
                                 Pay using your wallet balance.
                                 {walletData ? (

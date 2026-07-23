@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { getFlyers, Flyer, submitContactMessage, getUserProfile, User } from '@/lib/api';
 import { ArrowRight, Download, X, ChevronLeft, ChevronRight, Eye, Send, CheckCircle2, Lock } from 'lucide-react';
 import Link from 'next/link';
+import { BRAND } from '@/config/brand';
 
 export default function FlyerSection() {
     const [flyers, setFlyers] = useState<Flyer[]>([]);
@@ -80,7 +81,7 @@ export default function FlyerSection() {
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = filename || 'tripnroll-flyer.jpg';
+            link.download = filename || `${BRAND.name.toLowerCase()}-flyer.jpg`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);

@@ -6,6 +6,7 @@ import { getAirlineLogo, PREDEFINED_AIRLINES } from '@/lib/airlines';
 import { Plus, Edit2, Trash2, Search, X, FileDigit, Download, Eye, EyeOff, Map } from 'lucide-react';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
+import { BRAND } from '@/config/brand';
 
 // Helper to format ISO to dd/mm/yyyy
 const formatDateToDDMMYYYY = (isoString: string | undefined) => {
@@ -500,7 +501,7 @@ export default function AdminFlightsPage() {
         const ws = XLSX.utils.json_to_sheet(sampleData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Flights Template");
-        XLSX.writeFile(wb, "tripnroll_flights_template.xlsx");
+        XLSX.writeFile(wb, `${BRAND.name.toLowerCase()}_flights_template.xlsx`);
     };
 
     const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

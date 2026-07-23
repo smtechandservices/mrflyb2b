@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.conf import settings
 from django.contrib.auth.models import User
 from .models import Flight, Booking, ContactMessage, UserProfile, WalletTransaction, TopUpRequest, UserKYC, Flyer
 
@@ -33,7 +34,7 @@ class UserKYCSerializer(serializers.ModelSerializer):
             if request:
                 absolute_uri = request.build_absolute_uri(url)
                 # If the request is over HTTPS or behind an HTTPS proxy, ensure the URL uses https
-                if request.is_secure() or request.META.get('HTTP_X_FORWARDED_PROTO') == 'https' or 'tripnrolltravel.com' in request.get_host():
+                if request.is_secure() or request.META.get('HTTP_X_FORWARDED_PROTO') == 'https' or settings.BRAND_DOMAIN in request.get_host():
                     return absolute_uri.replace('http://', 'https://')
                 return absolute_uri
             return url
@@ -318,7 +319,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         profile_data = validated_data.pop('profile', {})
-        password = validated_data.pop('password', 'tripnroll123') # Default password if not provided
+        password = validated_data.pop('password', f'{settings.BRAND_NAME.lower()}123') # Default password if not provided
         
         if 'username' in validated_data:
             validated_data['username'] = validated_data['username'].lower()
@@ -390,7 +391,7 @@ class FlyerSerializer(serializers.ModelSerializer):
         if request:
             absolute_uri = request.build_absolute_uri(url)
             # Ensure HTTPS for production-like environments
-            if request.is_secure() or request.META.get('HTTP_X_FORWARDED_PROTO') == 'https' or 'tripnrolltravel.com' in request.get_host():
+            if request.is_secure() or request.META.get('HTTP_X_FORWARDED_PROTO') == 'https' or settings.BRAND_DOMAIN in request.get_host():
                 return absolute_uri.replace('http://', 'https://')
             return absolute_uri
         return url

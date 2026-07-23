@@ -891,7 +891,7 @@ class RazorpayOrderView(generics.CreateAPIView):
                 "currency": "INR",
                 "payment_capture": "1",
                 "notes": {
-                    "description": f"TripNRoll Wallet Top up : {request.user.username}"
+                    "description": f"{settings.BRAND_NAME} Wallet Top up : {request.user.username}"
                 }
             })
             

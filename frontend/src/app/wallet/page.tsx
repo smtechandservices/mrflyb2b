@@ -6,6 +6,7 @@ import { getWalletBalance, topUpWallet, WalletData, getTopUpRequests, TopUpReque
 import Script from 'next/script';
 import { Wallet, CreditCard, ArrowUpRight, ArrowDownLeft, AlertCircle, History, RotateCcw, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import Swal from 'sweetalert2';
+import { BRAND } from '@/config/brand';
 
 export default function WalletPage() {
     const { user, isAuthenticated } = useAuth();
@@ -128,7 +129,7 @@ export default function WalletPage() {
                 key: orderData.key,
                 amount: orderData.amount,
                 currency: orderData.currency,
-                name: "TripNRoll",
+                name: BRAND.name,
                 description: "Wallet Top-up",
                 order_id: orderData.order_id,
                 handler: async function (response: any) {

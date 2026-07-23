@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Plane, LogOut, User, Wallet, ShieldCheck, ShieldAlert, Shield, Menu, X } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useState, useEffect } from 'react';
+import { BRAND } from '@/config/brand';
 
 export function Header() {
     const { user, logout, isAuthenticated, refreshUser } = useAuth();
@@ -42,9 +43,9 @@ export function Header() {
         <header className={`${isMenuOpen ? 'fixed inset-0 z-[1000] bg-slate-950 flex flex-col' : 'fixed top-0 inset-x-0 z-50 bg-black/60 lg:bg-black/20'} transition-all duration-300 ${isScrolled ? 'bg-black/80 lg:bg-black/40 backdrop-blur-md border-b border-white/20' : ''}`}>
             <div className="mx-auto px-4 md:px-12 h-20 flex items-center justify-between shrink-0">
                 <Link href="/" className="flex items-center space-x-2 md:space-x-3 font-semibold shrink-0" style={{ fontFamily: "sans-serif" }}>
-                    <Image src="/logo.png" alt="Trip N Roll Logo" width={32} height={32} className="object-contain md:w-10 md:h-10" />
+                    <Image src={BRAND.logo} alt={`${BRAND.name} Logo`} width={32} height={32} className="object-contain md:w-10 md:h-10" />
                     <span className={`bg-gradient-to-r ${isScrolled ? 'from-green-200 to-yellow-200' : 'from-green-500 to-yellow-500'} text-transparent text-xl md:text-3xl bg-clip-text whitespace-nowrap`}>
-                        Trip N Roll
+                        {BRAND.name}
                     </span>
                 </Link>
 
@@ -234,7 +235,7 @@ export function Header() {
                         </div>
                     ) : (
                             <div className="flex flex-col gap-4">
-                                <h3 className="text-center text-white text-2xl font-bold mb-2">Welcome to Trip N Roll</h3>
+                                <h3 className="text-center text-white text-2xl font-bold mb-2">Welcome to {BRAND.name}</h3>
                                 <div className="grid grid-cols-2 gap-4">
                                     <Link
                                         href="/login"
@@ -265,7 +266,7 @@ export function Header() {
                     </div>
 
                     <div className="pt-8 border-t border-white/10 text-center">
-                        <p className="text-gray-500 text-sm">© 2026 Trip N Roll Travel</p>
+                        <p className="text-gray-500 text-sm">© {new Date().getFullYear()} {BRAND.name}</p>
                     </div>
                 </>
             )}

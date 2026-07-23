@@ -3,11 +3,18 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 
+from .branding import BRAND
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load environment variables from .env file
 load_dotenv(BASE_DIR / '.env')
+
+# White-label branding, sourced from brand.config.json at the repo root
+BRAND_NAME = BRAND['name']
+BRAND_DOMAIN = BRAND['domain']
+SUPPORT_EMAIL = BRAND['supportEmail']
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key-for-dev-only-change-this-in-prod')
@@ -45,7 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'tripnroll_backend.urls'
+ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
     {
@@ -63,7 +70,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'tripnroll_backend.wsgi.application'
+WSGI_APPLICATION = 'backend.wsgi.application'
 
 
 # Database configuration using DATABASE_URL environment variable

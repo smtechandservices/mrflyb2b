@@ -1,0 +1,21 @@
+{
+  "name": "MrFlyB2B",
+  "shortName": "MrFlyB2B",
+  "tagline": "Where Every Journey Begins and Ends with Excellence.",
+  "domain": "mrflyb2b.com",
+  "websiteUrl": "https://www.mrflyb2b.com",
+  "supportEmail": "support@mrflyb2b.com",
+  "contactEmail": "support@mrflyb2b.com",
+  "logo": "/logo.png",
+  "phones": ["+91 7982309458", "+91 8700701646"],
+  "social": {
+    "facebook": "https://www.facebook.com/mrflyb2b",
+    "instagram": "https://www.instagram.com/mrflyb2b",
+    "youtube": "https://www.youtube.com/@mrflyb2b",
+    "linkedin": "https://www.linkedin.com/company/mrflyb2b"
+  },
+  "admin": {
+    "name": "MrFlyB2B Admin",
+    "description": "MrFlyB2B Admin Dashboard for managing flights, bookings, users and more."
+  }
+}

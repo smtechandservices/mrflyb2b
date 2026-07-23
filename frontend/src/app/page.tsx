@@ -1,6 +1,7 @@
 import { SearchForm } from '@/components/SearchForm';
 import { RipplesBackground } from '@/components/RipplesBackground';
 import FlyerSection from '@/components/FlyerSection';
+import { BRAND } from '@/config/brand';
 
 export default function Home() {
   return (
@@ -18,7 +19,7 @@ export default function Home() {
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">Adventure</span>
               </h1>
               <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8 md:mb-10 leading-relaxed">
-                Premium flights to destinations around the globe. Experience comfort, luxury, and seamless travel with Trip N Roll.
+                Premium flights to destinations around the globe. Experience comfort, luxury, and seamless travel with {BRAND.name}.
               </p>
             </div>
           </div>

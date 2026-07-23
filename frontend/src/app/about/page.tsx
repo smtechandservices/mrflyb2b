@@ -1,5 +1,6 @@
 'use client';
 import { Plane, Users, Globe, Award, Heart, Shield, Zap, TrendingUp } from 'lucide-react';
+import { BRAND } from '@/config/brand';
 
 export default function AboutPage() {
     return (
@@ -27,13 +28,13 @@ export default function AboutPage() {
                 <h2 className="text-4xl font-bold text-slate-800 mb-6">Our Story</h2>
                 <div className="space-y-4 text-lg text-slate-600 leading-relaxed">
                     <p>
-                        TripnRoll was founded with a simple vision: to make flight booking as easy as rolling down a hill. We noticed that travelers were frustrated with complicated interfaces, hidden fees, and endless options that made choosing the right flight overwhelming.
+                        {BRAND.name} was founded with a simple vision: to make flight booking as easy as rolling down a hill. We noticed that travelers were frustrated with complicated interfaces, hidden fees, and endless options that made choosing the right flight overwhelming.
                     </p>
                     <p>
                         Our team of travel enthusiasts and tech experts came together to create a platform that puts the traveler first. We've built smart filters, intuitive search, and transparent pricing to help you find exactly what you need in minutes, not hours.
                     </p>
                     <p>
-                        Today, TripnRoll serves thousands of happy travelers, connecting them with flights to destinations around the world. But we're just getting started. We're constantly innovating, adding new features, and expanding our reach to make your travel dreams a reality.
+                        Today, {BRAND.name} serves thousands of happy travelers, connecting them with flights to destinations around the world. But we're just getting started. We're constantly innovating, adding new features, and expanding our reach to make your travel dreams a reality.
                     </p>
                 </div>
             </div>
@@ -44,7 +45,7 @@ export default function AboutPage() {
                     <div>
                         <h2 className="text-4xl font-bold text-slate-800 mb-6">Our Mission</h2>
                         <p className="text-lg text-slate-600 leading-relaxed mb-4">
-                            At TripnRoll, we believe that everyone deserves to explore the world without the hassle of complicated booking processes. Our mission is to simplify air travel by providing a seamless, user-friendly platform that connects travelers with the best flight options.
+                            At {BRAND.name}, we believe that everyone deserves to explore the world without the hassle of complicated booking processes. Our mission is to simplify air travel by providing a seamless, user-friendly platform that connects travelers with the best flight options.
                         </p>
                         <p className="text-lg text-slate-600 leading-relaxed mb-4">
                             We're committed to making your journey from search to boarding as smooth as possible, with transparent pricing, real-time updates, and exceptional customer service.
@@ -75,7 +76,7 @@ export default function AboutPage() {
                 <div className="max-w-4xl mx-auto text-center">
                     <h2 className="text-4xl md:text-6xl font-bold mb-6">Ready to Start Your Journey?</h2>
                     <p className="text-xl md:text-2xl text-green-50 mb-8">
-                        Join thousands of travelers who trust TripnRoll for their flight bookings
+                        Join thousands of travelers who trust {BRAND.name} for their flight bookings
                     </p>
                     <a
                         href="/search"
@@ -91,7 +92,7 @@ export default function AboutPage() {
                 <div className="max-w-9xl mx-auto">
                     <h2 className="text-4xl font-bold text-slate-800 mb-4 text-center">Our Core Values</h2>
                     <p className="text-lg text-slate-600 text-center mb-12 max-w-2xl mx-auto">
-                        These principles guide everything we do at TripnRoll
+                        These principles guide everything we do at {BRAND.name}
                     </p>
                     <div className="grid md:grid-cols-3 gap-8">
                         <ValueCard
@@ -122,7 +123,7 @@ export default function AboutPage() {
                         <ValueCard
                             icon={<Users className="text-indigo-500" />}
                             title="Community"
-                            description="Join thousands of travelers who trust TripnRoll for their journey planning needs."
+                            description={`Join thousands of travelers who trust ${BRAND.name} for their journey planning needs.`}
                         />
                     </div>
                 </div>

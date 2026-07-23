@@ -6,6 +6,7 @@ import { login as loginApi, getUserProfile } from '@/lib/api';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Eye, EyeOff } from 'lucide-react';
+import { BRAND } from '@/config/brand';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -122,8 +123,8 @@ export default function LoginPage() {
                     <div className="flex justify-center mb-6">
                         <div className="h-20 w-20 relative">
                             <Image
-                                src="/logo.png"
-                                alt="TripnRoll Logo"
+                                src={BRAND.logo}
+                                alt={`${BRAND.name} Logo`}
                                 fill
                                 className="object-contain"
                             />

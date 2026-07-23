@@ -6,6 +6,7 @@ import { getUserProfile } from '@/lib/api';
 import Link from 'next/link';
 import Image from 'next/image';
 import { LayoutDashboard, Plane, Calendar, Users, LogOut, RotateCcw, MessageSquare, Shield, Wallet, Image as ImageIcon } from 'lucide-react';
+import { BRAND } from '@/config/brand';
 
 export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -45,7 +46,7 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50 text-slate-500">Loading TripnRoll Admin...</div>
+      <div className="flex h-screen items-center justify-center bg-slate-50 text-slate-500">Loading {BRAND.admin.name}...</div>
     );
   }
 
@@ -85,8 +86,8 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
         <div className="p-6 flex items-center justify-between lg:justify-start gap-3">
           <div className="flex items-center gap-3">
             <Image
-              src="/logo.png"
-              alt="Logo"
+              src={BRAND.logo}
+              alt={`${BRAND.name} Logo`}
               width={40}
               height={40}
               priority
@@ -94,7 +95,7 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
               className="object-contain rounded-lg"
             />
             <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-200 to-emerald-400">
-              Trip N Roll
+              {BRAND.name}
             </h1>
           </div>
           <button
