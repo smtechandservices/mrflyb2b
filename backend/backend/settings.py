@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-import dj_database_url
 
 from .branding import BRAND
 
@@ -73,28 +72,31 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
-# Database configuration using DATABASE_URL environment variable
-import dj_database_url
+# Database configuration
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT")
 
-if os.getenv("DATABASE_URL"):
+if DB_USER and DB_PASSWORD and DB_HOST and DB_PORT:
     DATABASES = {
-        'default': dj_database_url.parse(
-            os.getenv("DATABASE_URL"),
-            conn_max_age=600,
-            ssl_require=True
-        )
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": DB_NAME,
+            "USER": DB_USER,
+            "PASSWORD": DB_PASSWORD,
+            "HOST": DB_HOST,
+            "PORT": DB_PORT,
+        }
     }
 else:
     DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "mrfly_db",
-        "USER": "mrfly_user",
-        "PASSWORD": "Mrfly@123",
-        "HOST": "localhost",
-        "PORT": "5432",
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
 
 
 # Password validation
