@@ -176,13 +176,13 @@ export default function ForgotPasswordPage() {
                 className="fixed inset-0 bg-cover bg-center bg-no-repeat"
                 style={{ backgroundImage: 'url(/hero-search.png)' }}
             />
-            <div className="fixed inset-0 bg-gradient-to-br from-slate-900/70 via-slate-900/60 to-green-900/70" />
+            <div className="fixed inset-0 bg-gradient-to-br from-slate-900/70 via-slate-900/60 to-blue-900/70" />
 
             <div className="relative z-10 max-w-xl w-full">
                 <div className="bg-white/95 backdrop-blur-lg p-8 md:p-10 rounded-3xl shadow-2xl border border-white/20">
                     <div className="flex justify-center mb-6">
                         <div className="h-20 w-20 relative">
-                            <Image src={BRAND.logo} alt={`${BRAND.name} Logo`} fill className="object-contain" />
+                            <Image src={BRAND.logoTransparent} alt={`${BRAND.name} Logo`} fill className="object-contain" />
                         </div>
                     </div>
 
@@ -198,7 +198,7 @@ export default function ForgotPasswordPage() {
                                         Enter the 6-digit code sent to <span className="font-semibold text-slate-800">{email}</span>.
                                         <br />
                                         <span className="text-xs mt-2 block text-slate-500 italic">
-                                            Didn&apos;t receive it? Check your <span className="font-bold text-green-600">spam folder</span>.
+                                            Didn&apos;t receive it? Check your <span className="font-bold text-blue-600">spam folder</span>.
                                         </span>
                                     </>
                                 )
@@ -212,7 +212,7 @@ export default function ForgotPasswordPage() {
                     )}
 
                     {message && !error && (
-                        <div className="bg-green-50 border border-green-200 text-green-600 p-4 rounded-xl text-sm font-medium mb-6">
+                        <div className="bg-blue-50 border border-blue-200 text-blue-600 p-4 rounded-xl text-sm font-medium mb-6">
                             {message}
                         </div>
                     )}
@@ -226,14 +226,14 @@ export default function ForgotPasswordPage() {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="text-black w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all bg-white"
+                                    className="text-black w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white"
                                     placeholder="your@email.com"
                                 />
                             </div>
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3.5 rounded-xl font-bold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg shadow-green-600/30 flex items-center justify-center gap-2"
+                                className="w-full bg-gradient-to-r from-blue-600 to-sky-600 text-white py-3.5 rounded-xl font-bold hover:from-blue-700 hover:to-sky-700 transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2"
                             >
                                 {isLoading ? <Loader2 className="animate-spin" /> : 'Send Reset Code'}
                             </button>
@@ -252,7 +252,7 @@ export default function ForgotPasswordPage() {
                                         value={digit}
                                         onChange={(e) => handleOtpChange(e.target.value, index)}
                                         onKeyDown={(e) => handleKeyDown(e, index)}
-                                        className="text-black text-center text-2xl font-bold w-full h-12 md:h-16 rounded-xl border-2 border-slate-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all bg-white font-mono"
+                                        className="text-black text-center text-2xl font-bold w-full h-12 md:h-16 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white font-mono"
                                         placeholder="•"
                                     />
                                 ))}
@@ -260,7 +260,7 @@ export default function ForgotPasswordPage() {
                             <button
                                 type="submit"
                                 disabled={otp.some(d => !d)}
-                                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3.5 rounded-xl font-bold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg shadow-green-600/30 flex items-center justify-center gap-2 disabled:opacity-50"
+                                className="w-full bg-gradient-to-r from-blue-600 to-sky-600 text-white py-3.5 rounded-xl font-bold hover:from-blue-700 hover:to-sky-700 transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 disabled:opacity-50"
                             >
                                 Verify Code
                             </button>
@@ -270,7 +270,7 @@ export default function ForgotPasswordPage() {
                                     type="button"
                                     disabled={!canResend || isLoading}
                                     onClick={handleResendOTP}
-                                    className="text-sm font-medium text-green-600 hover:text-green-700 disabled:text-slate-400 transition-colors"
+                                    className="text-sm font-medium text-blue-600 hover:text-blue-700 disabled:text-slate-400 transition-colors"
                                 >
                                     {resendTimer > 0 
                                         ? `Resend code in ${resendTimer}s` 
@@ -290,7 +290,7 @@ export default function ForgotPasswordPage() {
                                         type={showPassword ? "text" : "password"}
                                         value={newPassword}
                                         onChange={(e) => setNewPassword(e.target.value)}
-                                        className="text-black w-full px-4 py-3 pr-12 rounded-xl border-2 border-slate-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all bg-white"
+                                        className="text-black w-full px-4 py-3 pr-12 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white"
                                         placeholder="Min. 8 characters"
                                     />
                                     <button
@@ -305,7 +305,7 @@ export default function ForgotPasswordPage() {
                             <button
                                 type="submit"
                                 disabled={isLoading || newPassword.length < 8}
-                                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3.5 rounded-xl font-bold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg shadow-green-600/30 flex items-center justify-center gap-2 disabled:opacity-50"
+                                className="w-full bg-gradient-to-r from-blue-600 to-sky-600 text-white py-3.5 rounded-xl font-bold hover:from-blue-700 hover:to-sky-700 transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 disabled:opacity-50"
                             >
                                 {isLoading ? <Loader2 className="animate-spin" /> : 'Reset Password'}
                             </button>
@@ -313,7 +313,7 @@ export default function ForgotPasswordPage() {
                     )}
 
                     <div className="mt-8 text-center">
-                        <Link href="/login" className="text-slate-500 hover:text-green-600 font-medium transition-colors inline-flex items-center gap-2">
+                        <Link href="/login" className="text-slate-500 hover:text-blue-600 font-medium transition-colors inline-flex items-center gap-2">
                             <ArrowLeft size={16} /> Back to Login
                         </Link>
                     </div>

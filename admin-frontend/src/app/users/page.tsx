@@ -193,12 +193,12 @@ export default function UserManagementPage() {
                             placeholder="Search users..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="text-slate-700 pl-10 pr-12 py-3 border border-slate-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 w-64"
+                            className="text-slate-700 pl-10 pr-12 py-3 border border-slate-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
                         />
                     </div>
                     <button
                         onClick={() => openModal()}
-                        className="cursor-pointer bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-bold flex items-center gap-2 transition-all border border-slate-400"
+                        className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-bold flex items-center gap-2 transition-all border border-slate-400"
                     >
                         <UserPlus className="w-5 h-5" />
                         Add User
@@ -224,7 +224,7 @@ export default function UserManagementPage() {
                             <tr>
                                 <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
                                     <div className="flex flex-col items-center gap-3">
-                                        <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                                        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                                         <span>Loading users...</span>
                                     </div>
                                 </td>
@@ -324,7 +324,7 @@ export default function UserManagementPage() {
                                     type="text"
                                     value={formData.username}
                                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-slate-900"
+                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900"
                                 />
                             </div>
                             <div>
@@ -334,7 +334,7 @@ export default function UserManagementPage() {
                                     type="email"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-slate-900"
+                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900"
                                 />
                             </div>
                             <div>
@@ -347,7 +347,7 @@ export default function UserManagementPage() {
                                         type={showPassword ? "text" : "password"}
                                         value={formData.password}
                                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-slate-900 pr-10"
+                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 pr-10"
                                     />
                                     <button
                                         type="button"
@@ -368,7 +368,7 @@ export default function UserManagementPage() {
                                         ...formData,
                                         profile: { ...formData.profile, phone_number: e.target.value }
                                     })}
-                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-slate-900"
+                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900"
                                 />
                             </div>
                             <div>
@@ -379,7 +379,7 @@ export default function UserManagementPage() {
                                         ...formData,
                                         profile: { ...formData.profile, address: e.target.value }
                                     })}
-                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 h-20 text-slate-900"
+                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-20 text-slate-900"
                                 />
                             </div>
 
@@ -393,7 +393,7 @@ export default function UserManagementPage() {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-6 py-2 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-all shadow-md shadow-green-200 cursor-pointer"
+                                    className="px-6 py-2 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all shadow-md shadow-blue-200 cursor-pointer"
                                 >
                                     {editingUser ? 'Update User' : 'Create User'}
                                 </button>
@@ -432,7 +432,7 @@ export default function UserManagementPage() {
                                         step="0.01"
                                         value={walletData.credit_limit}
                                         onChange={(e) => setWalletData({ ...walletData, credit_limit: e.target.value })}
-                                        className="w-full pl-8 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-slate-900"
+                                        className="w-full pl-8 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900"
                                     />
                                 </div>
                                 <p className="text-xs text-slate-500 mt-1">Maximum credit allowed for this broker.</p>
@@ -448,7 +448,7 @@ export default function UserManagementPage() {
                                         step="0.01"
                                         value={walletData.wallet_balance}
                                         onChange={(e) => setWalletData({ ...walletData, wallet_balance: e.target.value })}
-                                        className="w-full pl-8 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-slate-900"
+                                        className="w-full pl-8 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900"
                                     />
                                 </div>
                             </div>
@@ -462,7 +462,7 @@ export default function UserManagementPage() {
                                         step="0.01"
                                         value={walletData.total_dues}
                                         onChange={(e) => setWalletData({ ...walletData, total_dues: e.target.value })}
-                                        className="w-full pl-8 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-slate-900"
+                                        className="w-full pl-8 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900"
                                     />
                                 </div>
                             </div>

@@ -60,13 +60,13 @@ export function FlightFilters({ filters, onFilterChange, availableAirlines = [] 
             {/* Header */}
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200">
                 <div className="flex items-center gap-2">
-                    <Filter className="w-5 h-5 text-green-600" />
+                    <Filter className="w-5 h-5 text-blue-600" />
                     <h3 className="text-lg font-bold text-slate-800">Filters</h3>
                 </div>
                 {hasActiveFilters && (
                     <button
                         onClick={clearAllFilters}
-                        className="text-sm text-green-600 hover:text-green-700 font-medium flex items-center gap-1"
+                        className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
                     >
                         <X className="w-4 h-4" />
                         Clear All
@@ -85,7 +85,7 @@ export function FlightFilters({ filters, onFilterChange, availableAirlines = [] 
                                     type="checkbox"
                                     checked={filters.stops.includes(option.value)}
                                     onChange={() => handleCheckboxChange('stops', option.value)}
-                                    className="w-4 h-4 text-green-600 border-slate-300 rounded focus:ring-green-500"
+                                    className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
                                 />
                                 <span className="text-sm text-slate-700 group-hover:text-slate-900">{option.label}</span>
                             </label>
@@ -103,7 +103,7 @@ export function FlightFilters({ filters, onFilterChange, availableAirlines = [] 
                                     type="checkbox"
                                     checked={filters.departureTime.includes(slot.value)}
                                     onChange={() => handleCheckboxChange('departureTime', slot.value)}
-                                    className="w-4 h-4 text-green-600 border-slate-300 rounded focus:ring-green-500"
+                                    className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
                                 />
                                 <div className="flex flex-col">
                                     <span className="text-sm text-slate-700 group-hover:text-slate-900">{slot.label}</span>
@@ -124,7 +124,7 @@ export function FlightFilters({ filters, onFilterChange, availableAirlines = [] 
                                     type="checkbox"
                                     checked={filters.arrivalTime.includes(slot.value)}
                                     onChange={() => handleCheckboxChange('arrivalTime', slot.value)}
-                                    className="w-4 h-4 text-green-600 border-slate-300 rounded focus:ring-green-500"
+                                    className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
                                 />
                                 <div className="flex flex-col">
                                     <span className="text-sm text-slate-700 group-hover:text-slate-900">{slot.label}</span>
@@ -146,7 +146,7 @@ export function FlightFilters({ filters, onFilterChange, availableAirlines = [] 
                                         type="checkbox"
                                         checked={filters.airlines.includes(airline)}
                                         onChange={() => handleCheckboxChange('airlines', airline)}
-                                        className="w-4 h-4 text-green-600 border-slate-300 rounded focus:ring-green-500"
+                                        className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
                                     />
                                     <span className="text-sm text-slate-700 group-hover:text-slate-900">{airline}</span>
                                 </label>

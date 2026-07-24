@@ -25,7 +25,7 @@ export default function AdminDashboard() {
   if (!stats) return (
     <div className="flex h-[80vh] items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 border-4 border-slate-200 border-t-green-500 rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-slate-200 border-t-blue-500 rounded-full animate-spin"></div>
         <p className="text-slate-500 font-medium">Loading analysis...</p>
       </div>
     </div>
@@ -66,7 +66,7 @@ export default function AdminDashboard() {
           </button>
           <button 
              onClick={() => router.push('/flights')}
-             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-all shadow-md shadow-green-600/20"
+             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-md shadow-blue-600/20"
           >
             <Plus className="w-4 h-4" /> New Flight
           </button>
@@ -183,7 +183,7 @@ export default function AdminDashboard() {
             <h3 className="text-lg font-bold text-slate-800">Recent Bookings</h3>
             <button 
               onClick={() => router.push('/bookings')}
-              className="text-sm text-green-600 font-bold hover:underline inline-flex items-center gap-1"
+              className="text-sm text-blue-600 font-bold hover:underline inline-flex items-center gap-1"
             >
               View All <ArrowRight className="w-3 h-3" />
             </button>

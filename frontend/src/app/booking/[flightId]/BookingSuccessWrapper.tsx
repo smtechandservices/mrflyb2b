@@ -45,9 +45,9 @@ export function BookingSuccessWrapper({
                                 </div>
                             </div>
 
-                            <div class="bg-green-50 p-4 rounded-xl border border-green-100 text-green-800 text-sm">
+                            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 text-blue-800 text-sm">
                                 <div class="flex items-center gap-2">
-                                    <div class="h-2 w-2 rounded-full bg-green-500"></div>
+                                    <div class="h-2 w-2 rounded-full bg-blue-500"></div>
                                     <strong class="font-bold">Status: Confirmed</strong>
                                 </div>
                                 <p class="opacity-80 mt-1">Your flight has been successfully booked. A confirmation email has been sent. You can also view and download your ticket in the <strong>"Bookings"</strong> tab. <br/><br/><span class="text-xs italic opacity-70 block mt-2 font-medium">Didn't receive the email? Check your <b>spam folder</b>.</span></p>
@@ -55,7 +55,7 @@ export function BookingSuccessWrapper({
                         </div>
                     `,
                     confirmButtonText: 'View My Bookings',
-                    confirmButtonColor: '#16a34a', // green-600
+                    confirmButtonColor: '#2563eb',
                     allowOutsideClick: false,
                     customClass: {
                         popup: 'rounded-3xl',

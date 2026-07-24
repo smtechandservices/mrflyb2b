@@ -123,7 +123,7 @@ export default function FlyerSection() {
             <div className="mx-auto flex flex-col md:flex-row md:items-center justify-between mb-8 md:mb-12 px-6">
                 <div className="mb-6 md:mb-0">
                     <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-2 tracking-tight">
-                        Exclusive <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-500">Promotions</span>
+                        Exclusive <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-sky-500">Promotions</span>
                     </h2>
                     <p className="text-slate-500 font-medium text-base md:text-lg">Handpicked travel deals and seasonal flyers just for you</p>
                 </div>
@@ -163,7 +163,7 @@ export default function FlyerSection() {
 
                         <button 
                             onClick={() => setSelectedFlyer(flyer)}
-                            className="underline underline-offset-4 cursor-pointer w-full flex items-center justify-center text-slate-600 text-md hover:text-green-600 transition-all duration-300"
+                            className="underline underline-offset-4 cursor-pointer w-full flex items-center justify-center text-slate-600 text-md hover:text-blue-600 transition-all duration-300"
                         >
                             VIEW DETAILS
                             {/* <ArrowRight className="w-3 h-3 ml-2" /> */}
@@ -203,7 +203,7 @@ export default function FlyerSection() {
                             {/* Scrollable Text Area */}
                             <div className="flex-1 p-6 md:p-12 overflow-y-auto scrollbar-hide">
                                 <h3 className="text-xl md:text-4xl font-semibold text-slate-900 tracking-tight mb-4 md:mb-6">Offer Details</h3>
-                                <div className="text-slate-600 text-sm md:text-xl leading-relaxed whitespace-pre-line font-medium italic border-l-4 border-green-500 pl-4 md:pl-6 py-1 md:py-2">
+                                <div className="text-slate-600 text-sm md:text-xl leading-relaxed whitespace-pre-line font-medium italic border-l-4 border-blue-500 pl-4 md:pl-6 py-1 md:py-2">
                                     {selectedFlyer.description || "Exciting travel details await! Send an enquiry now to get the full itinerary and best fares."}
                                 </div>
                             </div>
@@ -220,7 +220,7 @@ export default function FlyerSection() {
                                         <div className="flex flex-col">
                                             {enquiryStatus === 'SUCCESS' ? (
                                                 <div className="flex flex-col items-center justify-center py-2 text-center animate-in zoom-in duration-300">
-                                                    <CheckCircle2 className="w-8 h-8 md:w-10 md:h-10 text-green-500 mb-2 md:mb-3" />
+                                                    <CheckCircle2 className="w-8 h-8 md:w-10 md:h-10 text-blue-500 mb-2 md:mb-3" />
                                                     <h5 className="text-lg md:text-xl font-black text-slate-900 mb-1">Enquiry Sent!</h5>
                                                     <p className="text-slate-500 text-xs md:text-sm">Our team will get back to you shortly.</p>
                                                 </div>
@@ -229,7 +229,7 @@ export default function FlyerSection() {
                                                     <button 
                                                         onClick={handleSendEnquiry}
                                                         disabled={enquiryStatus === 'SENDING'}
-                                                        className="cursor-pointer flex-1 flex items-center justify-center gap-2 bg-slate-900 hover:bg-green-600 text-white font-bold py-4 md:py-5 rounded-xl md:rounded-2xl transition-all active:scale-[0.98] disabled:opacity-50 text-sm md:text-lg shadow-lg"
+                                                        className="cursor-pointer flex-1 flex items-center justify-center gap-2 bg-slate-900 hover:bg-blue-600 text-white font-bold py-4 md:py-5 rounded-xl md:rounded-2xl transition-all active:scale-[0.98] disabled:opacity-50 text-sm md:text-lg shadow-lg"
                                                     >
                                                         <Send className={`w-4 h-4 md:w-5 md:h-5 ${enquiryStatus === 'SENDING' ? 'animate-pulse' : ''}`} />
                                                         {enquiryStatus === 'SENDING' ? 'SENDING...' : 'I AM INTERESTED'}

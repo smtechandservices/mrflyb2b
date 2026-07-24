@@ -173,14 +173,14 @@ export default function SignupPage() {
                 className="fixed inset-0 bg-cover bg-center bg-no-repeat"
                 style={{ backgroundImage: 'url(/hero-search.png)' }}
             />
-            <div className="fixed inset-0 bg-gradient-to-br from-slate-900/70 via-slate-900/60 to-green-900/70" />
+            <div className="fixed inset-0 bg-gradient-to-br from-slate-900/70 via-slate-900/60 to-blue-900/70" />
 
             <div className="relative z-10 max-w-xl w-full">
                 <div className="bg-white/95 backdrop-blur-lg p-8 md:p-10 rounded-3xl shadow-2xl border border-white/20">
-                    <div className="flex justify-center mb-6">
+                    <div className="flex justify-center">
                         <div className="h-20 w-20 relative">
                             <Image
-                                src={BRAND.logo}
+                                src={BRAND.logoTransparent}
                                 alt={`${BRAND.name} Logo`}
                                 fill
                                 className="object-contain"
@@ -199,7 +199,7 @@ export default function SignupPage() {
                                     We&apos;ve sent a 6-digit code to <span className="font-semibold text-slate-800">{email}</span>.
                                     <br />
                                     <span className="text-xs mt-2 block text-slate-500 italic">
-                                        Didn&apos;t receive it? Check your <span className="font-bold text-green-600">spam folder</span>.
+                                        Didn&apos;t receive it? Check your <span className="font-bold text-blue-600">spam folder</span>.
                                     </span>
                                 </>
                             )}
@@ -220,7 +220,7 @@ export default function SignupPage() {
                                     type="text"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
-                                    className="text-black w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all bg-white"
+                                    className="text-black w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white"
                                     placeholder="username"
                                 />
                             </div>
@@ -230,7 +230,7 @@ export default function SignupPage() {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="text-black w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all bg-white"
+                                    className="text-black w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white"
                                     placeholder="your@email.com"
                                     required
                                 />
@@ -242,7 +242,7 @@ export default function SignupPage() {
                                         type={showPassword ? "text" : "password"}
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="text-black w-full px-4 py-3 pr-12 rounded-xl border-2 border-slate-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all bg-white"
+                                        className="text-black w-full px-4 py-3 pr-12 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white"
                                         placeholder="Create a strong password"
                                         required
                                     />
@@ -263,7 +263,7 @@ export default function SignupPage() {
                                     onChange={(e) => handlePhoneChange(e.target.value)}
                                     className={`text-black w-full px-4 py-3 rounded-xl border-2 ${phoneError
                                             ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                                            : 'border-slate-200 focus:border-green-500 focus:ring-green-200'
+                                            : 'border-slate-200 focus:border-blue-500 focus:ring-blue-200'
                                         } focus:ring-2 outline-none transition-all bg-white`}
                                     placeholder="+91 9876543210"
                                 />
@@ -275,7 +275,7 @@ export default function SignupPage() {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="cursor-pointer w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3.5 rounded-xl font-bold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg shadow-green-600/30 hover:shadow-xl hover:shadow-green-600/40 transform hover:scale-[1.02] mt-6 flex items-center justify-center gap-2"
+                                className="cursor-pointer w-full bg-gradient-to-r from-blue-600 to-sky-600 text-white py-3.5 rounded-xl font-bold hover:from-blue-700 hover:to-sky-700 transition-all shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 transform hover:scale-[1.02] mt-6 flex items-center justify-center gap-2"
                             >
                                 {isLoading ? <Loader2 className="animate-spin" /> : 'Get Verification Code'}
                             </button>
@@ -292,7 +292,7 @@ export default function SignupPage() {
                                         value={digit}
                                         onChange={(e) => handleOtpChange(e.target.value, index)}
                                         onKeyDown={(e) => handleKeyDown(e, index)}
-                                        className="text-black text-center text-2xl font-bold w-full h-12 md:h-16 rounded-xl border-2 border-slate-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all bg-white font-mono"
+                                        className="text-black text-center text-2xl font-bold w-full h-12 md:h-16 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white font-mono"
                                         placeholder="•"
                                     />
                                 ))}
@@ -301,7 +301,7 @@ export default function SignupPage() {
                             <button
                                 type="submit"
                                 disabled={isLoading || otp.some(d => !d)}
-                                className="cursor-pointer w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3.5 rounded-xl font-bold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg shadow-green-600/30 hover:shadow-xl hover:shadow-green-600/40 transform hover:scale-[1.02] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="cursor-pointer w-full bg-gradient-to-r from-blue-600 to-sky-600 text-white py-3.5 rounded-xl font-bold hover:from-blue-700 hover:to-sky-700 transition-all shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 transform hover:scale-[1.02] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isLoading ? <Loader2 className="animate-spin" /> : 'Verify & Sign Up'}
                             </button>
@@ -311,7 +311,7 @@ export default function SignupPage() {
                                     type="button"
                                     disabled={!canResend || isLoading}
                                     onClick={handleResendOTP}
-                                    className="text-sm font-medium text-green-600 hover:text-green-700 disabled:text-slate-400 transition-colors"
+                                    className="text-sm font-medium text-blue-600 hover:text-blue-700 disabled:text-slate-400 transition-colors"
                                 >
                                     {resendTimer > 0 
                                         ? `Resend code in ${resendTimer}s` 
@@ -331,7 +331,7 @@ export default function SignupPage() {
 
                     <p className="mt-8 text-center text-slate-600 text-sm">
                         Already have an account?{' '}
-                        <Link href="/login" className="text-green-600 font-bold hover:text-green-700 hover:underline transition-colors">
+                        <Link href="/login" className="text-blue-600 font-bold hover:text-blue-700 hover:underline transition-colors">
                             Log in
                         </Link>
                     </p>

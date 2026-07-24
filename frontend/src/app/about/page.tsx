@@ -8,13 +8,13 @@ export default function AboutPage() {
 
             {/* Page Header */}
             <div className="bg-slate-900 pt-28 pb-20 px-4 text-center">
-                <div className="inline-flex items-center gap-2 bg-green-500/10 text-green-400 px-4 py-2 rounded-full text-sm font-bold mb-6 border border-green-500/20">
+                <div className="inline-flex items-center gap-2 bg-blue-500/10 text-sky-400 px-4 py-2 rounded-full text-sm font-bold mb-6 border border-blue-500/20">
                     <Plane size={16} />
                     About Our Journey
                 </div>
                 <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-6">
                     We're on a Mission to <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">
                         Simplify Travel
                     </span>
                 </h1>
@@ -54,7 +54,7 @@ export default function AboutPage() {
                             Contact us now to book your next flight!
                         </p>
                     </div>
-                    <div className="bg-gradient-to-br from-green-100 to-emerald-100 p-12 rounded-3xl border border-slate-200">
+                    <div className="bg-gradient-to-br from-sky-100 to-blue-100 p-12 rounded-3xl border border-slate-200">
                         <div className="grid grid-cols-2 gap-6">
                             <StatCard icon={<Users />} value="50K+" label="Happy Travelers" />
                             <StatCard icon={<Plane />} value="8K+" label="Flight Options" />
@@ -72,15 +72,15 @@ export default function AboutPage() {
             </div>
 
             {/* CTA Section */}
-            <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-16 px-4 min-h-[50vh] flex items-center">
+            <div className="bg-gradient-to-r from-blue-600 to-sky-600 text-white py-16 px-4 min-h-[50vh] flex items-center">
                 <div className="max-w-4xl mx-auto text-center">
                     <h2 className="text-4xl md:text-6xl font-bold mb-6">Ready to Start Your Journey?</h2>
-                    <p className="text-xl md:text-2xl text-green-50 mb-8">
+                    <p className="text-xl md:text-2xl text-blue-50 mb-8">
                         Join thousands of travelers who trust {BRAND.name} for their flight bookings
                     </p>
                     <a
                         href="/search"
-                        className="inline-block bg-white text-green-600 px-10 py-4 rounded-xl font-bold text-lg hover:bg-green-50 transition-colors shadow-lg hover:shadow-xl transform hover:scale-105 transition-transform"
+                        className="inline-block bg-white text-blue-600 px-10 py-4 rounded-xl font-bold text-lg hover:bg-blue-50 transition-colors shadow-lg hover:shadow-xl transform hover:scale-105 transition-transform"
                     >
                         Book Your Flight Now
                     </a>
@@ -111,7 +111,7 @@ export default function AboutPage() {
                             description="We continuously improve our platform with cutting-edge technology to make booking faster and easier."
                         />
                         <ValueCard
-                            icon={<TrendingUp className="text-green-500" />}
+                            icon={<TrendingUp className="text-teal-500" />}
                             title="Best Prices"
                             description="We work with airlines worldwide to bring you competitive prices and exclusive deals on flights."
                         />
@@ -135,7 +135,7 @@ export default function AboutPage() {
 function StatCard({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
     return (
         <div className="text-center">
-            <div className="flex justify-center mb-3 text-green-600">
+            <div className="flex justify-center mb-3 text-blue-600">
                 {icon}
             </div>
             <div className="text-3xl font-bold text-slate-800 mb-1">{value}</div>

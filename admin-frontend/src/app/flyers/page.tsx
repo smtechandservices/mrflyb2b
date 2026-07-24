@@ -119,7 +119,7 @@ export default function AdminFlyersPage() {
                 <h2 className="text-2xl font-bold text-slate-800">Flyer Management</h2>
                 <button
                     onClick={() => openModal()}
-                    className="cursor-pointer flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition border border-slate-400"
+                    className="cursor-pointer flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition border border-slate-400"
                 >
                     <Plus className="w-5 h-5" />
                     Add Flyer
@@ -142,7 +142,7 @@ export default function AdminFlyersPage() {
                             <tr>
                                 <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
                                     <div className="flex flex-col items-center gap-3">
-                                        <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                                        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                                         <span>Loading flyers...</span>
                                     </div>
                                 </td>
@@ -249,7 +249,7 @@ export default function AdminFlyersPage() {
                                 <textarea
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:outline-none text-slate-700 h-24"
+                                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-700 h-24"
                                     placeholder="Enter flyer description..."
                                 />
                             </div>
@@ -261,7 +261,7 @@ export default function AdminFlyersPage() {
                                     id="is-active"
                                     checked={isActive}
                                     onChange={(e) => setIsActive(e.target.checked)}
-                                    className="w-5 h-5 rounded border-slate-300 text-green-600 focus:ring-green-500"
+                                    className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                                 />
                                 <label htmlFor="is-active" className="text-sm font-medium text-slate-700">Active (Visible to users)</label>
                             </div>
@@ -276,7 +276,7 @@ export default function AdminFlyersPage() {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition font-medium shadow-sm shadow-green-200"
+                                    className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition font-medium shadow-sm shadow-blue-200"
                                 >
                                     {editingFlyer ? 'Update Flyer' : 'Create Flyer'}
                                 </button>

@@ -38,7 +38,7 @@ export default function ContactPage() {
                 icon: 'error',
                 title: 'Oops...',
                 text: 'Failed to send message. Please try again later.',
-                confirmButtonColor: '#10b981' // green-500
+                confirmButtonColor: '#2563eb'
             });
         } finally {
             setLoading(false);
@@ -56,7 +56,7 @@ export default function ContactPage() {
                 </div>
                 <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-6">
                     We're Here to <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">
                         Help You Roll
                     </span>
                 </h1>
@@ -70,11 +70,11 @@ export default function ContactPage() {
                     <div className="bg-white p-8 rounded-3xl border border-slate-400">
                         <h2 className="text-2xl font-bold text-slate-800 mb-6">Send a Message</h2>
                         {success ? (
-                            <div className="bg-green-50 text-green-700 p-6 rounded-xl text-center">
+                            <div className="bg-blue-50 text-blue-700 p-6 rounded-xl text-center">
                                 <div className="text-4xl mb-4">🎉</div>
                                 <h3 className="font-bold text-xl mb-2">Message Sent!</h3>
                                 <p>We'll get back to you shortly.</p>
-                                <button onClick={() => setSuccess(false)} className="cursor-pointer mt-4 text-green-700 font-semibold hover:underline">Send another</button>
+                                <button onClick={() => setSuccess(false)} className="cursor-pointer mt-4 text-blue-700 font-semibold hover:underline">Send another</button>
                             </div>
                         ) : (
                             <form onSubmit={handleSubmit} className="space-y-6">
@@ -85,7 +85,7 @@ export default function ContactPage() {
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
                                         required
-                                        className="text-slate-600 w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-green-500 outline-none bg-slate-50"
+                                        className="text-slate-600 w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 outline-none bg-slate-50"
                                         placeholder="John Doe"
                                     />
                                 </div>
@@ -128,7 +128,7 @@ export default function ContactPage() {
 
                         <div className="space-y-8">
                             <div className="flex items-start gap-4">
-                                <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 shrink-0">
+                                <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 shrink-0">
                                     <Mail />
                                 </div>
                                 <div>
@@ -150,7 +150,7 @@ export default function ContactPage() {
                             </div>
 
                             <div className="flex items-start gap-4">
-                                <div className="h-12 w-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 shrink-0">
+                                <div className="h-12 w-12 bg-sky-100 rounded-full flex items-center justify-center text-sky-600 shrink-0">
                                     <MapPin />
                                 </div>
                                 <div>
@@ -173,7 +173,7 @@ export default function ContactPage() {
                                 <div className="space-y-2 text-sm text-slate-500">
                                     <p className="flex justify-between"><span>Mon - Fri:</span> <span>9:00 AM - 8:00 PM</span></p>
                                     <p className="flex justify-between"><span>Saturday:</span> <span>10:00 AM - 6:00 PM</span></p>
-                                    <p className="flex justify-between font-medium text-green-600"><span>Support:</span> <span>24/7 Available</span></p>
+                                    <p className="flex justify-between font-medium text-blue-600"><span>Support:</span> <span>24/7 Available</span></p>
                                 </div>
                             </div>
                             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-400">
@@ -203,7 +203,7 @@ export default function ContactPage() {
                 {/* FAQ Section */}
                 <div className="mt-24 max-w-9xl mx-auto">
                     <div className="text-center mb-12">
-                        <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-bold mb-4">
+                        <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-bold mb-4">
                             <HelpCircle size={16} />
                             Common Questions
                         </div>
@@ -240,7 +240,7 @@ export default function ContactPage() {
                         ].map((faq, i) => (
                             <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-400 hover:shadow-md transition-shadow">
                                 <h3 className="font-bold text-slate-800 mb-2 flex items-center gap-3">
-                                    <span className="h-6 w-6 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-xs shrink-0">{i + 1}</span>
+                                    <span className="h-6 w-6 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs shrink-0">{i + 1}</span>
                                     {faq.q}
                                 </h3>
                                 <p className="text-slate-600 ml-9 leading-relaxed">{faq.a}</p>

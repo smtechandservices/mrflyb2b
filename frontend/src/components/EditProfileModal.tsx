@@ -201,7 +201,7 @@ export function EditProfileModal() {
                     <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
                         <div className="flex items-center gap-3">
                             {user?.profile?.kyc_status === 'VERIFIED' ? (
-                                <div className="p-1.5 bg-emerald-100 text-emerald-600 rounded-lg">
+                                <div className="p-1.5 bg-sky-100 text-sky-600 rounded-lg">
                                     <ShieldCheck size={16} />
                                 </div>
                             ) : user?.profile?.kyc_status === 'SUBMITTED' ? (

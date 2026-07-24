@@ -189,7 +189,7 @@ function SearchPageContent() {
                 <div className="pb-20 pt-24 lg:pt-32 px-4">
                     <div className="max-w-9xl md:px-10 mx-auto w-full flex flex-col justify-end items-center text-left min-h-[40vh] md:min-h-[50vh]">
                         <h1 className="max-w-2xl text-4xl md:text-5xl font-extrabold text-white mb-32 tracking-tight text-center">
-                            Find Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">Perfect Flight</span>
+                            Find Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">Perfect Flight</span>
                         </h1>
 
                         <div className="w-full">
@@ -212,7 +212,7 @@ function SearchPageContent() {
                     <div className="max-w-9xl mx-auto px-4 md:px-12 pt-8 md:pt-12">
                         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                                <Plane className="text-green-600" />
+                                <Plane className="text-blue-600" />
                                 {totalCount} Flights Found
                             </h2>
                             <div className="text-sm text-slate-500">
@@ -235,7 +235,7 @@ function SearchPageContent() {
                                 onClick={() => setIsMobileFilterOpen(true)}
                                 className="w-full py-4 shadow-xl bg-slate-900 border border-slate-800 text-white rounded-2xl font-bold flex items-center justify-center gap-3 active:scale-95 transition-transform"
                             >
-                                <Filter className="w-5 h-5 text-green-400" />
+                                <Filter className="w-5 h-5 text-sky-400" />
                                 Filters & Sorting
                             </button>
                         </div>
@@ -245,7 +245,7 @@ function SearchPageContent() {
                             <div className="fixed inset-0 z-[1000] bg-white flex flex-col lg:hidden">
                                 <div className="h-20 px-4 flex items-center justify-between border-b border-slate-200 bg-white">
                                     <div className="flex items-center gap-2">
-                                        <Filter className="text-green-600" size={20} />
+                                        <Filter className="text-blue-600" size={20} />
                                         <h2 className="text-xl font-bold text-slate-800">Filters</h2>
                                     </div>
                                     <button
@@ -265,7 +265,7 @@ function SearchPageContent() {
                                 <div className="fixed bottom-0 left-0 right-0 p-6 bg-white border-t border-slate-200 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-[210]">
                                     <button
                                         onClick={() => setIsMobileFilterOpen(false)}
-                                        className="w-full py-4 bg-green-600 text-white rounded-2xl font-bold shadow-lg shadow-green-600/20 active:scale-[0.98] transition-all"
+                                        className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg shadow-blue-600/20 active:scale-[0.98] transition-all"
                                     >
                                         Show Results
                                     </button>
@@ -288,7 +288,7 @@ function SearchPageContent() {
                             <div className="lg:col-span-3 space-y-12">
                                 {loading ? (
                                     <div className="text-center py-20">
-                                        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+                                        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                                         <p className="mt-4 text-slate-600">Loading flights...</p>
                                     </div>
                                 ) : (
@@ -297,7 +297,7 @@ function SearchPageContent() {
                                         <section>
                                             {returnDate && (
                                                 <div className="flex items-center gap-3 mb-6 pb-2 border-b border-slate-200">
-                                                    <div className="p-2 bg-green-100 rounded-lg text-green-600">
+                                                    <div className="p-2 bg-blue-100 rounded-lg text-blue-600">
                                                         <Plane className="w-5 h-5 rotate-45" />
                                                     </div>
                                                     <div>
@@ -328,7 +328,7 @@ function SearchPageContent() {
                                         {returnDate && (
                                             <section>
                                                 <div className="flex items-center gap-3 mb-6 pb-2 border-b border-slate-200">
-                                                    <div className="p-2 bg-green-100 rounded-lg text-green-600">
+                                                    <div className="p-2 bg-blue-100 rounded-lg text-blue-600">
                                                         <Plane className="w-5 h-5 -rotate-45" />
                                                     </div>
                                                     <div>
@@ -393,7 +393,7 @@ export default function SearchPage() {
         <Suspense fallback={
             <div className="min-h-screen bg-slate-50 flex items-center justify-center">
                 <div className="text-center">
-                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                     <p className="mt-4 text-slate-600 font-medium tracking-tight">Loading Search results...</p>
                 </div>
             </div>

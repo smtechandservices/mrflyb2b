@@ -313,7 +313,7 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
             html: `
                 <div class="text-left space-y-4">
                     <p>Are you sure you want to book for <strong>${passengers.length} passenger(s)</strong>?</p>
-                    <div class="bg-blue-50 border border-green-200 rounded-2xl p-5 mt-4">
+                    <div class="bg-blue-50 border border-blue-200 rounded-2xl p-5 mt-4">
                         <div class="flex items-center gap-2 mb-2">
                             <div class="bg-blue-600 text-white p-1 rounded-md flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -622,7 +622,7 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                                     </span>
                                     Passenger Information
                                     {isChild && (
-                                        <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] uppercase tracking-wider rounded border border-green-200 font-bold ml-1">
+                                        <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[10px] uppercase tracking-wider rounded border border-indigo-200 font-bold ml-1">
                                             Child
                                         </span>
                                     )}
@@ -798,7 +798,7 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                                 Pay using your wallet balance.
                                 {walletData ? (
                                     <div className="mt-1 space-y-1">
-                                        <span className="block font-medium text-emerald-600">
+                                        <span className="block font-medium text-sky-600">
                                             Available: ₹{Number(walletData.wallet_balance).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                         </span>
                                         <span className="block text-[11px] font-bold text-blue-600 flex items-center gap-1">
@@ -807,7 +807,7 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                                         </span>
                                     </div>
                                 ) : user?.profile?.wallet_balance !== undefined && (
-                                    <span className="block mt-1 font-medium text-emerald-600">
+                                    <span className="block mt-1 font-medium text-sky-600">
                                         Available: ₹{Number(user.profile.wallet_balance).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                     </span>
                                 )}

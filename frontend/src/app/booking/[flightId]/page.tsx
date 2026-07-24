@@ -60,7 +60,7 @@ export default function BookingPage() {
     if (authLoading || loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
-                <Loader2 className="animate-spin text-green-600" size={40} />
+                <Loader2 className="animate-spin text-blue-600" size={40} />
             </div>
         );
     }
@@ -108,7 +108,7 @@ export default function BookingPage() {
                                                 <img src={getAirlineLogo(flight.airline)!} alt={flight.airline} className="w-full h-full object-contain" />
                                             </div>
                                         ) : (
-                                            <div className="h-6 w-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-xs font-bold">
+                                            <div className="h-6 w-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xs font-bold">
                                                 {flight.airline[0]}
                                             </div>
                                         )}
@@ -150,7 +150,7 @@ export default function BookingPage() {
                                                     {legs.map((leg, idx) => (
                                                         <div key={idx} className="relative pl-6 space-y-2">
                                                             {/* Point marker */}
-                                                            <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full bg-white border-4 border-green-600"></div>
+                                                            <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full bg-white border-4 border-blue-600"></div>
                                                             
                                                                 <div className="flex items-center gap-1.5 flex-1 min-w-0">
                                                                     {leg.airline && (
@@ -200,7 +200,7 @@ export default function BookingPage() {
                                         return (
                                             <div className="space-y-4">
                                                 <div className="font-semibold text-slate-700 flex items-center gap-2">
-                                                    <Clock size={14} className="text-green-600" />
+                                                    <Clock size={14} className="text-blue-600" />
                                                     {new Date(flight.departure_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                                                     {flight.departure_terminal && (
                                                         <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full border border-blue-100">
@@ -230,7 +230,7 @@ export default function BookingPage() {
 
                                 <div className="pt-4 border-t">
                                     <div className="text-xs text-slate-400 uppercase">Total Price</div>
-                                    <div className="text-2xl font-bold text-green-600">{`₹${totalPrice.toLocaleString('en-IN')}`}</div>
+                                    <div className="text-2xl font-bold text-blue-600">{`₹${totalPrice.toLocaleString('en-IN')}`}</div>
                                     <div className="mt-2 space-y-1">
                                         {passengerCounts.adults > 0 && (
                                             <div className="text-[10px] text-slate-500 font-medium flex justify-between">

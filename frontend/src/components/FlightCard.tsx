@@ -48,7 +48,7 @@ export function FlightCard({ flight, passengers = 1 }: FlightCardProps) {
                             <img src={airlineLogo} alt={flight.airline} className="w-full h-full object-contain" />
                         </div>
                     ) : (
-                        <div className="h-12 w-12 bg-green-50 rounded-full flex items-center justify-center text-green-600 font-bold text-xl">
+                        <div className="h-12 w-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 font-bold text-xl">
                             {flight.airline[0]}
                         </div>
                     )}
@@ -86,7 +86,7 @@ export function FlightCard({ flight, passengers = 1 }: FlightCardProps) {
                         <div className="text-xs text-slate-400 mb-1">{flight.duration}</div>
                         <div className="w-full flex items-center space-x-2">
                             <div className="h-[2px] bg-slate-200 flex-1"></div>
-                            <Plane className="h-4 w-4 text-green-500 transform rotate-90" />
+                            <Plane className="h-4 w-4 text-blue-500 transform rotate-90" />
                             <div className="h-[2px] bg-slate-200 flex-1"></div>
                         </div>
                         <div className="text-xs text-slate-400 mt-1">
@@ -122,7 +122,7 @@ export function FlightCard({ flight, passengers = 1 }: FlightCardProps) {
 
             <div className="border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-6 w-full md:w-56 flex flex-col items-center justify-center gap-3">
                 <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">
+                    <div className="text-2xl font-bold text-blue-600">
                         {`₹${totalPrice.toLocaleString('en-IN')}`}
                     </div>
                     {passengers > 1 && (
@@ -134,7 +134,7 @@ export function FlightCard({ flight, passengers = 1 }: FlightCardProps) {
                 <Link
                     href={`/booking/${flight.id}?passengers=${passengers}${window.location.search.includes('adults=') ? `&${new URLSearchParams(window.location.search).toString()}` : ''}`}
                     onClick={handleBookNow}
-                    className="w-full bg-green-600 text-center text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition-colors shadow-lg shadow-green-600/20"
+                    className="w-full bg-blue-600 text-center text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20"
                 >
                     Book Now
                 </Link>
@@ -146,7 +146,7 @@ export function FlightCard({ flight, passengers = 1 }: FlightCardProps) {
                                 Only {flight.available_seats} seat{flight.available_seats !== 1 ? 's' : ''}!
                             </span>
                         ) : (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                 {flight.available_seats} seats
                             </span>
                         )}

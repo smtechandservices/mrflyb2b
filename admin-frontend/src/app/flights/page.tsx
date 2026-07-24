@@ -656,7 +656,7 @@ export default function AdminFlightsPage() {
                             placeholder="Search flights..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="text-slate-700 pl-10 pr-4 py-2 border border-slate-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                            className="text-slate-700 pl-10 pr-4 py-2 border border-slate-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
                     <div className="flex gap-2">
@@ -676,14 +676,14 @@ export default function AdminFlightsPage() {
                         />
                         <button
                             onClick={() => document.getElementById('excel-upload')?.click()}
-                            className="cursor-pointer flex items-center gap-2 border border-slate-400 text-green-600 px-4 py-2 rounded-lg hover:bg-green-50 transition"
+                            className="cursor-pointer flex items-center gap-2 border border-slate-400 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition"
                         >
                             <FileDigit className="w-5 h-5" />
                             Upload Excel
                         </button>
                         <button
                             onClick={() => openModal()}
-                            className="cursor-pointer flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition border border-slate-400"
+                            className="cursor-pointer flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition border border-slate-400"
                         >
                             <Plus className="w-5 h-5" />
                             Add Flight
@@ -710,7 +710,7 @@ export default function AdminFlightsPage() {
                             <tr>
                                 <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
                                     <div className="flex flex-col items-center gap-3">
-                                        <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                                        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                                         <span>Searching flights...</span>
                                     </div>
                                 </td>
@@ -730,7 +730,7 @@ export default function AdminFlightsPage() {
                                                 <img src={getAirlineLogo(flight.airline)!} alt={flight.airline} className="w-full h-full object-contain" />
                                             </div>
                                         ) : (
-                                            <div className="h-8 w-8 bg-green-50 rounded flex items-center justify-center text-green-600 font-bold text-sm flex-shrink-0">
+                                            <div className="h-8 w-8 bg-blue-50 rounded flex items-center justify-center text-blue-600 font-bold text-sm flex-shrink-0">
                                                 {flight.airline[0]}
                                             </div>
                                         )}
@@ -848,7 +848,7 @@ export default function AdminFlightsPage() {
                                     <input
                                         type="text"
                                         required
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition shadow-sm outline-none"
+                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm outline-none"
                                         placeholder="Type or select airline..."
                                         value={formData.airline || ''}
                                         onChange={e => {
@@ -860,14 +860,14 @@ export default function AdminFlightsPage() {
                                         autoComplete="off"
                                     />
                                     {isAirlineDropdownOpen && (
-                                        <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] shadow-green-900/10 max-h-60 overflow-y-auto overflow-x-hidden p-1.5 scrollbar-thin scrollbar-thumb-slate-200">
+                                        <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] shadow-blue-900/10 max-h-60 overflow-y-auto overflow-x-hidden p-1.5 scrollbar-thin scrollbar-thumb-slate-200">
                                             {PREDEFINED_AIRLINES.filter(a => a.toLowerCase().includes((formData.airline || '').toLowerCase())).length > 0 ? (
                                                 PREDEFINED_AIRLINES
                                                     .filter(a => a.toLowerCase().includes((formData.airline || '').toLowerCase()))
                                                     .map((airline) => (
                                                         <div
                                                             key={airline}
-                                                            className="flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-green-50 hover:text-green-800 rounded-lg text-slate-700 transition duration-150"
+                                                            className="flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-blue-50 hover:text-blue-800 rounded-lg text-slate-700 transition duration-150"
                                                             onMouseDown={(e) => {
                                                                 e.preventDefault(); // Prevent input onBlur from firing first
                                                                 setFormData({ ...formData, airline });
@@ -879,7 +879,7 @@ export default function AdminFlightsPage() {
                                                                     <img src={getAirlineLogo(airline)!} alt={airline} className="w-full h-full object-contain" />
                                                                 </div>
                                                             ) : (
-                                                                <div className="h-7 w-7 bg-green-100/50 border border-green-100 rounded flex items-center justify-center text-green-700 font-bold text-xs flex-shrink-0">
+                                                                <div className="h-7 w-7 bg-blue-100/50 border border-blue-100 rounded flex items-center justify-center text-blue-700 font-bold text-xs flex-shrink-0">
                                                                     {airline[0]}
                                                                 </div>
                                                             )}
@@ -1104,7 +1104,7 @@ export default function AdminFlightsPage() {
                                         type="number"
                                         required
                                         min="0"
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-green-700"
+                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-blue-700"
                                         value={formData.available_seats !== undefined ? formData.available_seats : ''}
                                         onChange={e => handleAvailableSeatsChange(parseInt(e.target.value) || 0)}
                                     />
@@ -1166,7 +1166,7 @@ export default function AdminFlightsPage() {
                                     <label className="flex items-center gap-2 cursor-pointer">
                                         <input
                                             type="checkbox"
-                                            className="w-4 h-4 text-green-600 border-slate-300 rounded focus:ring-green-500"
+                                            className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
                                             checked={formData.is_hidden || false}
                                             onChange={e => setFormData({ ...formData, is_hidden: e.target.checked })}
                                         />
@@ -1184,7 +1184,7 @@ export default function AdminFlightsPage() {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="cursor-pointer px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium"
+                                    className="cursor-pointer px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
                                 >
                                     Save Flight
                                 </button>
@@ -1198,11 +1198,11 @@ export default function AdminFlightsPage() {
             {isStopModalOpen && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
                     <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl border border-white/20 overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
-                        <div className="bg-gradient-to-r from-green-600 to-emerald-800 p-6 text-white flex-shrink-0">
+                        <div className="bg-gradient-to-r from-blue-600 to-sky-800 p-6 text-white flex-shrink-0">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h3 className="text-xl font-bold">Configure Detailed Itinerary</h3>
-                                    <p className="text-green-50 text-xs mt-1">Define details for each leg of the journey</p>
+                                    <p className="text-blue-50 text-xs mt-1">Define details for each leg of the journey</p>
                                 </div>
                                 <button onClick={() => setIsStopModalOpen(false)} className="bg-white/20 hover:bg-white/30 p-2 rounded-full transition">
                                     <X className="w-5 h-5" />
@@ -1213,7 +1213,7 @@ export default function AdminFlightsPage() {
                         <div className="p-6 overflow-y-auto space-y-8 bg-slate-50/50">
                             {legInputs.map((leg, idx) => (
                                 <div key={idx} className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 relative group">
-                                    <div className="absolute -top-3 left-6 px-3 bg-green-600 text-white text-[10px] font-bold rounded-full py-0.5 shadow-sm">
+                                    <div className="absolute -top-3 left-6 px-3 bg-blue-600 text-white text-[10px] font-bold rounded-full py-0.5 shadow-sm">
                                         LEG #{idx + 1}
                                     </div>
                                     
@@ -1223,7 +1223,7 @@ export default function AdminFlightsPage() {
                                             <input 
                                                 type="text" 
                                                 list={`airline-options-${idx}`}
-                                                className="text-slate-800 w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm transition-all"
+                                                className="text-slate-800 w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all"
                                                 placeholder="e.g. Air India" 
                                                 value={leg.airline} 
                                                 onChange={e => updateLegInput(idx, 'airline', e.target.value)} 
@@ -1240,7 +1240,7 @@ export default function AdminFlightsPage() {
                                                 className={`text-slate-800 w-full px-3 py-2 border rounded-lg outline-none font-semibold uppercase transition-all ${
                                                     idx === 0 
                                                     ? 'bg-slate-200/60 border-slate-300 cursor-not-allowed text-slate-500 shadow-inner' 
-                                                    : 'bg-white border-slate-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm'
+                                                    : 'bg-white border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm'
                                                 }`}
                                                 placeholder="e.g. 6E 123"
                                                 value={leg.flight_number}
@@ -1266,7 +1266,7 @@ export default function AdminFlightsPage() {
                                                 className={`text-slate-800 w-full px-3 py-2 border rounded-lg outline-none font-semibold uppercase transition-all ${
                                                     idx === legInputs.length - 1 
                                                     ? 'bg-slate-200/60 border-slate-300 cursor-not-allowed text-slate-500 shadow-inner' 
-                                                    : 'bg-white border-slate-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm'
+                                                    : 'bg-white border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm'
                                                 }`}
                                                 placeholder="Airport Code"
                                                 value={leg.destination}
@@ -1281,7 +1281,7 @@ export default function AdminFlightsPage() {
                                                     className={`w-full px-2 py-2 border rounded-lg text-sm transition-all focus:outline-none ${
                                                         idx > 0 || idx === 0 // All origins are either master or synced
                                                         ? 'bg-slate-200/60 border-slate-300 cursor-not-allowed text-slate-500 shadow-inner' 
-                                                        : 'bg-white border-slate-200 text-slate-700 focus:ring-2 focus:ring-green-500 shadow-sm'
+                                                        : 'bg-white border-slate-200 text-slate-700 focus:ring-2 focus:ring-blue-500 shadow-sm'
                                                     }`} 
                                                     placeholder="T3" 
                                                     value={leg.departure_terminal} 
@@ -1297,7 +1297,7 @@ export default function AdminFlightsPage() {
                                                     className={`w-full px-2 py-2 border rounded-lg text-sm transition-all focus:outline-none ${
                                                         idx === legInputs.length - 1 
                                                         ? 'bg-slate-200/60 border-slate-300 cursor-not-allowed text-slate-500 shadow-inner' 
-                                                        : 'bg-white border-slate-200 text-slate-700 focus:ring-2 focus:ring-green-500 shadow-sm'
+                                                        : 'bg-white border-slate-200 text-slate-700 focus:ring-2 focus:ring-blue-500 shadow-sm'
                                                     }`} 
                                                     placeholder="T1" 
                                                     value={leg.arrival_terminal} 
@@ -1338,7 +1338,7 @@ export default function AdminFlightsPage() {
                                                 className={`text-slate-800 w-full px-3 py-2 border rounded-lg outline-none transition-all ${
                                                     idx === legInputs.length - 1 
                                                     ? 'bg-slate-200/60 border-slate-300 cursor-not-allowed text-slate-500 shadow-inner' 
-                                                    : 'bg-white border-slate-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm'
+                                                    : 'bg-white border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm'
                                                 }`}
                                                 placeholder="DD/MM/YYYY"
                                                 value={leg.date_arrival}
@@ -1353,7 +1353,7 @@ export default function AdminFlightsPage() {
                                                 className={`text-slate-800 w-full px-3 py-2 border rounded-lg outline-none transition-all ${
                                                     idx === legInputs.length - 1 
                                                     ? 'bg-slate-200/60 border-slate-300 cursor-not-allowed text-slate-500 shadow-inner' 
-                                                    : 'bg-white border-slate-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm'
+                                                    : 'bg-white border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm'
                                                 }`}
                                                 placeholder="HH:mm"
                                                 value={leg.time_arrival}
@@ -1380,7 +1380,7 @@ export default function AdminFlightsPage() {
                             </button>
                             <button 
                                 onClick={handleSaveStops}
-                                className="flex-1 px-6 py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 shadow-lg shadow-green-200 transition transform active:scale-95"
+                                className="flex-1 px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition transform active:scale-95"
                             >
                                 Save Complete Itinerary
                             </button>

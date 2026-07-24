@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Github, X as XIcon, Facebook, Instagram, Mail, Phone, MapPin, Youtube, Linkedin } from 'lucide-react';
 import { BRAND } from '@/config/brand';
 
@@ -8,7 +9,10 @@ export function Footer() {
             <div className="mx-auto px-4 md:px-12">
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-16">
                     <div className="col-span-1 md:col-span-2">
-                        <h3 className="text-xl font-bold text-white mb-2 underline decoration-green-500 underline-offset-8">{BRAND.name}</h3>
+                        <div className="flex items-center gap-2 mb-2">
+                            <Image src={BRAND.logoTransparent} alt={`${BRAND.name} Logo`} width={32} height={32} className="object-contain md:w-20 md:h-20" />
+                            <h3 className="text-xl font-semibold text-white/80 mt-4 -ms-4">{BRAND.name}</h3>
+                        </div>
                         <p className="text-gray-400 leading-relaxed text-sm mb-4">
                             Shop No 16, Balaji Market, Kashmiri Gate, Delhi
                         </p>
@@ -51,22 +55,22 @@ export function Footer() {
                             <h4 className="text-lg font-semibold text-white mb-6">Get in Touch</h4>
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-green-500/10 transition-colors">
+                                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-blue-500/10 transition-colors">
                                         <Mail size={16} />
                                     </div>
                                     <div>
-                                        <a href={`mailto:${BRAND.contactEmail}`} className="flex items-center gap-3 text-gray-400 hover:text-green-400 transition-colors group">
+                                        <a href={`mailto:${BRAND.contactEmail}`} className="flex items-center gap-3 text-gray-400 hover:text-sky-400 transition-colors group">
                                             <span className="text-sm">{BRAND.contactEmail}</span>
                                         </a>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-green-500/10 transition-colors">
+                                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-blue-500/10 transition-colors">
                                         <Phone size={16} />
                                     </div>
                                     <div>
                                         {BRAND.phones.map((phone) => (
-                                            <a key={phone} href={`tel:${phone.replace(/\s/g, '')}`} className="flex items-center gap-3 text-gray-400 hover:text-green-400 transition-colors group">
+                                            <a key={phone} href={`tel:${phone.replace(/\s/g, '')}`} className="flex items-center gap-3 text-gray-400 hover:text-sky-400 transition-colors group">
                                                 <span className="text-sm">{phone}</span>
                                             </a>
                                         ))}
@@ -98,7 +102,7 @@ export function Footer() {
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
     return (
         <li>
-            <Link href={href} className="text-gray-400 hover:text-green-400 transition-colors marker:text-green-500">
+            <Link href={href} className="text-gray-400 hover:text-sky-400 transition-colors marker:text-blue-500">
                 {children}
             </Link>
         </li>

@@ -40,11 +40,11 @@ export function Header() {
     }, [isAuthenticated, refreshUser]);
 
     return (
-        <header className={`${isMenuOpen ? 'fixed inset-0 z-[1000] bg-slate-950 flex flex-col' : 'fixed top-0 inset-x-0 z-50 bg-black/60 lg:bg-black/20'} transition-all duration-300 ${isScrolled ? 'bg-black/80 lg:bg-black/40 backdrop-blur-md border-b border-white/20' : ''}`}>
+        <header className={`${isMenuOpen ? 'fixed inset-0 z-[1000] bg-slate-950 flex flex-col' : 'fixed top-0 inset-x-0 z-50 bg-slate-950/40 lg:bg-slate-950/10'} transition-all duration-300 ${isScrolled ? 'bg-slate-950/80 lg:bg-slate-950/40 backdrop-blur-md border-b border-white/20' : ''}`}>
             <div className="mx-auto px-4 md:px-12 h-20 flex items-center justify-between shrink-0">
                 <Link href="/" className="flex items-center space-x-2 md:space-x-3 font-semibold shrink-0" style={{ fontFamily: "sans-serif" }}>
-                    <Image src={BRAND.logo} alt={`${BRAND.name} Logo`} width={32} height={32} className="object-contain md:w-10 md:h-10" />
-                    <span className={`bg-gradient-to-r ${isScrolled ? 'from-green-200 to-yellow-200' : 'from-green-500 to-yellow-500'} text-transparent text-xl md:text-3xl bg-clip-text whitespace-nowrap`}>
+                    <Image src={BRAND.logoTransparent} alt={`${BRAND.name} Logo`} width={32} height={32} className="object-contain md:w-20 md:h-20" />
+                    <span className={`bg-gradient-to-r from-sky-300 to-blue-200 text-transparent text-xl md:text-3xl bg-clip-text whitespace-nowrap mt-2 -ms-2`}>
                         {BRAND.name}
                     </span>
                 </Link>
@@ -66,12 +66,12 @@ export function Header() {
                             <div className="relative">
                                 <button
                                     onClick={() => window.dispatchEvent(new CustomEvent('open-edit-profile-modal'))}
-                                    className="cursor-pointer text-white font-medium flex items-center gap-2 hover:text-green-200 transition-colors"
+                                    className="cursor-pointer text-white font-medium flex items-center gap-2 hover:text-blue-200 transition-colors"
                                 >
                                     <User size={18} />
                                     {user?.username}
                                     {user?.profile?.kyc_status === 'VERIFIED' ? (
-                                        <div className="flex items-center gap-1 bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30 text-[10px] font-bold">
+                                        <div className="flex items-center gap-1 bg-sky-500/20 text-sky-400 px-2 py-0.5 rounded-full border border-sky-500/30 text-[10px] font-bold">
                                             <ShieldCheck size={10} />
                                         </div>
                                     ) : user?.profile?.kyc_status === 'SUBMITTED' ? (
@@ -92,11 +92,11 @@ export function Header() {
                                 const spendingPower = balance + credit - dues;
                                 const fmt = (n: number) => '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                                 return (
-                                    <Link href="/wallet" className="group relative flex items-center gap-3 px-4 py-2 rounded-2xl bg-gradient-to-br from-emerald-950/80 to-slate-900/80 border border-emerald-500/40 hover:border-emerald-400/70 transition-all duration-300 shadow-lg shadow-emerald-900/30 backdrop-blur-sm overflow-hidden">
-                                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                    <Link href="/wallet" className="group relative flex items-center gap-3 px-4 py-2 rounded-2xl bg-gradient-to-br from-sky-950/80 to-slate-900/80 border border-sky-500/40 hover:border-sky-400/70 transition-all duration-300 shadow-lg shadow-sky-900/30 backdrop-blur-sm overflow-hidden">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-sky-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                         {/* Spending power */}
                                         <div className="relative flex flex-col">
-                                            <span className="text-emerald-400/80 text-[8px] uppercase tracking-[0.15em] font-bold flex items-center gap-1"><Wallet size={9} />Power</span>
+                                            <span className="text-sky-400/80 text-[8px] uppercase tracking-[0.15em] font-bold flex items-center gap-1"><Wallet size={9} />Power</span>
                                             <span className="text-white font-black text-base leading-tight tracking-tight whitespace-nowrap">{fmt(spendingPower)}</span>
                                         </div>
                                         {/* Divider */}
@@ -109,7 +109,7 @@ export function Header() {
                                             </div>
                                             <div className="flex flex-col">
                                                 <span className="text-slate-400 text-[8px] uppercase tracking-wider">Credit</span>
-                                                <span className="text-emerald-300 font-bold whitespace-nowrap">{fmt(credit)}</span>
+                                                <span className="text-sky-300 font-bold whitespace-nowrap">{fmt(credit)}</span>
                                             </div>
                                             <div className="flex flex-col">
                                                 <span className="text-slate-400 text-[8px] uppercase tracking-wider">Dues</span>
@@ -121,7 +121,7 @@ export function Header() {
                             })()}
                             <button
                                 onClick={logout}
-                                className="cursor-pointer bg-white/10 hover:bg-white/20 text-white p-2 border border-emerald-500 rounded-full transition-colors"
+                                className="cursor-pointer bg-white/10 hover:bg-white/20 text-white p-2 border border-sky-500 rounded-full transition-colors"
                                 title="Logout"
                             >
                                 <LogOut size={18} />
@@ -129,10 +129,10 @@ export function Header() {
                         </div>
                     ) : (
                         <div className="flex items-center gap-4">
-                            <Link href="/login" className="text-white hover:text-green-300 font-medium transition-colors">
+                            <Link href="/login" className="text-white hover:text-blue-300 font-medium transition-colors">
                                 Login
                             </Link>
-                            <Link href="/signup" className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-full font-bold transition-colors shadow-lg shadow-green-600/20">
+                            <Link href="/signup" className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-full font-bold transition-colors shadow-lg shadow-blue-600/20">
                                 Create an account
                             </Link>
                         </div>
@@ -156,7 +156,7 @@ export function Header() {
                     {isAuthenticated ? (
                         <div className="flex flex-col space-y-6">
                             <div className="flex items-center gap-4 bg-white/5 p-4 rounded-3xl border border-white/10">
-                                <div className="w-14 h-14 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/30">
+                                <div className="w-14 h-14 rounded-full bg-sky-500/20 flex items-center justify-center text-sky-400 border border-sky-500/30">
                                     <User size={28} />
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -177,7 +177,7 @@ export function Header() {
                                     }}
                                     className="flex items-center justify-center gap-2 p-4 bg-white/5 hover:bg-white/10 text-white rounded-2xl border border-white/10 transition-all font-bold text-sm"
                                 >
-                                    <User size={18} className="text-emerald-400" />
+                                    <User size={18} className="text-sky-400" />
                                     Edit Profile
                                 </button>
                                 <button
@@ -186,7 +186,7 @@ export function Header() {
                                         window.dispatchEvent(new CustomEvent('open-kyc-modal'));
                                     }}
                                     className={`flex items-center justify-center gap-2 p-4 rounded-2xl border transition-all font-bold text-sm ${user?.profile?.kyc_status === 'VERIFIED'
-                                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                                        ? 'bg-sky-500/10 text-sky-400 border-sky-500/30'
                                         : user?.profile?.kyc_status === 'SUBMITTED'
                                             ? 'bg-blue-500/10 text-blue-400 border-blue-500/30'
                                             : 'bg-amber-500/10 text-amber-400 border-amber-500/30 animate-pulse'
@@ -207,12 +207,12 @@ export function Header() {
                                 const spendingPower = balance + credit - dues;
                                 const fmt = (n: number) => '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                                 return (
-                                    <Link href="/wallet" className="p-4 rounded-3xl bg-gradient-to-br from-emerald-500/20 to-green-600/10 border border-emerald-500/30 block">
+                                    <Link href="/wallet" className="p-4 rounded-3xl bg-gradient-to-br from-sky-500/20 to-blue-600/10 border border-sky-500/30 block">
                                         <div className="flex items-center gap-2 mb-2">
-                                            <div className="p-1.5 bg-emerald-500/20 rounded-lg">
-                                                <Wallet size={14} className="text-emerald-400" />
+                                            <div className="p-1.5 bg-sky-500/20 rounded-lg">
+                                                <Wallet size={14} className="text-sky-400" />
                                             </div>
-                                            <span className="text-emerald-300 text-[10px] uppercase tracking-widest font-bold">Spending Power</span>
+                                            <span className="text-sky-300 text-[10px] uppercase tracking-widest font-bold">Spending Power</span>
                                         </div>
                                         <p className="text-white font-extrabold text-2xl mb-3 truncate">{fmt(spendingPower)}</p>
                                         <div className="grid grid-cols-3 gap-1.5 pt-3 border-t border-white/10">
@@ -221,7 +221,7 @@ export function Header() {
                                                 <p className="text-white font-bold text-[11px] truncate">{fmt(balance)}</p>
                                             </div>
                                             <div className="bg-white/5 rounded-xl p-2 text-center">
-                                                <p className="text-emerald-300 text-[9px] uppercase tracking-wider font-bold mb-0.5">Credit</p>
+                                                <p className="text-sky-300 text-[9px] uppercase tracking-wider font-bold mb-0.5">Credit</p>
                                                 <p className="text-white font-bold text-[11px] truncate">{fmt(credit)}</p>
                                             </div>
                                             <div className="bg-white/5 rounded-xl p-2 text-center">
@@ -245,7 +245,7 @@ export function Header() {
                                     </Link>
                                     <Link
                                         href="/signup"
-                                        className="py-4 text-center text-white font-bold bg-green-600 rounded-2xl shadow-lg shadow-green-600/20"
+                                        className="py-4 text-center text-white font-bold bg-blue-600 rounded-2xl shadow-lg shadow-blue-600/20"
                                     >
                                         Join Now
                                     </Link>
@@ -284,7 +284,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
             className={`relative text-gray-200 hover:text-white px-2 py-2 transition-all duration-300 text-lg font-medium group ${isActive ? 'text-white' : ''}`}
         >
             {children}
-            <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-green-500 transition-all duration-300 rounded-full ${isActive ? 'w-2/3' : 'group-hover:w-1/3'}`} />
+            <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-blue-500 transition-all duration-300 rounded-full ${isActive ? 'w-2/3' : 'group-hover:w-1/3'}`} />
         </Link>
     );
 }
@@ -297,7 +297,7 @@ function MobileNavLink({ href, children }: { href: string; children: React.React
         <Link
             href={href}
             className={`flex items-center px-6 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 ${isActive
-                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                ? 'bg-sky-500/20 text-sky-400 border border-sky-500/30'
                 : 'text-gray-300 hover:bg-white/5'
                 }`}
         >

@@ -117,7 +117,7 @@ export default function TopUpRequestsPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-800 flex items-center gap-3">
-                        <Wallet className="text-green-600" size={32} />
+                        <Wallet className="text-blue-600" size={32} />
                         Transactions & Top-ups
                     </h1>
                     <p className="text-slate-500 mt-1">Manage top-up requests and audit all wallet transactions.</p>
@@ -128,7 +128,7 @@ export default function TopUpRequestsPage() {
                         onClick={() => setActiveTab('TOPUPS')}
                         className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
                             activeTab === 'TOPUPS' 
-                            ? 'bg-white text-green-600 shadow-sm' 
+                            ? 'bg-white text-blue-600 shadow-sm' 
                             : 'text-slate-500 hover:text-slate-700'
                         }`}
                     >
@@ -156,7 +156,7 @@ export default function TopUpRequestsPage() {
                     <input
                         type="text"
                         placeholder="Search by username or email..."
-                        className="text-slate-700 w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20"
+                        className="text-slate-700 w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                         value={search}
                         onChange={(e) => handleSearchChange(e.target.value)}
                     />
@@ -165,7 +165,7 @@ export default function TopUpRequestsPage() {
                 <div className="flex items-center gap-2 w-full lg:w-auto">
                     <Filter className="text-slate-400" size={18} />
                     <select
-                        className="flex-1 lg:w-48 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500/20 text-slate-600 font-medium"
+                        className="flex-1 lg:w-48 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-600 font-medium"
                         value={statusFilter}
                         onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
                     >

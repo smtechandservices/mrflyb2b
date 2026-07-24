@@ -179,7 +179,7 @@ export default function MyBookingsPage() {
     if (loading) {
         return (
             <div className="min-h-screen bg-slate-50 py-12 px-4 flex items-center justify-center">
-                <Loader2 className="animate-spin text-green-600" size={40} />
+                <Loader2 className="animate-spin text-blue-600" size={40} />
             </div>
         );
     }
@@ -260,7 +260,7 @@ export default function MyBookingsPage() {
                                                 firstPassenger.status === 'REFUNDED' ? 'bg-gradient-to-r from-blue-500 to-blue-600' :
                                                     (firstPassenger.status === 'CANCELLED' || firstPassenger.status === 'REJECTED') ? 'bg-gradient-to-r from-red-500 to-red-600' :
                                                         firstPassenger.status === 'PENDING' ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
-                                                            'bg-gradient-to-r from-green-600 to-emerald-600'
+                                                            'bg-gradient-to-r from-blue-600 to-sky-600'
                                                 } text-white px-6 py-4 flex justify-between items-center`}>
                                                 <div className="flex items-center gap-4">
                                                     {getAirlineLogo(firstPassenger.flight_details.airline) && (
@@ -317,7 +317,7 @@ export default function MyBookingsPage() {
                                                         <div className="text-sm md:text-md text-slate-500 mb-2">Flight {firstPassenger.flight_details.flight_number}</div>
                                                         <div className="w-full flex items-center justify-center">
                                                             <div className="h-px bg-slate-300 flex-1"></div>
-                                                            <svg className="w-6 h-6 text-green-600 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                                            <svg className="w-6 h-6 text-blue-600 mx-2" fill="currentColor" viewBox="0 0 20 20">
                                                                 <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
                                                             </svg>
                                                             <div className="h-px bg-slate-300 flex-1"></div>
@@ -380,7 +380,7 @@ export default function MyBookingsPage() {
                                                                 </>
                                                             ) : firstPassenger.payment_mode === 'RAZORPAY' ? (
                                                                 <>
-                                                                    <CreditCard size={14} className="text-green-500" />
+                                                                    <CreditCard size={14} className="text-indigo-500" />
                                                                     <span>Razorpay</span>
                                                                 </>
                                                             ) : (
@@ -478,7 +478,7 @@ export default function MyBookingsPage() {
                                 {/* Passenger Details Card - Right (1/3 width) */}
                                 <div className="lg:col-span-1">
                                     <div className={`bg-white rounded-2xl overflow-hidden h-full shadow-sm border-y-2 ${isExpired ? 'border-slate-400 opacity-75' : (firstPassenger.status === 'REJECTED' || firstPassenger.status === 'CANCELLED') ? 'border-red-600' : 'border-slate-700'}`}>
-                                        <div className={`${isExpired ? 'bg-gradient-to-r from-slate-500 to-slate-600' : (firstPassenger.status === 'REJECTED' || firstPassenger.status === 'CANCELLED') ? 'bg-gradient-to-r from-red-500 to-red-600' : 'bg-gradient-to-r from-green-600 to-emerald-600'} text-white px-6 py-4`}>
+                                        <div className={`${isExpired ? 'bg-gradient-to-r from-slate-500 to-slate-600' : (firstPassenger.status === 'REJECTED' || firstPassenger.status === 'CANCELLED') ? 'bg-gradient-to-r from-red-500 to-red-600' : 'bg-gradient-to-r from-blue-600 to-sky-600'} text-white px-6 py-4`}>
                                             <div className="text-xs uppercase tracking-wider opacity-90">Passenger List</div>
                                             <div className="text-lg font-bold mt-1">{passengers.length} Passenger{passengers.length !== 1 ? 's' : ''}</div>
                                         </div>
@@ -504,7 +504,7 @@ export default function MyBookingsPage() {
                                                                     const age = calculateAge(passenger.date_of_birth);
                                                                     return age !== null && age > 2 && age <= 18;
                                                                 })() && (
-                                                                    <span className="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider border border-green-200">
+                                                                    <span className="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider border border-blue-200">
                                                                         Child
                                                                     </span>
                                                                 )}
@@ -514,7 +514,7 @@ export default function MyBookingsPage() {
                                                                     </span>
                                                                 )}
                                                                 {passenger.status === 'REFUNDED' && (
-                                                                    <span className="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                                                                    <span className="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider">
                                                                         Refunded
                                                                     </span>
                                                                 )}
@@ -532,7 +532,7 @@ export default function MyBookingsPage() {
                                                                     Price: ₹{parseFloat((parseFloat(passenger.charged_price) > 0 || passenger.is_infant) ? passenger.charged_price : passenger.flight_details.price).toLocaleString('en-IN')}
                                                                 </div>
                                                                 {passenger.pnr ? (
-                                                                    <div className="text-[10px] font-mono bg-green-100 px-2 py-0.5 rounded text-green-700 font-bold border border-green-200 inline-block">
+                                                                    <div className="text-[10px] font-mono bg-blue-100 px-2 py-0.5 rounded text-blue-700 font-bold border border-blue-200 inline-block">
                                                                         PNR: {passenger.pnr}
                                                                     </div>
                                                                 ) : (

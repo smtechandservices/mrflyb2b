@@ -114,16 +114,16 @@ export default function LoginPage() {
                 className="fixed inset-0 bg-cover bg-center bg-no-repeat"
                 style={{ backgroundImage: 'url(/hero-search.png)' }}
             />
-            <div className="fixed inset-0 bg-gradient-to-br from-slate-900/70 via-slate-900/60 to-green-900/70" />
+            <div className="fixed inset-0 bg-gradient-to-br from-slate-900/70 via-slate-900/60 to-blue-900/70" />
 
             {/* Login Card */}
             <div className="relative z-10 max-w-md w-full">
                 <div className="bg-white/95 backdrop-blur-lg p-8 md:p-10 rounded-3xl shadow-2xl border border-white/20">
                     {/* Logo */}
-                    <div className="flex justify-center mb-6">
+                    <div className="flex justify-center">
                         <div className="h-20 w-20 relative">
                             <Image
-                                src={BRAND.logo}
+                                src={BRAND.logoTransparent}
                                 alt={`${BRAND.name} Logo`}
                                 fill
                                 className="object-contain"
@@ -152,7 +152,7 @@ export default function LoginPage() {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="text-black w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all bg-white"
+                                    className="text-black w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white"
                                     placeholder="Enter your email"
                                     required
                                 />
@@ -165,7 +165,7 @@ export default function LoginPage() {
                                         type={showPassword ? "text" : "password"}
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="text-black w-full px-4 py-3 pr-12 rounded-xl border-2 border-slate-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all bg-white"
+                                        className="text-black w-full px-4 py-3 pr-12 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white"
                                         placeholder="Enter your password"
                                         required
                                     />
@@ -178,7 +178,7 @@ export default function LoginPage() {
                                     </button>
                                 </div>
                                 <div className="flex justify-end mt-4">
-                                    <Link href="/forgot-password" disable-nav="true" className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors">
+                                    <Link href="/forgot-password" disable-nav="true" className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
                                         Forgot password?
                                     </Link>
                                 </div>
@@ -187,7 +187,7 @@ export default function LoginPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="cursor-pointer w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3.5 rounded-xl font-bold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg shadow-green-600/30 hover:shadow-xl hover:shadow-green-600/40 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="cursor-pointer w-full bg-gradient-to-r from-blue-600 to-sky-600 text-white py-3.5 rounded-xl font-bold hover:from-blue-700 hover:to-sky-700 transition-all shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {loading ? 'Verifying...' : 'Continue'}
                             </button>
@@ -208,7 +208,7 @@ export default function LoginPage() {
                                             value={otp[i] || ''}
                                             onChange={(e) => handleOtpChange(i, e.target.value)}
                                             onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                                            className="w-11 h-14 sm:w-12 sm:h-16 text-center text-2xl font-bold text-slate-800 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 outline-none transition-all shadow-sm"
+                                            className="w-11 h-14 sm:w-12 sm:h-16 text-center text-2xl font-bold text-slate-800 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm"
                                             required={i === 0}
                                             autoFocus={i === 0}
                                         />
@@ -220,7 +220,7 @@ export default function LoginPage() {
                                 <button
                                     type="submit"
                                     disabled={loading || otp.length !== 6}
-                                    className="cursor-pointer w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3.5 rounded-xl font-bold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg shadow-green-600/30 hover:shadow-xl hover:shadow-green-600/40 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="cursor-pointer w-full bg-gradient-to-r from-blue-600 to-sky-600 text-white py-3.5 rounded-xl font-bold hover:from-blue-700 hover:to-sky-700 transition-all shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {loading ? 'Logging in...' : 'Verify & Login'}
                                 </button>
@@ -239,7 +239,7 @@ export default function LoginPage() {
                     {step === 'LOGIN' && (
                         <p className="mt-8 text-center text-slate-600 text-sm">
                             Don't have an account?{' '}
-                            <Link href="/signup" disable-nav="true" className="text-green-600 font-bold hover:text-green-700 hover:underline transition-colors">
+                            <Link href="/signup" disable-nav="true" className="text-blue-600 font-bold hover:text-blue-700 hover:underline transition-colors">
                                 Sign up
                             </Link>
                         </p>

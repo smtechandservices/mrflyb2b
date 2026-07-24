@@ -83,18 +83,18 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
         w-64 bg-slate-900 text-white fixed h-full z-[1001] transition-transform duration-300 transform
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
-        <div className="p-6 flex items-center justify-between lg:justify-start gap-3">
+        <div className="px-4 pt-4 pb-0 flex items-center justify-between lg:justify-start gap-3">
           <div className="flex items-center gap-3">
             <Image
-              src={BRAND.logo}
+              src={BRAND.logoTransparent}
               alt={`${BRAND.name} Logo`}
-              width={40}
-              height={40}
+              width={42}
+              height={42}
               priority
               unoptimized
-              className="object-contain rounded-lg"
+              className="object-contain md:w-16 md:h-16"
             />
-            <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-200 to-emerald-400">
+            <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-sky-300 to-blue-200 mt-2 -ms-2">
               {BRAND.name}
             </h1>
           </div>
@@ -113,7 +113,7 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
                 key={item.name}
                 href={item.href}
                 onClick={() => setIsSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                   }`}
               >
                 <item.icon className="w-5 h-5" />
@@ -139,7 +139,7 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
         {/* Mobile Header Bar */}
         <header className="lg:hidden h-16 bg-slate-900 flex items-center justify-between px-4 sticky top-0 z-20 border-b border-white/10">
           <div className="flex items-center gap-2">
-            <Image src="/logo.png" alt="Logo" width={32} height={32} unoptimized />
+            <Image src={BRAND.logoTransparent} alt="Logo" width={32} height={32} unoptimized />
             <span className="text-white font-bold">Admin</span>
           </div>
           <button

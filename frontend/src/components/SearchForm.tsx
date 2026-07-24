@@ -225,7 +225,7 @@ export function SearchForm({
                         type="button"
                         onClick={() => setTripType('one-way')}
                         className={`flex-1 sm:flex-none px-6 md:px-8 py-3 rounded-t-xl md:rounded-t-xl rounded-xl md:rounded-b-none font-bold text-sm md:text-base transition-colors cursor-pointer ${tripType === 'one-way'
-                            ? 'bg-white text-green-600 shadow-lg border border-slate-100'
+                            ? 'bg-white text-blue-600 shadow-lg border border-slate-100'
                             : 'bg-slate-100 md:bg-white/10 text-slate-600 md:text-white hover:bg-slate-200 md:hover:bg-white/20 backdrop-blur-sm'
                             }`}
                     >
@@ -235,7 +235,7 @@ export function SearchForm({
                         type="button"
                         onClick={() => setTripType('round-trip')}
                         className={`flex-1 sm:flex-none px-6 md:px-8 py-3 rounded-t-xl md:rounded-t-xl rounded-xl md:rounded-b-none font-bold text-sm md:text-base transition-colors cursor-pointer ${tripType === 'round-trip'
-                            ? 'bg-white text-green-600 shadow-lg border border-slate-100'
+                            ? 'bg-white text-blue-600 shadow-lg border border-slate-100'
                             : 'bg-slate-100 md:bg-white/10 text-slate-600 md:text-white hover:bg-slate-200 md:hover:bg-white/20 backdrop-blur-sm'
                             }`}
                     >
@@ -261,7 +261,7 @@ export function SearchForm({
             <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 w-full">
                 {/* Origin Input */}
                 <div className="w-full md:flex-1 relative">
-                    <div className="bg-slate-50 p-4 md:p-6 rounded-2xl flex items-center space-x-3 border border-slate-200 focus-within:border-green-400 transition-colors">
+                    <div className="bg-slate-50 p-4 md:p-6 rounded-2xl flex items-center space-x-3 border border-slate-200 focus-within:border-sky-400 transition-colors">
                         <MapPin className="text-slate-400 shrink-0" />
                         <div className="flex-1">
                             <label className="block text-xs md:text-base font-semibold text-slate-400 uppercase tracking-wider">From</label>
@@ -299,7 +299,7 @@ export function SearchForm({
                 {/* Swap Button (Desktop and Mobile) */}
                 <button
                     onClick={handleSwap}
-                    className="absolute md:static left-1/2 -translate-x-1/2 md:translate-x-0 md:-ml-8 md:-mr-8 z-20 w-8 h-8 bg-white border border-slate-200 rounded-full shadow-md flex items-center justify-center hover:bg-slate-50 transition-colors text-slate-500 hover:text-green-600 focus:outline-none"
+                    className="absolute md:static left-1/2 -translate-x-1/2 md:translate-x-0 md:-ml-8 md:-mr-8 z-20 w-8 h-8 bg-white border border-slate-200 rounded-full shadow-md flex items-center justify-center hover:bg-slate-50 transition-colors text-slate-500 hover:text-blue-600 focus:outline-none"
                     style={{ top: 'calc(50% - 20px)' }}
                     type="button"
                     title="Swap Origin and Destination"
@@ -348,10 +348,10 @@ export function SearchForm({
                 <div className="w-full md:flex-[1.5] flex flex-col sm:flex-row gap-3">
                     <div className="flex-1 relative">
                         <div
-                            className="bg-slate-50 p-4 md:p-6 rounded-2xl flex items-center space-x-3 border border-slate-200 focus-within:border-green-400 transition-colors cursor-pointer group"
+                            className="bg-slate-50 p-4 md:p-6 rounded-2xl flex items-center space-x-3 border border-slate-200 focus-within:border-sky-400 transition-colors cursor-pointer group"
                             onClick={() => { setShowDestSuggestions(false); setShowOriginSuggestions(false); setShowDepartureOptions(!showDepartureOptions); }}
                         >
-                            <Calendar className="text-slate-400 group-hover:text-green-500 transition-colors shrink-0" size={20} />
+                            <Calendar className="text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" size={20} />
                             <div className="flex-1 min-w-0">
                                 <label className="block text-xs md:text-base font-semibold text-slate-400 uppercase tracking-wider cursor-pointer">Departure</label>
                                 <div className="text-slate-800 font-medium truncate text-lg md:text-xl">
@@ -383,7 +383,7 @@ export function SearchForm({
                                         return (
                                             <div
                                                 key={date.toISOString()}
-                                                className={`px-5 py-3.5 cursor-pointer transition-all flex items-center justify-between mx-2 rounded-xl mb-1 last:mb-0 ${isSelected ? 'bg-green-50 text-green-700 shadow-sm' : 'hover:bg-slate-50 text-slate-700 hover:translate-x-1'
+                                                className={`px-5 py-3.5 cursor-pointer transition-all flex items-center justify-between mx-2 rounded-xl mb-1 last:mb-0 ${isSelected ? 'bg-blue-50 text-blue-700 shadow-sm' : 'hover:bg-slate-50 text-slate-700 hover:translate-x-1'
                                                     }`}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
@@ -391,9 +391,9 @@ export function SearchForm({
                                                     setShowDepartureOptions(false);
                                                 }}
                                             >
-                                                <span className={`font-semibold ${isSelected ? 'text-green-700' : 'text-slate-700'}`}>{dateStr}</span>
+                                                <span className={`font-semibold ${isSelected ? 'text-blue-700' : 'text-slate-700'}`}>{dateStr}</span>
                                                 {isSelected && (
-                                                    <div className="flex items-center justify-center w-5 h-5 rounded-full bg-green-500 shadow-sm shadow-green-500/30">
+                                                    <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 shadow-sm shadow-blue-500/30">
                                                         <div className="w-2 h-2 rounded-full bg-white"></div>
                                                     </div>
                                                 )}
@@ -416,7 +416,7 @@ export function SearchForm({
                     {tripType === 'round-trip' && (
                         <div className="flex-1 relative animate-in fade-in zoom-in duration-200">
                             <div
-                                className={`bg-slate-50 p-4 md:p-6 rounded-2xl flex items-center space-x-3 border border-slate-200 transition-colors cursor-pointer group ${!departureDate ? 'opacity-50 cursor-not-allowed' : 'focus-within:border-green-400'}`}
+                                className={`bg-slate-50 p-4 md:p-6 rounded-2xl flex items-center space-x-3 border border-slate-200 transition-colors cursor-pointer group ${!departureDate ? 'opacity-50 cursor-not-allowed' : 'focus-within:border-sky-400'}`}
                                 onClick={() => {
                                     if (!departureDate) return;
                                     setShowDestSuggestions(false);
@@ -424,7 +424,7 @@ export function SearchForm({
                                     setShowReturnOptions(!showReturnOptions);
                                 }}
                             >
-                                <Calendar className="text-slate-400 group-hover:text-green-500 transition-colors shrink-0" size={20} />
+                                <Calendar className="text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" size={20} />
                                 <div className="flex-1 min-w-0">
                                     <label className="block text-xs md:text-base font-semibold text-slate-400 uppercase tracking-wider cursor-pointer">Return</label>
                                     <div className="text-slate-800 font-medium truncate text-lg md:text-xl">
@@ -456,7 +456,7 @@ export function SearchForm({
                                             return (
                                                 <div
                                                     key={date.toISOString()}
-                                                    className={`px-5 py-3.5 cursor-pointer transition-all flex items-center justify-between mx-2 rounded-xl mb-1 last:mb-0 ${isSelected ? 'bg-green-50 text-green-700 shadow-sm' : 'hover:bg-slate-50 text-slate-700 hover:translate-x-1'
+                                                    className={`px-5 py-3.5 cursor-pointer transition-all flex items-center justify-between mx-2 rounded-xl mb-1 last:mb-0 ${isSelected ? 'bg-blue-50 text-blue-700 shadow-sm' : 'hover:bg-slate-50 text-slate-700 hover:translate-x-1'
                                                         }`}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
@@ -464,9 +464,9 @@ export function SearchForm({
                                                         setShowReturnOptions(false);
                                                     }}
                                                 >
-                                                    <span className={`font-semibold ${isSelected ? 'text-green-700' : 'text-slate-700'}`}>{dateStr}</span>
+                                                    <span className={`font-semibold ${isSelected ? 'text-blue-700' : 'text-slate-700'}`}>{dateStr}</span>
                                                     {isSelected && (
-                                                        <div className="flex items-center justify-center w-5 h-5 rounded-full bg-green-500 shadow-sm shadow-green-500/30">
+                                                        <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 shadow-sm shadow-blue-500/30">
                                                             <div className="w-2 h-2 rounded-full bg-white"></div>
                                                         </div>
                                                     )}
@@ -490,7 +490,7 @@ export function SearchForm({
 
                 <div className="w-full md:w-56 relative">
                     <div
-                        className="bg-slate-50 p-4 md:p-6 rounded-2xl flex items-center space-x-3 border border-slate-200 focus-within:border-green-400 transition-colors cursor-pointer"
+                        className="bg-slate-50 p-4 md:p-6 rounded-2xl flex items-center space-x-3 border border-slate-200 focus-within:border-sky-400 transition-colors cursor-pointer"
                         onClick={() => { setShowDestSuggestions(false); setShowOriginSuggestions(false); setShowDepartureOptions(false); setShowReturnOptions(false); setShowPassengerDropdown(!showPassengerDropdown); }}
                     >
                         <Users className="text-slate-400 shrink-0" />
@@ -570,7 +570,7 @@ export function SearchForm({
                     <div className="fixed inset-0 z-40 bg-transparent" onClick={() => { setShowDepartureOptions(false); setShowReturnOptions(false); setShowPassengerDropdown(false); }} />
                 )}
 
-                <button type="submit" className="cursor-pointer w-full md:w-auto h-20 md:h-24 px-8 md:px-12 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold text-xl md:text-2xl hover:shadow-lg hover:shadow-green-600/30 transition-all flex items-center justify-center space-x-2 shrink-0">
+                <button type="submit" className="cursor-pointer w-full md:w-auto h-20 md:h-24 px-8 md:px-12 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold text-xl md:text-2xl hover:shadow-lg hover:shadow-blue-600/30 transition-all flex items-center justify-center space-x-2 shrink-0">
                     <Search size={24} />
                     <span>Search</span>
                 </button>

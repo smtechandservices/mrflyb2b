@@ -67,7 +67,7 @@ export default function WalletPage() {
             `,
             icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#16a34a',
+            confirmButtonColor: '#2563eb',
             cancelButtonColor: '#64748b',
             confirmButtonText: 'Yes, proceed',
             cancelButtonText: 'Cancel',
@@ -87,7 +87,7 @@ export default function WalletPage() {
                 icon: 'success',
                 title: 'Request Submitted',
                 text: 'Your top-up request has been submitted and is pending admin approval.',
-                confirmButtonColor: '#16a34a',
+                confirmButtonColor: '#2563eb',
             });
             setTopUpAmount('');
             fetchTopUpRequests(); // Refresh requests list
@@ -146,7 +146,7 @@ export default function WalletPage() {
                             icon: 'success',
                             title: 'Top-up Successful',
                             text: `₹${amount.toLocaleString('en-IN')} has been added to your wallet instantly.`,
-                            confirmButtonColor: '#16a34a',
+                            confirmButtonColor: '#2563eb',
                         });
 
                         setTopUpAmount('');
@@ -176,7 +176,7 @@ export default function WalletPage() {
                     contact: user?.profile?.phone_number
                 },
                 theme: {
-                    color: "#16a34a"
+                    color: "#2563eb"
                 },
                 modal: {
                     ondismiss: function() {
@@ -218,7 +218,7 @@ export default function WalletPage() {
 
             <div className="mx-auto px-6 md:px-12 pt-8 md:pt-10 relative z-10">
                 <h1 className="text-3xl md:text-5xl font-extrabold text-slate-700 mb-2">
-                    My <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">Wallet</span>
+                    My <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">Wallet</span>
                 </h1>
                 <p className="text-slate-400 text-base md:text-lg leading-relaxed mb-2">
                     Manage your funds, credit limit, and transaction history in one secure place.
@@ -229,7 +229,7 @@ export default function WalletPage() {
 
                 {loading ? (
                     <div className="text-center py-12">
-                        <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                         <p className="text-gray-500">Loading wallet details...</p>
                     </div>
                 ) : !walletData ? (
@@ -252,7 +252,7 @@ export default function WalletPage() {
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-gray-700">
                                         <div>
                                             <p className="text-gray-400 text-xs md:text-sm mb-1">Wallet Balance</p>
-                                            <p className="text-xl md:text-2xl font-semibold text-green-400">
+                                            <p className="text-xl md:text-2xl font-semibold text-sky-400">
                                                 ₹{parseFloat(walletData.wallet_balance.toString()).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                             </p>
                                         </div>
@@ -295,7 +295,7 @@ export default function WalletPage() {
                                                             : tx.description.toLowerCase().includes('razorpay')
                                                                 ? 'bg-indigo-100 text-indigo-600'
                                                                 : tx.transaction_type === 'CREDIT'
-                                                                    ? 'bg-green-100 text-green-600'
+                                                                    ? 'bg-blue-100 text-blue-600'
                                                                     : 'bg-red-100 text-red-600'
                                                         }`}>
                                                         {tx.description.toLowerCase().includes('refund') ? (
@@ -328,7 +328,7 @@ export default function WalletPage() {
                                                     </div>
                                                 </div>
                                                 <div className="text-right shrink-0">
-                                                    <p className={`font-bold text-sm md:text-base ${tx.transaction_type === 'CREDIT' ? 'text-green-600' : 'text-slate-900'
+                                                    <p className={`font-bold text-sm md:text-base ${tx.transaction_type === 'CREDIT' ? 'text-blue-600' : 'text-slate-900'
                                                         }`}>
                                                         {tx.transaction_type === 'CREDIT' ? '+' : '-'} ₹{parseFloat(tx.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                                     </p>
@@ -409,7 +409,7 @@ export default function WalletPage() {
                                                     value={topUpAmount}
                                                     onChange={(e) => setTopUpAmount(e.target.value)}
                                                     placeholder="0.00"
-                                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-lg font-medium text-gray-900"
+                                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg font-medium text-gray-900"
                                                 />
                                             </div>
                                         </div>
@@ -470,7 +470,7 @@ export default function WalletPage() {
                                 <p className="text-gray-500 text-sm">
                                     Need a higher credit limit?
                                     <br />
-                                    <a href="/contact" className="text-green-600 font-bold hover:underline">Contact Support</a>
+                                    <a href="/contact" className="text-blue-600 font-bold hover:underline">Contact Support</a>
                                 </p>
                             </div>
 
@@ -494,7 +494,7 @@ export default function WalletPage() {
                                                 <div className="flex items-center gap-4">
                                                     <div className={`p-2 rounded-lg ${
                                                         req.status === 'PENDING' ? 'bg-amber-100 text-amber-600' :
-                                                        req.status === 'APPROVED' ? 'bg-green-100 text-green-600' :
+                                                        req.status === 'APPROVED' ? 'bg-blue-100 text-blue-600' :
                                                         'bg-red-100 text-red-600'
                                                     }`}>
                                                         {req.status === 'PENDING' ? <Clock className="w-5 h-5" /> :
@@ -527,7 +527,7 @@ export default function WalletPage() {
                                                     </span>
                                                     <span className={`text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
                                                         req.status === 'PENDING' ? 'bg-amber-100 text-amber-700 border border-amber-200' :
-                                                        req.status === 'APPROVED' ? 'bg-green-100 text-green-700 border border-green-200' :
+                                                        req.status === 'APPROVED' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
                                                         'bg-red-100 text-red-700 border border-red-200'
                                                     }`}>
                                                         {req.status}

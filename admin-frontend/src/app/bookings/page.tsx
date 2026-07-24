@@ -208,7 +208,7 @@ export default function AdminBookingsPage() {
                             placeholder="Search by booked by or passenger..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="text-slate-700 pl-10 pr-12 py-4 border border-slate-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                            className="text-slate-700 pl-10 pr-12 py-4 border border-slate-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
                 </div>
@@ -236,7 +236,7 @@ export default function AdminBookingsPage() {
                                 <tr>
                                     <td colSpan={10} className="px-6 py-12 text-center text-slate-500">
                                         <div className="flex flex-col items-center gap-3">
-                                            <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                                            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                                             <span>Searching bookings...</span>
                                         </div>
                                     </td>
@@ -374,7 +374,7 @@ export default function AdminBookingsPage() {
                                             <h4 className="font-bold text-slate-900 flex items-center gap-2">
                                                 {passenger.first_name} {passenger.last_name}
                                                 {isChild && (
-                                                    <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] uppercase tracking-wider rounded border border-green-200 font-bold">
+                                                    <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[10px] uppercase tracking-wider rounded border border-indigo-200 font-bold">
                                                         Child
                                                     </span>
                                                 )}
