@@ -22,15 +22,15 @@ export const metadata: Metadata = {
   openGraph: {
     title: BRAND.name,
     description,
-    images: [BRAND.logo],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: BRAND.name }],
     siteName: BRAND.name,
     type: 'website',
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: BRAND.name,
     description,
-    images: [BRAND.logo],
+    images: ['/og-image.png'],
   },
 };
 
