@@ -1,11 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { 
-    CreateBookingData, createBooking, getWalletBalance, WalletData, 
-    checkDuplicateBooking, createFlightRazorpayOrder, verifyFlightRazorpayPayment 
+import {
+    CreateBookingData, createBooking, getWalletBalance, WalletData,
+    checkDuplicateBooking, createFlightRazorpayOrder, verifyFlightRazorpayPayment
 } from '@/lib/api';
-import { Loader2, Wallet, Info, CreditCard } from 'lucide-react';
+import { Wallet, Info, CreditCard, Check, Plane } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import Swal from 'sweetalert2';
 import Script from 'next/script';
@@ -129,14 +129,14 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
         if (currentPrimary) {
             const age = calculateAge(currentPrimary.date_of_birth);
             const isInfant = age !== null && age <= 2;
-            
+
             if (isInfant) {
                 // Find the first non-infant to be the primary passenger
                 const firstNonInfantIndex = passengers.findIndex(p => {
                     const a = calculateAge(p.date_of_birth);
                     return a === null || a > 2;
                 });
-                
+
                 if (firstNonInfantIndex !== -1 && firstNonInfantIndex !== primaryPassengerIndex) {
                     setPrimaryPassengerIndex(firstNonInfantIndex);
                 }
@@ -241,11 +241,7 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                     icon: 'error',
                     title: 'Age Restriction',
                     text: 'The passenger must be 18 years or older to book.',
-                    confirmButtonColor: '#2563eb',
-                    customClass: {
-                        popup: 'rounded-3xl',
-                        confirmButton: 'rounded-xl px-6 py-3 font-bold'
-                    }
+                    confirmButtonColor: '#1f3b30',
                 });
                 return;
             } else {
@@ -253,11 +249,7 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                     icon: 'error',
                     title: 'Age Restriction',
                     text: 'At least one passenger must be 18 years or older when booking for multiple passengers.',
-                    confirmButtonColor: '#2563eb',
-                    customClass: {
-                        popup: 'rounded-3xl',
-                        confirmButton: 'rounded-xl px-6 py-3 font-bold'
-                    }
+                    confirmButtonColor: '#1f3b30',
                 });
                 return;
             }
@@ -270,11 +262,11 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                 const issue = new Date(p.passport_issue_date);
                 const expiry = new Date(p.passport_expiry_date);
                 const age = calculateAge(p.date_of_birth);
-                
+
                 // Calculate difference in partial years
                 const diffTime = expiry.getTime() - issue.getTime();
                 const diffYears = diffTime / (1000 * 60 * 60 * 24 * 365.25);
-                
+
                 const maxValidity = (age !== null && age >= 18) ? 10 : 5;
                 console.log(diffYears, maxValidity);
                 if (diffYears > maxValidity) {
@@ -282,11 +274,7 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                         icon: 'error',
                         title: 'Invalid Passport Validity',
                         text: `Passenger ${i + 1}: Passport validity cannot exceed ${maxValidity} years for ${maxValidity === 10 ? 'adults' : 'minors'}.`,
-                        confirmButtonColor: '#2563eb',
-                        customClass: {
-                            popup: 'rounded-3xl',
-                            confirmButton: 'rounded-xl px-6 py-3 font-bold'
-                        }
+                        confirmButtonColor: '#1f3b30',
                     });
                     return;
                 }
@@ -296,11 +284,7 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                         icon: 'error',
                         title: 'Invalid Passport Dates',
                         text: `Passenger ${i + 1}: Passport expiry date cannot be before the issue date.`,
-                        confirmButtonColor: '#2563eb',
-                        customClass: {
-                            popup: 'rounded-3xl',
-                            confirmButton: 'rounded-xl px-6 py-3 font-bold'
-                        }
+                        confirmButtonColor: '#1f3b30',
                     });
                     return;
                 }
@@ -311,19 +295,14 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
         const result = await Swal.fire({
             title: 'Complete Your Booking',
             html: `
-                <div class="text-left space-y-4">
+                <div style="text-align:left">
                     <p>Are you sure you want to book for <strong>${passengers.length} passenger(s)</strong>?</p>
-                    <div class="bg-blue-50 border border-blue-200 rounded-2xl p-5 mt-4">
-                        <div class="flex items-center gap-2 mb-2">
-                            <div class="bg-blue-600 text-white p-1 rounded-md flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                            </div>
-                            <p class="text-sm font-bold text-blue-900">Contact Email Confirmation</p>
-                        </div>
-                        <p class="text-sm text-blue-700 leading-relaxed mb-3">
+                    <div style="background:#f4ede0;border:1px solid #d8cdb6;border-radius:8px;padding:16px;margin-top:16px;">
+                        <p style="font-size:13px;font-weight:700;color:#1c1916;margin-bottom:8px;">Contact Email Confirmation</p>
+                        <p style="font-size:13px;color:#3a3530;line-height:1.5;margin-bottom:12px;">
                             A booking confirmation will be sent to the primary passenger's email address. You can download your E-Ticket anytime from the <strong>"My Bookings"</strong> tab.
                         </p>
-                        <div class="bg-white border border-blue-100 rounded-xl px-4 py-3 font-bold text-blue-600 text-center shadow-sm">
+                        <div style="background:#faf7f0;border:1px solid #d8cdb6;border-radius:4px;padding:10px 14px;font-weight:700;color:#1f3b30;text-align:center;">
                             ${primaryPassenger.passenger_email}
                         </div>
                     </div>
@@ -333,33 +312,24 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
             showCancelButton: true,
             confirmButtonText: 'Yes, Book Now',
             cancelButtonText: 'No, Cancel',
-            confirmButtonColor: '#2563eb', 
-            cancelButtonColor: '#64748b',
-            customClass: {
-                popup: 'rounded-3xl',
-                confirmButton: 'rounded-xl px-6 py-3 font-bold',
-                cancelButton: 'rounded-xl px-6 py-3 font-bold'
-            }
+            confirmButtonColor: '#1f3b30',
+            cancelButtonColor: '#756e63',
         });
 
         if (!result.isConfirmed) return;
 
         // KYC Verification Check
         if (user?.profile?.kyc_status !== 'VERIFIED') {
-            const statusText = user?.profile?.kyc_status === 'SUBMITTED' 
-                ? 'Your KYC is currently under review by our admin team.' 
+            const statusText = user?.profile?.kyc_status === 'SUBMITTED'
+                ? 'Your KYC is currently under review by our admin team.'
                 : 'You must complete your KYC verification (Aadhar & PAN) to book flights.';
-            
+
             await Swal.fire({
                 icon: 'warning',
                 title: 'KYC Required',
                 text: statusText,
-                confirmButtonColor: '#2563eb',
+                confirmButtonColor: '#1f3b30',
                 confirmButtonText: user?.profile?.kyc_status === 'SUBMITTED' ? 'Okay' : 'Complete KYC Now',
-                customClass: {
-                    popup: 'rounded-3xl',
-                    confirmButton: 'rounded-xl px-6 py-3 font-bold'
-                }
             }).then((result) => {
                 if (result.isConfirmed && user?.profile?.kyc_status !== 'SUBMITTED') {
                     // Navigate to profile or open KYC modal
@@ -378,11 +348,7 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                     icon: 'error',
                     title: 'Duplicate Passenger Name',
                     text: `Each passenger in a booking must have a unique name. Duplicate name found: "${passengers[i].first_name} ${passengers[i].last_name}"`,
-                    confirmButtonColor: '#2563eb',
-                    customClass: {
-                        popup: 'rounded-3xl',
-                        confirmButton: 'rounded-xl px-6 py-3 font-bold'
-                    }
+                    confirmButtonColor: '#1f3b30',
                 });
                 return;
             }
@@ -405,35 +371,30 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                     date_of_birth: p.date_of_birth || undefined,
                 }))
             };
-            
+
             const duplicateCheck = await checkDuplicateBooking(bookingData);
             if (duplicateCheck.has_duplicates) {
-                const duplicateDetails = duplicateCheck.duplicates.map(d => 
-                    `<li class="mb-1 text-sm text-amber-800"><strong>${d.first_name} ${d.last_name}:</strong> ${d.reason}</li>`
+                const duplicateDetails = duplicateCheck.duplicates.map(d =>
+                    `<li style="margin-bottom:4px;font-size:13px;"><strong>${d.first_name} ${d.last_name}:</strong> ${d.reason}</li>`
                 ).join('');
 
                 const confirmResult = await Swal.fire({
                     icon: 'warning',
                     title: 'Existing Booking Detected',
                     html: `
-                        <div class="text-left space-y-4">
-                            <p class="text-sm text-gray-600">Existing bookings were found for the following passenger(s) on this flight:</p>
-                            <ul class="list-disc pl-5 bg-amber-50 border border-amber-100 rounded-xl p-4">
+                        <div style="text-align:left">
+                            <p style="font-size:13px;color:#756e63;">Existing bookings were found for the following passenger(s) on this flight:</p>
+                            <ul style="text-align:left;background:#f4ede0;border:1px solid #d8cdb6;border-radius:8px;padding:16px 16px 16px 32px;margin-top:12px;">
                                 ${duplicateDetails}
                             </ul>
-                            <p class="text-sm font-semibold">Do you want to proceed with another booking anyway?</p>
+                            <p style="font-size:13px;font-weight:600;margin-top:12px;">Do you want to proceed with another booking anyway?</p>
                         </div>
                     `,
                     showCancelButton: true,
                     confirmButtonText: 'Proceed Anyway',
                     cancelButtonText: 'Cancel',
-                    confirmButtonColor: '#f59e0b', 
-                    cancelButtonColor: '#64748b',
-                    customClass: {
-                        popup: 'rounded-3xl',
-                        confirmButton: 'rounded-xl px-6 py-3 font-bold',
-                        cancelButton: 'rounded-xl px-6 py-3 font-bold'
-                    }
+                    confirmButtonColor: '#c79a4a',
+                    cancelButtonColor: '#756e63',
                 });
                 if (!confirmResult.isConfirmed) return;
             }
@@ -453,7 +414,7 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                 passengers: passengers.map(p => {
                     const age = calculateAge(p.date_of_birth);
                     const isInfant = age !== null && age <= 2;
-                    
+
                     return {
                         ...p,
                         passenger_email: isInfant ? (p.passenger_email || undefined) : p.passenger_email,
@@ -494,7 +455,7 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                                 // Trigger automated email (background)
                                 fetch('/api/booking/email', {
                                     method: 'POST',
-                                    headers: { 
+                                    headers: {
                                         'Content-Type': 'application/json',
                                         'Authorization': `Token ${localStorage.getItem('token')}`
                                     },
@@ -522,10 +483,10 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                             contact: user?.profile?.phone_number
                         },
                         theme: {
-                            color: "#2563eb"
+                            color: "#1f3b30"
                         },
                         modal: {
-                            ondismiss: function() {
+                            ondismiss: function () {
                                 setLoading(false);
                             }
                         }
@@ -546,13 +507,13 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
 
             // Wallet Payment Flow
             const response = await createBooking(bookingData);
-            
+
             // Send automated email
             try {
                 // We run this in the background, don't wait for it to finish before showing success UI
                 fetch('/api/booking/email', {
                     method: 'POST',
-                    headers: { 
+                    headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Token ${localStorage.getItem('token')}`
                     },
@@ -598,58 +559,72 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
         }
     };
 
+    // Derived (presentational only) progress state for the checkout step indicator below.
+    // Reflects the real sections already rendered in this form: passenger details -> payment -> confirm.
+    const passengersComplete = passengers.every(p => p.first_name.trim() !== '' && p.last_name.trim() !== '' && p.date_of_birth !== '');
+    const checkoutStep = loading ? 2 : (passengersComplete ? 1 : 0);
+    const checkoutSteps = ['Passenger Details', 'Payment Method', 'Confirm & Book'];
+
     return (
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit}>
             <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+
+            <div className="steps">
+                {checkoutSteps.map((label, i) => {
+                    const isCompleted = i < checkoutStep;
+                    const isActive = i === checkoutStep;
+                    return (
+                        <div key={label} className={`step ${isCompleted ? 'done' : ''} ${isActive ? 'active' : ''}`}>
+                            <span className="n">{isCompleted ? <Check size={13} /> : i + 1}</span>
+                            <span className="lbl">{label}</span>
+                        </div>
+                    );
+                })}
+            </div>
+
             {error && (
-                <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm font-medium">
+                <div style={{ padding: '12px 16px', background: 'rgba(184,68,58,0.08)', color: '#b8443a', borderRadius: 4, fontSize: 13, marginBottom: 24 }}>
                     {error}
                 </div>
             )}
 
-            <div className="space-y-12">
-                {passengers.map((passenger, index) => {
-                    const age = calculateAge(passenger.date_of_birth);
-                    const isInfant = age !== null && age <= 2;
-                    const isChild = age !== null && age > 2 && age <= 18;
+            {passengers.map((passenger, index) => {
+                const age = calculateAge(passenger.date_of_birth);
+                const isInfant = age !== null && age <= 2;
+                const isChild = age !== null && age > 2 && age <= 18;
 
-                    return (
-                        <div key={index} className="relative p-6 bg-slate-50/50 rounded-2xl border border-slate-100 animate-in fade-in slide-in-from-bottom-2">
-                            <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-lg font-bold text-slate-700 flex items-center gap-2">
-                                    <span className="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">
-                                        {index + 1}
-                                    </span>
-                                    Passenger Information
-                                    {isChild && (
-                                        <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[10px] uppercase tracking-wider rounded border border-indigo-200 font-bold ml-1">
-                                            Child
-                                        </span>
-                                    )}
-                                    {isInfant && (
-                                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-[10px] uppercase tracking-wider rounded border border-blue-200 font-bold ml-1">
-                                            Infant {infantPrice > 0 ? `(₹${infantPrice.toLocaleString('en-IN')})` : '(FREE)'}
-                                        </span>
-                                    )}
-                                </h3>
+                return (
+                    <div key={index} style={{ paddingBottom: 32, marginBottom: 32, borderBottom: index < passengers.length - 1 || true ? '1px solid var(--line)' : undefined }}>
+                        <div className="row between" style={{ marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
+                            <h4 className="row" style={{ gap: 10 }}>
+                                <span style={{
+                                    width: 24, height: 24, borderRadius: '50%', background: 'var(--forest)', color: 'var(--paper)',
+                                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontFamily: 'var(--mono)',
+                                }}>
+                                    {index + 1}
+                                </span>
+                                Passenger Information
+                                {isChild && <span className="tag">Child</span>}
+                                {isInfant && <span className="tag mono">Infant {infantPrice > 0 ? `(₹${infantPrice.toLocaleString('en-IN')})` : '(Free)'}</span>}
+                            </h4>
+                            <div className="row" style={{ gap: 16 }}>
                                 {passengers.length > 1 && !isInfant && (
-                                    <label className="flex items-center gap-2 ml-4 cursor-pointer">
+                                    <label className="row" style={{ gap: 8, cursor: 'pointer', fontSize: 13 }}>
                                         <input
                                             type="radio"
                                             name="primary_passenger"
                                             checked={primaryPassengerIndex === index}
                                             onChange={() => setPrimaryPassengerIndex(index)}
-                                            className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300"
                                         />
-                                        <span className="text-sm font-bold text-blue-600">Primary Passenger</span>
+                                        <span style={{ color: 'var(--clay)', fontWeight: 500 }}>Primary Passenger</span>
                                     </label>
                                 )}
-                            <div className="ml-auto">
                                 {passengers.length > 1 && (
                                     <button
                                         type="button"
                                         onClick={() => handleRemovePassenger(index)}
-                                        className="text-red-500 hover:text-red-700 text-sm font-bold flex items-center gap-1 transition-colors"
+                                        className="btn-link"
+                                        style={{ color: '#b8443a', borderBottomColor: '#b8443a', fontSize: 13 }}
                                     >
                                         Remove
                                     </button>
@@ -657,28 +632,18 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <FormInput
-                                label="First Name"
-                                name="first_name"
-                                value={passenger.first_name}
-                                onChange={(e) => handlePassengerChange(index, e)}
-                                required
-                            />
-                            <FormInput
-                                label="Last Name"
-                                name="last_name"
-                                value={passenger.last_name}
-                                onChange={(e) => handlePassengerChange(index, e)}
-                                required
-                            />
-                        </div>
+                        <div className="formgrid">
+                            <div className="field-group">
+                                <label>First Name</label>
+                                <input name="first_name" value={passenger.first_name} onChange={(e) => handlePassengerChange(index, e)} required />
+                            </div>
+                            <div className="field-group">
+                                <label>Last Name</label>
+                                <input name="last_name" value={passenger.last_name} onChange={(e) => handlePassengerChange(index, e)} required />
+                            </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                            <div className="flex flex-col">
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">
-                                    Date of Birth <span className="text-red-500 ml-0.5">*</span>
-                                </label>
+                            <div className="field-group">
+                                <label>Date of Birth</label>
                                 <DatePicker
                                     selected={safeDate(passenger.date_of_birth)}
                                     onChange={(date: Date | null) => handleDateChange(index, 'date_of_birth', date)}
@@ -687,63 +652,41 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                                     showYearDropdown
                                     dropdownMode="select"
                                     maxDate={new Date()}
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-slate-800 bg-slate-50"
                                     required
                                 />
                             </div>
-                            <div className="flex flex-col">
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">
-                                    Travel Date <span className="text-red-500 ml-0.5">*</span>
-                                </label>
-                                <div className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-100 text-slate-800 cursor-not-allowed">
+                            <div className="field-group">
+                                <label>Travel Date</label>
+                                <div style={{
+                                    padding: '12px 14px', border: '1px solid var(--line-2)', borderRadius: 'var(--radius)',
+                                    background: 'var(--sand)', fontFamily: 'var(--mono)', fontSize: 14, color: 'var(--muted)',
+                                }}>
                                     {new Date(departureDate).toLocaleDateString('en-GB')}
                                 </div>
                             </div>
-                        </div>
 
-                        {!isInfant && (
-                            <>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                                    <FormInput
-                                        label={index === primaryPassengerIndex ? "Email Address (For Booking Confirmation)" : "Email Address"}
-                                        name="passenger_email"
-                                        type="email"
-                                        value={passenger.passenger_email}
-                                        onChange={(e) => handlePassengerChange(index, e)}
-                                        required
-                                    />
-                                    <FormInput
-                                        label="Phone Number"
-                                        name="passenger_phone"
-                                        type="tel"
-                                        value={passenger.passenger_phone}
-                                        onChange={(e) => handlePassengerChange(index, e)}
-                                        required
-                                    />
-                                </div>
+                            {!isInfant && (
+                                <>
+                                    <div className="field-group">
+                                        <label>{index === primaryPassengerIndex ? 'Email (for booking confirmation)' : 'Email Address'}</label>
+                                        <input type="email" name="passenger_email" value={passenger.passenger_email} onChange={(e) => handlePassengerChange(index, e)} required />
+                                    </div>
+                                    <div className="field-group">
+                                        <label>Phone Number</label>
+                                        <input type="tel" name="passenger_phone" value={passenger.passenger_phone} onChange={(e) => handlePassengerChange(index, e)} required />
+                                    </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                                    <FormInput
-                                        label={isInternational ? "Passport Number" : "Passport Number (Optional)"}
-                                        name="passport_number"
-                                        value={passenger.passport_number}
-                                        onChange={(e) => handlePassengerChange(index, e)}
-                                        required={isInternational}
-                                    />
-                                    <FormInput
-                                        label="Frequent Flyer Number (Optional)"
-                                        name="frequent_flyer_number"
-                                        value={passenger.frequent_flyer_number}
-                                        onChange={(e) => handlePassengerChange(index, e)}
-                                        placeholder="Enter if you have one"
-                                    />
-                                </div>
+                                    <div className="field-group">
+                                        <label>{isInternational ? 'Passport Number' : 'Passport Number (Optional)'}</label>
+                                        <input name="passport_number" value={passenger.passport_number} onChange={(e) => handlePassengerChange(index, e)} required={isInternational} />
+                                    </div>
+                                    <div className="field-group">
+                                        <label>Frequent Flyer Number (Optional)</label>
+                                        <input name="frequent_flyer_number" value={passenger.frequent_flyer_number} onChange={(e) => handlePassengerChange(index, e)} placeholder="Enter if you have one" />
+                                    </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                                    <div className="flex flex-col">
-                                        <label className="block text-sm font-semibold text-slate-700 mb-2">
-                                            {isInternational ? "Passport Issue Date" : "Passport Issue Date (Optional)"} {isInternational && <span className="text-red-500 ml-0.5">*</span>}
-                                        </label>
+                                    <div className="field-group">
+                                        <label>{isInternational ? 'Passport Issue Date' : 'Passport Issue Date (Optional)'}</label>
                                         <DatePicker
                                             selected={safeDate(passenger.passport_issue_date)}
                                             onChange={(date: Date | null) => handleDateChange(index, 'passport_issue_date', date)}
@@ -752,14 +695,11 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                                             showYearDropdown
                                             dropdownMode="select"
                                             maxDate={new Date()}
-                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-slate-800 bg-slate-50"
                                             required={isInternational}
                                         />
                                     </div>
-                                    <div className="flex flex-col">
-                                        <label className="block text-sm font-semibold text-slate-700 mb-2">
-                                            {isInternational ? "Passport Expiry Date" : "Passport Expiry Date (Optional)"} {isInternational && <span className="text-red-500 ml-0.5">*</span>}
-                                        </label>
+                                    <div className="field-group">
+                                        <label>{isInternational ? 'Passport Expiry Date' : 'Passport Expiry Date (Optional)'}</label>
                                         <DatePicker
                                             selected={safeDate(passenger.passport_expiry_date)}
                                             onChange={(date: Date | null) => handleDateChange(index, 'passport_expiry_date', date)}
@@ -768,78 +708,64 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                                             showYearDropdown
                                             dropdownMode="select"
                                             minDate={new Date()}
-                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-slate-800 bg-slate-50"
                                             required={isInternational}
                                         />
                                     </div>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                    );
-                })}
-            </div>
-
-            <div className="space-y-4 pt-4 border-t border-slate-200">
-                <h3 className="text-lg font-bold text-slate-700 flex items-center gap-2">
-                    Payment Method
-                </h3>
-                <div className="grid grid-cols-1 gap-4">
-                    <div
-                        onClick={() => setPaymentMode('WALLET')}
-                        className={`relative p-4 rounded-xl border-2 flex items-start gap-4 transition-all text-left cursor-pointer ${paymentMode === 'WALLET' ? 'border-blue-500 bg-blue-50/50 ring-1 ring-blue-500' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
-                    >
-                        <div className={`p-3 rounded-full ${paymentMode === 'WALLET' ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-400'}`}>
-                            <Wallet size={24} />
+                                </>
+                            )}
                         </div>
+                    </div>
+                );
+            })}
+
+            <div style={{ marginBottom: 32 }}>
+                <h4 style={{ marginBottom: 16 }}>Payment Method</h4>
+                <div className="payment-tabs" style={{ flexDirection: 'column' }}>
+                    <div className={`pay-tab ${paymentMode === 'WALLET' ? 'active' : ''}`} onClick={() => setPaymentMode('WALLET')} style={{ alignItems: 'flex-start', padding: 16 }}>
+                        <span className="dot" style={{ marginTop: 4 }} />
+                        <Wallet size={20} style={{ flexShrink: 0, marginTop: 2 }} />
                         <div>
-                            <div className="font-bold text-slate-800">{BRAND.name} Wallet</div>
-                            <div className="text-sm text-slate-500 mt-1">
+                            <div style={{ fontWeight: 600 }}>{BRAND.name} Wallet</div>
+                            <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 4, fontWeight: 400 }}>
                                 Pay using your wallet balance.
                                 {walletData ? (
-                                    <div className="mt-1 space-y-1">
-                                        <span className="block font-medium text-sky-600">
+                                    <div style={{ marginTop: 6 }}>
+                                        <span className="mono" style={{ display: 'block', color: 'var(--forest)' }}>
                                             Available: ₹{Number(walletData.wallet_balance).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                         </span>
-                                        <span className="block text-[11px] font-bold text-blue-600 flex items-center gap-1">
-                                            <Info size={10} />
-                                            Spending Power: ₹{Number(walletData.available_spending_power).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                        <span className="mono row" style={{ gap: 4, fontSize: 11, color: 'var(--clay)', marginTop: 2 }}>
+                                            <Info size={10} /> Spending Power: ₹{Number(walletData.available_spending_power).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                         </span>
                                     </div>
                                 ) : user?.profile?.wallet_balance !== undefined && (
-                                    <span className="block mt-1 font-medium text-sky-600">
+                                    <span className="mono" style={{ display: 'block', marginTop: 6, color: 'var(--forest)' }}>
                                         Available: ₹{Number(user.profile.wallet_balance).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                     </span>
                                 )}
                             </div>
                         </div>
-                        {paymentMode === 'WALLET' && <div className="absolute top-4 right-4 w-4 h-4 rounded-full bg-blue-500 ring-2 ring-white" />}
                     </div>
 
-                    <div
-                        onClick={() => setPaymentMode('RAZORPAY')}
-                        className={`relative p-4 rounded-xl border-2 flex items-start gap-4 transition-all text-left cursor-pointer ${paymentMode === 'RAZORPAY' ? 'border-blue-500 bg-blue-50/50 ring-1 ring-blue-500' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
-                    >
-                        <div className={`p-3 rounded-full ${paymentMode === 'RAZORPAY' ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-400'}`}>
-                            <CreditCard size={24} />
-                        </div>
+                    <div className={`pay-tab ${paymentMode === 'RAZORPAY' ? 'active' : ''}`} onClick={() => setPaymentMode('RAZORPAY')} style={{ alignItems: 'flex-start', padding: 16 }}>
+                        <span className="dot" style={{ marginTop: 4 }} />
+                        <CreditCard size={20} style={{ flexShrink: 0, marginTop: 2 }} />
                         <div>
-                            <div className="font-bold text-slate-800">Instant Booking</div>
-                            <div className="text-sm text-slate-500 mt-1">
+                            <div style={{ fontWeight: 600 }}>Instant Booking</div>
+                            <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 4, fontWeight: 400 }}>
                                 Pay directly using Cards, UPI, NetBanking.
                             </div>
                         </div>
-                        {paymentMode === 'RAZORPAY' && <div className="absolute top-4 right-4 w-4 h-4 rounded-full bg-blue-500 ring-2 ring-white" />}
                     </div>
                 </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="row" style={{ gap: 16, marginBottom: 24 }}>
                 <button
                     type="button"
                     onClick={handleAddPassenger}
                     disabled={passengers.length >= 9}
-                    className="w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-500 font-bold hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-slate-200"
+                    className="btn btn-ghost"
+                    style={{ flex: 1, borderStyle: 'dashed' }}
                 >
                     + Add Passenger
                 </button>
@@ -847,14 +773,15 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
                     type="button"
                     onClick={handleAddInfant}
                     disabled={passengers.length >= 9}
-                    className="w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-500 font-bold hover:border-pink-400 hover:text-pink-500 hover:bg-pink-50/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-slate-200"
+                    className="btn btn-ghost"
+                    style={{ flex: 1, borderStyle: 'dashed' }}
                 >
                     + Add Infant (0-2 Yrs)
                 </button>
             </div>
-            
+
             {passengers.length >= 9 && (
-                <div className="p-4 bg-orange-50 border border-orange-200 rounded-xl text-orange-700 text-sm font-bold text-center">
+                <div style={{ padding: 14, background: 'rgba(199,154,74,0.1)', color: '#97712a', borderRadius: 4, fontSize: 13, fontWeight: 600, textAlign: 'center', marginBottom: 24 }}>
                     Maximum limit of 9 travelers per booking has been reached.
                 </div>
             )}
@@ -862,25 +789,15 @@ export function BookingForm({ flightId, departureDate, isInternational, infantPr
             <button
                 type="submit"
                 disabled={loading}
-                className="cursor-pointer w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
+                className="btn btn-primary btn-lg"
+                style={{ width: '100%' }}
             >
-                {loading ? <Loader2 className="animate-spin" /> : `Confirm Booking for ${passengers.length} Passenger${passengers.length !== 1 ? 's' : ''}`}
+                {loading ? (
+                    <span className="animate-plane-loading" style={{ display: 'inline-flex' }}>
+                        <Plane size={18} />
+                    </span>
+                ) : `Confirm Booking for ${passengers.length} Passenger${passengers.length !== 1 ? 's' : ''}`}
             </button>
         </form>
-    );
-}
-
-function FormInput({ label, ...props }: React.InputHTMLAttributes<HTMLInputElement> & { label: string }) {
-    return (
-        <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
-                {label} {props.required && <span className="text-red-500 ml-0.5">*</span>}
-            </label>
-            <input
-                {...props}
-                className={`w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-slate-800 ${props.readOnly ? 'bg-slate-100 cursor-not-allowed' : 'bg-slate-50'
-                    }`}
-            />
-        </div>
     );
 }

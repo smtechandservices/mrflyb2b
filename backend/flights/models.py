@@ -185,6 +185,7 @@ class Flyer(models.Model):
     
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Flyer {self.id} - {self.description[:30] if self.description else 'No description'}"

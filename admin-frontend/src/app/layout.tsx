@@ -1,7 +1,12 @@
 import type { Metadata } from 'next';
+import { Newsreader, Geist, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { AdminLayoutClient } from '@/components/AdminLayoutClient';
 import { BRAND } from '@/config/brand';
+
+const newsreader = Newsreader({ subsets: ['latin'], variable: '--font-newsreader' });
+const geist = Geist({ subsets: ['latin'], variable: '--font-geist' });
+const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
@@ -34,7 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${newsreader.variable} ${geist.variable} ${jetbrainsMono.variable} antialiased`}>
         <AdminLayoutClient>
           {children}
         </AdminLayoutClient>

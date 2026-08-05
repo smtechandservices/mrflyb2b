@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { login as loginApi, getUserProfile } from '@/lib/api';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, X } from 'lucide-react';
 import { BRAND } from '@/config/brand';
 
 export default function LoginPage() {
@@ -80,7 +80,7 @@ export default function LoginPage() {
 
     const handleOtpChange = (index: number, value: string) => {
         if (!/^\d*$/.test(value)) return;
-        
+
         const newOtp = otp.split('');
         newOtp[index] = value.slice(-1);
         const finalOtp = newOtp.join('');
@@ -108,77 +108,76 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen relative flex items-center justify-center px-4">
-            {/* Hero Background */}
-            <div
-                className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-                style={{ backgroundImage: 'url(/hero-search.png)' }}
-            />
-            <div className="fixed inset-0 bg-gradient-to-br from-slate-900/70 via-slate-900/60 to-blue-900/70" />
+        <div className="auth-page">
+            <div className="auth-visual" style={{ backgroundImage: 'url(/hero-booking.png)' }}>
+                <div className="auth-visual-content">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--serif)', fontSize: 22 }}>
+                        {BRAND.name}<span className="dot" />
+                    </div>
+                    <div className="auth-visual-quote">
+                        &ldquo;{BRAND.tagline}&rdquo;
+                        <span>— {BRAND.name}</span>
+                    </div>
+                </div>
+            </div>
 
-            {/* Login Card */}
-            <div className="relative z-10 max-w-md w-full">
-                <div className="bg-white/95 backdrop-blur-lg p-8 md:p-10 rounded-3xl shadow-2xl border border-white/20">
-                    {/* Logo */}
-                    <div className="flex justify-center">
-                        <div className="h-20 w-20 relative">
-                            <Image
-                                src={BRAND.logoTransparent}
-                                alt={`${BRAND.name} Logo`}
-                                fill
-                                className="object-contain"
-                            />
-                        </div>
+            <div className="auth-panel">
+                <div className="auth-panel-inner">
+                    <div className="auth-brand">
+                        <Image src={BRAND.logoTransparent} alt={`${BRAND.name} Logo`} width={508} height={491} style={{ height: 34, width: 'auto' }} />
+                        {BRAND.name}<span className="dot" />
                     </div>
 
-                    <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2 text-center">
-                        {step === 'LOGIN' ? 'Welcome Back' : 'Verify Identity'}
+                    <h1 style={{ fontSize: 32, marginBottom: 8 }}>
+                        {step === 'LOGIN' ? 'Welcome back.' : 'Verify identity'}
                     </h1>
-                    <p className="text-slate-600 mb-8 text-center">
-                        {step === 'LOGIN' ? 'Sign in to manage your bookings' : `Enter the 6-digit code sent to ${email}`}
+                    <p style={{ color: 'var(--muted)', marginBottom: 32, fontSize: 15 }}>
+                        {step === 'LOGIN' ? "Log in to manage your agency's bookings." : `Enter the 6-digit code sent to ${email}.`}
                     </p>
 
                     {error && (
-                        <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl text-sm font-medium mb-6 animate-shake">
-                            {error}
+                        <div style={{
+                            padding: '12px 16px', background: 'rgba(199, 154, 74, 0.1)', color: '#97712a',
+                            borderRadius: 4, fontSize: 13, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 8
+                        }}>
+                            <AlertCircle size={14} style={{ flexShrink: 0 }} /> {error}
                         </div>
                     )}
 
                     {step === 'LOGIN' ? (
-                        <form onSubmit={handleSendOTP} className="space-y-5">
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">Email Address</label>
+                        <form onSubmit={handleSendOTP} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                            <div className="field-group">
+                                <label>Email address</label>
                                 <input
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="text-black w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white"
-                                    placeholder="Enter your email"
+                                    placeholder="you@email.com"
                                     required
                                 />
                             </div>
-
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">Password</label>
-                                <div className="relative">
+                            <div className="field-group">
+                                <label>Password</label>
+                                <div style={{ position: 'relative' }}>
                                     <input
-                                        type={showPassword ? "text" : "password"}
+                                        type={showPassword ? 'text' : 'password'}
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="text-black w-full px-4 py-3 pr-12 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white"
                                         placeholder="Enter your password"
+                                        style={{ paddingRight: 40 }}
                                         required
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                        style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 0, padding: 0, color: 'var(--muted)', cursor: 'pointer', display: 'flex' }}
                                     >
-                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
                                 </div>
-                                <div className="flex justify-end mt-4">
-                                    <Link href="/forgot-password" disable-nav="true" className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
+                                <div style={{ textAlign: 'right' }}>
+                                    <Link href="/forgot-password" style={{ fontSize: 13, color: 'var(--clay)' }}>
                                         Forgot password?
                                     </Link>
                                 </div>
@@ -187,16 +186,17 @@ export default function LoginPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="cursor-pointer w-full bg-gradient-to-r from-blue-600 to-sky-600 text-white py-3.5 rounded-xl font-bold hover:from-blue-700 hover:to-sky-700 transition-all shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="btn btn-primary btn-lg"
+                                style={{ marginTop: 8, justifyContent: 'center' }}
                             >
-                                {loading ? 'Verifying...' : 'Continue'}
+                                {loading ? 'Verifying…' : 'Continue'}
                             </button>
                         </form>
                     ) : (
-                        <form onSubmit={handleVerifyOTP} className="space-y-8">
-                            <div className="flex flex-col items-center gap-6">
-                                <label className="block text-sm font-semibold text-slate-700 text-center uppercase tracking-wider opacity-70">One-Time Password</label>
-                                <div className="flex justify-center w-full gap-2 sm:gap-3" onPaste={handleOtpPaste}>
+                        <form onSubmit={handleVerifyOTP} style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
+                                <label className="eyebrow">One-time password</label>
+                                <div style={{ display: 'flex', justifyContent: 'center', gap: 10 }} onPaste={handleOtpPaste}>
                                     {[0, 1, 2, 3, 4, 5].map((i) => (
                                         <input
                                             key={i}
@@ -208,27 +208,33 @@ export default function LoginPage() {
                                             value={otp[i] || ''}
                                             onChange={(e) => handleOtpChange(i, e.target.value)}
                                             onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                                            className="w-11 h-14 sm:w-12 sm:h-16 text-center text-2xl font-bold text-slate-800 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm"
                                             required={i === 0}
                                             autoFocus={i === 0}
+                                            style={{
+                                                width: 44, height: 56, textAlign: 'center', fontSize: 20,
+                                                fontFamily: 'var(--mono)', border: '1px solid var(--line-2)',
+                                                borderRadius: 4, color: 'var(--ink)', outline: 'none'
+                                            }}
                                         />
                                     ))}
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                                 <button
                                     type="submit"
                                     disabled={loading || otp.length !== 6}
-                                    className="cursor-pointer w-full bg-gradient-to-r from-blue-600 to-sky-600 text-white py-3.5 rounded-xl font-bold hover:from-blue-700 hover:to-sky-700 transition-all shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="btn btn-primary btn-lg"
+                                    style={{ justifyContent: 'center' }}
                                 >
-                                    {loading ? 'Logging in...' : 'Verify & Login'}
+                                    {loading ? 'Logging in…' : 'Verify & log in'}
                                 </button>
-                                
+
                                 <button
                                     type="button"
                                     onClick={() => setStep('LOGIN')}
-                                    className="w-full text-slate-500 text-sm font-medium hover:text-slate-700 transition-colors"
+                                    className="btn btn-link"
+                                    style={{ alignSelf: 'center', borderBottom: 0, color: 'var(--muted)', fontWeight: 400 }}
                                 >
                                     Try again with password
                                 </button>
@@ -237,20 +243,10 @@ export default function LoginPage() {
                     )}
 
                     {step === 'LOGIN' && (
-                        <p className="mt-8 text-center text-slate-600 text-sm">
-                            Don't have an account?{' '}
-                            <Link href="/signup" disable-nav="true" className="text-blue-600 font-bold hover:text-blue-700 hover:underline transition-colors">
-                                Sign up
-                            </Link>
+                        <p style={{ marginTop: 28, fontSize: 14, color: 'var(--muted)', textAlign: 'center' }}>
+                            New agency? <Link href="/signup" style={{ color: 'var(--clay)' }}>Sign up</Link>
                         </p>
                     )}
-                </div>
-
-                {/* Back to Home Link */}
-                <div className="text-center mt-6">
-                    <Link href="/" disable-nav="true" className="text-white/90 hover:text-white text-sm font-medium hover:underline transition-colors">
-                        ← Back to Home
-                    </Link>
                 </div>
             </div>
         </div>

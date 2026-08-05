@@ -5,7 +5,10 @@ import { useRouter, usePathname } from 'next/navigation';
 import { getUserProfile } from '@/lib/api';
 import Link from 'next/link';
 import Image from 'next/image';
-import { LayoutDashboard, Plane, Calendar, Users, LogOut, RotateCcw, MessageSquare, Shield, Wallet, Image as ImageIcon } from 'lucide-react';
+import {
+  LayoutDashboard, Plane, Calendar, Users, LogOut, RotateCcw,
+  MessageSquare, Shield, Wallet, Image as ImageIcon, Menu, X,
+} from 'lucide-react';
 import { BRAND } from '@/config/brand';
 
 export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
@@ -46,7 +49,13 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50 text-slate-500">Loading {BRAND.admin.name}...</div>
+      <div style={{
+        display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center',
+        background: 'var(--sand)', color: 'var(--muted)', fontFamily: 'var(--mono)',
+        fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase',
+      }}>
+        Loading {BRAND.admin.name}…
+      </div>
     );
   }
 
@@ -63,97 +72,110 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
     { name: 'Refunds', href: '/refunds', icon: RotateCcw },
     { name: 'Transactions', href: '/topups', icon: Wallet },
     { name: 'Messages', href: '/messages', icon: MessageSquare },
-    { name: 'Users', href: '/users', icon: Users },
+    { name: 'Agents', href: '/users', icon: Users },
     { name: 'KYC', href: '/kyc', icon: Shield },
     { name: 'Flyers', href: '/flyers', icon: ImageIcon },
   ];
 
   return (
-    <div className="flex min-h-screen bg-slate-100 relative">
-      {/* Mobile Overlay */}
+    <div className="admin">
+      {/* Scoped responsive rules for the mobile off-canvas sidebar — the
+          Kushmud reference has no mobile treatment for .admin-side, so
+          this project adds its own here rather than editing globals.css. */}
+      <style>{`
+        .admin-mobile-toggle { display: none; }
+        @media (max-width: 900px) {
+          .admin { grid-template-columns: 1fr; }
+          .admin-side {
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            width: 240px;
+            z-index: 1001;
+            transform: translateX(-100%);
+            transition: transform .25s ease;
+          }
+          .admin-side.is-open { transform: translateX(0); }
+          .admin-mobile-toggle { display: inline-flex; }
+        }
+      `}</style>
+
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-[1000] lg:hidden backdrop-blur-sm"
           onClick={() => setIsSidebarOpen(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(28,25,22,0.6)', zIndex: 1000 }}
         />
       )}
 
-      {/* Sidebar */}
-      <aside className={`
-        w-64 bg-slate-900 text-white fixed h-full z-[1001] transition-transform duration-300 transform
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      `}>
-        <div className="px-4 pt-4 pb-0 flex items-center justify-between lg:justify-start gap-3">
-          <div className="flex items-center gap-3">
-            <Image
-              src={BRAND.logoTransparent}
-              alt={`${BRAND.name} Logo`}
-              width={42}
-              height={42}
-              priority
-              unoptimized
-              className="object-contain md:w-16 md:h-16"
-            />
-            <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-sky-300 to-blue-200 mt-2 -ms-2">
-              {BRAND.name}
-            </h1>
-          </div>
+      <aside className={`admin-side${isSidebarOpen ? ' is-open' : ''}`}>
+        <div className="admin-brand">
+          <Image
+            src={BRAND.logoTransparent}
+            alt={`${BRAND.name} logo`}
+            width={26}
+            height={26}
+            unoptimized
+            style={{ objectFit: 'contain' }}
+          />
+          {BRAND.name}
           <button
             onClick={() => setIsSidebarOpen(false)}
-            className="lg:hidden p-2 text-slate-400 hover:text-white"
+            className="admin-mobile-toggle"
+            aria-label="Close menu"
+            style={{ marginLeft: 'auto', background: 'transparent', border: 0, color: 'var(--sand)', cursor: 'pointer', padding: 4 }}
           >
-            <LogOut size={20} className="rotate-180" />
+            <X size={16} />
           </button>
         </div>
-        <nav className="mt-6 px-4 space-y-2">
+        <nav className="admin-nav">
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.name}
                 href={item.href}
                 onClick={() => setIsSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                  }`}
+                className={isActive ? 'active' : ''}
               >
-                <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.name}</span>
+                <span className="ic"><item.icon size={15} /></span>
+                <span style={{ flex: 1 }}>{item.name}</span>
               </Link>
             );
           })}
+        </nav>
+        <div className="admin-side-foot">
           <button
             onClick={() => {
               localStorage.removeItem('token');
               router.push('/login');
             }}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors mt-8"
+            className="btn btn-ghost btn-sm"
+            style={{ width: '100%', color: 'var(--sand)', borderColor: 'rgba(244,237,224,0.2)', justifyContent: 'flex-start' }}
           >
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Logout</span>
+            <LogOut size={14} /> Sign out
           </button>
-        </nav>
+        </div>
       </aside>
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 lg:ml-64">
-        {/* Mobile Header Bar */}
-        <header className="lg:hidden h-16 bg-slate-900 flex items-center justify-between px-4 sticky top-0 z-20 border-b border-white/10">
-          <div className="flex items-center gap-2">
-            <Image src={BRAND.logoTransparent} alt="Logo" width={32} height={32} unoptimized />
-            <span className="text-white font-bold">Admin</span>
-          </div>
+      <main className="admin-main">
+        <div className="admin-top">
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="p-2 text-white hover:bg-white/10 rounded-lg"
+            className="admin-mobile-toggle btn btn-ghost btn-sm"
+            aria-label="Open menu"
           >
-            <LayoutDashboard size={24} />
+            <Menu size={16} />
           </button>
-        </header>
-
-        <main className="p-4 md:p-8 flex-1">
+          <span className="mono" style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)' }}>
+            {BRAND.admin.name}
+          </span>
+          <Link href={BRAND.websiteUrl} target="_blank" className="btn btn-ghost btn-sm" style={{ marginLeft: 'auto' }}>
+            ← View site
+          </Link>
+        </div>
+        <div className="admin-content">
           {children}
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Newsreader, Geist, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { LayoutContent } from "@/components/LayoutContent";
 import { BRAND } from "@/config/brand";
 
-const inter = Inter({ subsets: ["latin"] });
+const newsreader = Newsreader({ subsets: ["latin"], variable: "--font-newsreader" });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
+const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains-mono" });
 
-const description = `Experience the journey like never before with ${BRAND.name}. Book flights to destinations worldwide with ease.`;
+const description = `The flight booking platform built for travel agents. Search, book, and manage client travel with ${BRAND.name}.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
@@ -41,7 +43,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} min-h-screen flex flex-col bg-slate-50`}>
+      <body className={`${newsreader.variable} ${geist.variable} ${jetbrainsMono.variable} antialiased`}>
         <AuthProvider>
           <LayoutContent>{children}</LayoutContent>
         </AuthProvider>

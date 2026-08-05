@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft, AlertCircle, CheckCircle2, X } from 'lucide-react';
 import { BRAND } from '@/config/brand';
 
 export default function ForgotPasswordPage() {
@@ -18,7 +18,7 @@ export default function ForgotPasswordPage() {
     const [step, setStep] = useState<'email' | 'otp' | 'reset'>('email');
     const [resendTimer, setResendTimer] = useState(0);
     const [canResend, setCanResend] = useState(true);
-    
+
     const router = useRouter();
 
     React.useEffect(() => {
@@ -84,7 +84,7 @@ export default function ForgotPasswordPage() {
             setMessage(data.message);
             setStep('otp');
             startResendTimer();
-            
+
             // Clear message after 3 seconds
             setTimeout(() => setMessage(''), 3000);
         } catch (err: any) {
@@ -171,152 +171,168 @@ export default function ForgotPasswordPage() {
     };
 
     return (
-        <div className="min-h-screen relative flex items-center justify-center px-4 py-8">
-            <div
-                className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-                style={{ backgroundImage: 'url(/hero-search.png)' }}
-            />
-            <div className="fixed inset-0 bg-gradient-to-br from-slate-900/70 via-slate-900/60 to-blue-900/70" />
+        <div className="auth-page">
+            <Link href="/" className="auth-close" aria-label="Close">
+                <X size={16} />
+            </Link>
 
-            <div className="relative z-10 max-w-xl w-full">
-                <div className="bg-white/95 backdrop-blur-lg p-8 md:p-10 rounded-3xl shadow-2xl border border-white/20">
-                    <div className="flex justify-center mb-6">
-                        <div className="h-20 w-20 relative">
-                            <Image src={BRAND.logoTransparent} alt={`${BRAND.name} Logo`} fill className="object-contain" />
-                        </div>
+            <div className="auth-visual" style={{ backgroundImage: 'url(/hero-booking.png)' }}>
+                <div className="auth-visual-content">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--serif)', fontSize: 22 }}>
+                        {BRAND.name}<span className="dot" />
+                    </div>
+                    <div className="auth-visual-quote">
+                        &ldquo;{BRAND.tagline}&rdquo;
+                        <span>— {BRAND.name}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="auth-panel">
+                <div className="auth-panel-inner">
+                    <div className="auth-brand">
+                        <Image src={BRAND.logoTransparent} alt={`${BRAND.name} Logo`} width={508} height={491} style={{ height: 34, width: 'auto' }} />
+                        {BRAND.name}<span className="dot" />
                     </div>
 
-                    <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2 text-center">
-                        {step === 'email' ? 'Forgot Password' : step === 'otp' ? 'Verify OTP' : 'New Password'}
+                    <h1 style={{ fontSize: 32, marginBottom: 8 }}>
+                        {step === 'email' ? 'Forgot password.' : step === 'otp' ? 'Verify code' : 'New password'}
                     </h1>
-                    <p className="text-slate-600 mb-8 text-center">
-                        {step === 'email' 
-                            ? 'Enter your email to receive a reset code' 
-                            : step === 'otp' 
-                                ? (
-                                    <>
-                                        Enter the 6-digit code sent to <span className="font-semibold text-slate-800">{email}</span>.
-                                        <br />
-                                        <span className="text-xs mt-2 block text-slate-500 italic">
-                                            Didn&apos;t receive it? Check your <span className="font-bold text-blue-600">spam folder</span>.
-                                        </span>
-                                    </>
-                                )
-                                : 'Choose a strong new password'}
+                    <p style={{ color: 'var(--muted)', marginBottom: 32, fontSize: 15 }}>
+                        {step === 'email' ? (
+                            "Enter your email and we'll send you a reset code."
+                        ) : step === 'otp' ? (
+                            <>
+                                Enter the 6-digit code sent to <strong style={{ color: 'var(--ink)' }}>{email}</strong>.
+                                {' '}Check your spam folder if it doesn&apos;t arrive shortly.
+                            </>
+                        ) : (
+                            'Choose a strong new password for your agency account.'
+                        )}
                     </p>
 
                     {error && (
-                        <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl text-sm font-medium mb-6">
-                            {error}
+                        <div style={{
+                            padding: '12px 16px', background: 'rgba(199, 154, 74, 0.1)', color: '#97712a',
+                            borderRadius: 4, fontSize: 13, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 8
+                        }}>
+                            <AlertCircle size={14} style={{ flexShrink: 0 }} /> {error}
                         </div>
                     )}
 
                     {message && !error && (
-                        <div className="bg-blue-50 border border-blue-200 text-blue-600 p-4 rounded-xl text-sm font-medium mb-6">
-                            {message}
+                        <div style={{
+                            padding: '12px 16px', background: 'rgba(31, 122, 77, 0.1)', color: '#1f7a4d',
+                            borderRadius: 4, fontSize: 13, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 8
+                        }}>
+                            <CheckCircle2 size={14} style={{ flexShrink: 0 }} /> {message}
                         </div>
                     )}
 
                     {step === 'email' && (
-                        <form onSubmit={handleSendOTP} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">Email Address</label>
+                        <form onSubmit={handleSendOTP} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                            <div className="field-group">
+                                <label>Email address</label>
                                 <input
                                     required
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="text-black w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white"
-                                    placeholder="your@email.com"
+                                    placeholder="you@email.com"
                                 />
                             </div>
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full bg-gradient-to-r from-blue-600 to-sky-600 text-white py-3.5 rounded-xl font-bold hover:from-blue-700 hover:to-sky-700 transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2"
+                                className="btn btn-primary btn-lg"
+                                style={{ marginTop: 8, justifyContent: 'center' }}
                             >
-                                {isLoading ? <Loader2 className="animate-spin" /> : 'Send Reset Code'}
+                                {isLoading ? 'Sending…' : 'Send reset code'}
                             </button>
                         </form>
                     )}
 
                     {step === 'otp' && (
-                        <form onSubmit={handleVerifyOTP} className="space-y-6">
-                            <div className="flex justify-between gap-2 md:gap-4">
+                        <form onSubmit={handleVerifyOTP} style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', gap: 10 }}>
                                 {otp.map((digit, index) => (
                                     <input
                                         key={index}
                                         id={`otp-${index}`}
                                         type="text"
+                                        inputMode="numeric"
                                         maxLength={1}
                                         value={digit}
                                         onChange={(e) => handleOtpChange(e.target.value, index)}
                                         onKeyDown={(e) => handleKeyDown(e, index)}
-                                        className="text-black text-center text-2xl font-bold w-full h-12 md:h-16 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white font-mono"
-                                        placeholder="•"
+                                        style={{
+                                            width: 44, height: 56, textAlign: 'center', fontSize: 20,
+                                            fontFamily: 'var(--mono)', border: '1px solid var(--line-2)',
+                                            borderRadius: 4, color: 'var(--ink)', outline: 'none'
+                                        }}
                                     />
                                 ))}
                             </div>
                             <button
                                 type="submit"
-                                disabled={otp.some(d => !d)}
-                                className="w-full bg-gradient-to-r from-blue-600 to-sky-600 text-white py-3.5 rounded-xl font-bold hover:from-blue-700 hover:to-sky-700 transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 disabled:opacity-50"
+                                disabled={otp.some(d => !d) || isLoading}
+                                className="btn btn-primary btn-lg"
+                                style={{ justifyContent: 'center' }}
                             >
-                                Verify Code
+                                {isLoading ? 'Verifying…' : 'Verify code'}
                             </button>
 
-                            <div className="text-center">
-                                <button
-                                    type="button"
-                                    disabled={!canResend || isLoading}
-                                    onClick={handleResendOTP}
-                                    className="text-sm font-medium text-blue-600 hover:text-blue-700 disabled:text-slate-400 transition-colors"
-                                >
-                                    {resendTimer > 0 
-                                        ? `Resend code in ${resendTimer}s` 
-                                        : 'Didn\'t receive code? Resend'}
-                                </button>
-                            </div>
+                            <button
+                                type="button"
+                                disabled={!canResend || isLoading}
+                                onClick={handleResendOTP}
+                                className="btn btn-link"
+                                style={{ alignSelf: 'center', borderBottom: 0, fontSize: 13, color: canResend ? 'var(--clay)' : 'var(--muted)', fontWeight: 400 }}
+                            >
+                                {resendTimer > 0 ? `Resend code in ${resendTimer}s` : "Didn't receive it? Resend"}
+                            </button>
                         </form>
                     )}
 
                     {step === 'reset' && (
-                        <form onSubmit={handleResetPassword} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">New Password</label>
-                                <div className="relative">
+                        <form onSubmit={handleResetPassword} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                            <div className="field-group">
+                                <label>New password</label>
+                                <div style={{ position: 'relative' }}>
                                     <input
                                         required
-                                        type={showPassword ? "text" : "password"}
+                                        type={showPassword ? 'text' : 'password'}
                                         value={newPassword}
                                         onChange={(e) => setNewPassword(e.target.value)}
-                                        className="text-black w-full px-4 py-3 pr-12 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white"
                                         placeholder="Min. 8 characters"
+                                        style={{ paddingRight: 40 }}
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                        style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 0, padding: 0, color: 'var(--muted)', cursor: 'pointer', display: 'flex' }}
                                     >
-                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
                                 </div>
                             </div>
                             <button
                                 type="submit"
                                 disabled={isLoading || newPassword.length < 8}
-                                className="w-full bg-gradient-to-r from-blue-600 to-sky-600 text-white py-3.5 rounded-xl font-bold hover:from-blue-700 hover:to-sky-700 transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 disabled:opacity-50"
+                                className="btn btn-primary btn-lg"
+                                style={{ marginTop: 8, justifyContent: 'center' }}
                             >
-                                {isLoading ? <Loader2 className="animate-spin" /> : 'Reset Password'}
+                                {isLoading ? 'Resetting…' : 'Reset password'}
                             </button>
                         </form>
                     )}
 
-                    <div className="mt-8 text-center">
-                        <Link href="/login" className="text-slate-500 hover:text-blue-600 font-medium transition-colors inline-flex items-center gap-2">
-                            <ArrowLeft size={16} /> Back to Login
+                    <p style={{ marginTop: 28, fontSize: 14, color: 'var(--muted)', textAlign: 'center' }}>
+                        <Link href="/login" style={{ color: 'var(--clay)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                            <ArrowLeft size={14} /> Back to login
                         </Link>
-                    </div>
+                    </p>
                 </div>
             </div>
         </div>

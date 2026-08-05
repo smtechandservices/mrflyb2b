@@ -28,6 +28,15 @@ export interface FlightLeg {
     duration?: string;
 }
 
+export function formatDuration(duration: string): string {
+    const match = duration.match(/^(?:(\d+) days?, )?(\d+):(\d+):\d+$/);
+    if (!match) return duration;
+    const days = match[1] ? parseInt(match[1], 10) : 0;
+    const hours = days * 24 + parseInt(match[2], 10);
+    const minutes = parseInt(match[3], 10);
+    return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+}
+
 export function parseFlightLegs(stop_info: string | undefined, stop_details: string | undefined): FlightLeg[] | null {
     const data = stop_info || stop_details;
     if (!data) return null;

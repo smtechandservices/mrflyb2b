@@ -13,6 +13,7 @@ interface AuthContextType {
     logout: () => void;
     refreshUser: () => Promise<void>;
     isAuthenticated: boolean;
+    isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -22,11 +23,13 @@ const AuthContext = createContext<AuthContextType>({
     logout: () => { },
     refreshUser: async () => { },
     isAuthenticated: false,
+    isLoading: true,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
@@ -49,8 +52,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     localStorage.removeItem('user');
                     setToken(null);
                     setUser(null);
-                    router.push('/login');
-                });
+                })
+                .finally(() => setIsLoading(false));
+        } else {
+            setIsLoading(false);
         }
     }, []);
 
@@ -84,7 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, login, logout, refreshUser, isAuthenticated: !!token }}>
+        <AuthContext.Provider value={{ user, token, login, logout, refreshUser, isAuthenticated: !!token, isLoading }}>
             {children}
         </AuthContext.Provider>
     );

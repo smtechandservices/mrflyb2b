@@ -59,16 +59,16 @@ export default function WalletPage() {
         const result = await Swal.fire({
             title: 'Confirm Top-up',
             html: `
-                <p style="margin-bottom:12px;color:#475569;">Adding <strong>₹${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong> to your wallet</p>
+                <p style="margin-bottom:12px;color:#3a3530;">Adding <strong>₹${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong> to your wallet</p>
                 <div style="text-align:left;">
-                    <label style="font-size:13px;font-weight:600;color:#64748b;display:block;margin-bottom:6px;">Remarks <span style="font-weight:400;color:#94a3b8;">(optional)</span></label>
-                    <textarea id="topup-remarks" rows="2" placeholder="e.g. UTR number, bank reference…" style="width:100%;border:1px solid #e2e8f0;border-radius:8px;padding:8px 10px;font-size:13px;color:#1e293b;resize:none;box-sizing:border-box;outline:none;"></textarea>
+                    <label style="font-size:12px;font-family:monospace;text-transform:uppercase;letter-spacing:0.08em;color:#756e63;display:block;margin-bottom:6px;">Remarks (optional)</label>
+                    <textarea id="topup-remarks" rows="2" placeholder="e.g. UTR number, bank reference…" style="width:100%;border:1px solid #c9bda3;border-radius:4px;padding:8px 10px;font-size:13px;color:#1c1916;resize:none;box-sizing:border-box;outline:none;font-family:inherit;"></textarea>
                 </div>
             `,
             icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#2563eb',
-            cancelButtonColor: '#64748b',
+            confirmButtonColor: '#1f3b30',
+            cancelButtonColor: '#756e63',
             confirmButtonText: 'Yes, proceed',
             cancelButtonText: 'Cancel',
             preConfirm: () => (document.getElementById('topup-remarks') as HTMLTextAreaElement)?.value?.trim() || '',
@@ -87,7 +87,7 @@ export default function WalletPage() {
                 icon: 'success',
                 title: 'Request Submitted',
                 text: 'Your top-up request has been submitted and is pending admin approval.',
-                confirmButtonColor: '#2563eb',
+                confirmButtonColor: '#1f3b30',
             });
             setTopUpAmount('');
             fetchTopUpRequests(); // Refresh requests list
@@ -146,7 +146,7 @@ export default function WalletPage() {
                             icon: 'success',
                             title: 'Top-up Successful',
                             text: `₹${amount.toLocaleString('en-IN')} has been added to your wallet instantly.`,
-                            confirmButtonColor: '#2563eb',
+                            confirmButtonColor: '#1f3b30',
                         });
 
                         setTopUpAmount('');
@@ -176,7 +176,7 @@ export default function WalletPage() {
                     contact: user?.profile?.phone_number
                 },
                 theme: {
-                    color: "#2563eb"
+                    color: "#1f3b30"
                 },
                 modal: {
                     ondismiss: function() {
@@ -199,208 +199,132 @@ export default function WalletPage() {
 
     if (!isAuthenticated) {
         return (
-            <div className="min-h-screen bg-slate-50 py-12 px-4">
-                <div className="max-w-4xl mx-auto text-center pt-8">
-                    <h1 className="text-3xl font-bold text-slate-800 mb-4">My Wallet</h1>
-                    <p className="text-slate-600">Please log in to view your wallet.</p>
-                </div>
+            <div className="container page-content-sm" style={{ textAlign: 'center' }}>
+                <h1 style={{ marginBottom: 12 }}>Agency Wallet</h1>
+                <p style={{ color: 'var(--muted)' }}>Please log in to view your agency's wallet.</p>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="page-content-sm">
             <Script src="https://checkout.razorpay.com/v1/checkout.js" />
 
-            {/* Hero Section */}
-            <div className="bg-slate-900 py-10 px-4 text-center">
-            </div>
-
-            <div className="mx-auto px-6 md:px-12 pt-8 md:pt-10 relative z-10">
-                <h1 className="text-3xl md:text-5xl font-extrabold text-slate-700 mb-2">
-                    My <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">Wallet</span>
-                </h1>
-                <p className="text-slate-400 text-base md:text-lg leading-relaxed mb-2">
-                    Manage your funds, credit limit, and transaction history in one secure place.
-                </p>
-            </div>
-
-            <div className="mx-auto px-4 md:px-12 py-12 -mt-10 relative z-10">
+            <div className="container">
+                <span className="eyebrow">— Account</span>
+                <h1 style={{ marginTop: 8, marginBottom: 32 }}>Agency Wallet</h1>
 
                 {loading ? (
-                    <div className="text-center py-12">
-                        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                        <p className="text-gray-500">Loading wallet details...</p>
+                    <div style={{ textAlign: 'center', padding: '64px 0', color: 'var(--muted)' }}>
+                        Loading wallet details…
                     </div>
                 ) : !walletData ? (
-                    <div className="text-center py-12 text-red-500">Failed to load wallet data.</div>
+                    <div style={{ textAlign: 'center', padding: '64px 0', color: '#b8443a' }}>Failed to load wallet data.</div>
                 ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Main Wallet Card */}
-                        <div className="lg:col-span-2 space-y-6">
-                            <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-8 opacity-10">
-                                    <Wallet className="w-64 h-64" />
+                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 32 }}>
+                        <div>
+                            <div className="kpis" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: 24 }}>
+                                <div className="kpi">
+                                    <div className="lbl">Spending Power</div>
+                                    <div className="v">₹{walletData.available_spending_power.toLocaleString('en-IN', { minimumFractionDigits: 0 })}</div>
                                 </div>
-
-                                <div className="relative z-10">
-                                    <p className="text-gray-400 font-medium mb-1 text-sm md:text-base">Available Spending Power</p>
-                                    <h2 className="text-3xl md:text-5xl font-bold mb-8">
-                                        ₹{walletData.available_spending_power.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                                    </h2>
-
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-gray-700">
-                                        <div>
-                                            <p className="text-gray-400 text-xs md:text-sm mb-1">Wallet Balance</p>
-                                            <p className="text-xl md:text-2xl font-semibold text-sky-400">
-                                                ₹{parseFloat(walletData.wallet_balance.toString()).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p className="text-gray-400 text-xs md:text-sm mb-1">Credit Limit</p>
-                                            <p className="text-lg md:text-xl font-semibold text-blue-400">
-                                                ₹{parseFloat(walletData.credit_limit.toString()).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p className="text-gray-400 text-xs md:text-sm mb-1">Total Dues</p>
-                                            <p className="text-lg md:text-xl font-semibold text-red-400">
-                                                ₹{parseFloat(walletData.total_dues.toString()).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                                            </p>
-                                        </div>
-                                    </div>
+                                <div className="kpi">
+                                    <div className="lbl">Wallet Balance</div>
+                                    <div className="v" style={{ fontSize: 26 }}>₹{parseFloat(walletData.wallet_balance.toString()).toLocaleString('en-IN', { minimumFractionDigits: 0 })}</div>
+                                </div>
+                                <div className="kpi">
+                                    <div className="lbl">Credit Limit</div>
+                                    <div className="v" style={{ fontSize: 26 }}>₹{parseFloat(walletData.credit_limit.toString()).toLocaleString('en-IN', { minimumFractionDigits: 0 })}</div>
+                                </div>
+                                <div className="kpi">
+                                    <div className="lbl">Total Dues</div>
+                                    <div className="v" style={{ fontSize: 26, color: '#b8443a' }}>₹{parseFloat(walletData.total_dues.toString()).toLocaleString('en-IN', { minimumFractionDigits: 0 })}</div>
                                 </div>
                             </div>
 
-                            {/* Recent Transactions */}
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                                <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50">
-                                    <h3 className="font-bold text-gray-800 flex items-center gap-2">
-                                        <History className="w-5 h-5 text-gray-500" />
-                                        Recent Transactions
-                                    </h3>
+                            <div className="panel">
+                                <div className="panel-head">
+                                    <h4 className="row" style={{ gap: 8 }}><History size={16} style={{ color: 'var(--muted)' }} />Recent Transactions</h4>
                                 </div>
-                                <div className="divide-y divide-gray-100 max-h-[600px] overflow-y-auto">
+                                <div style={{ maxHeight: 600, overflowY: 'auto' }}>
                                     {walletData.recent_transactions.length === 0 ? (
-                                        <div className="p-8 text-center text-gray-500">
-                                            No recent transactions found.
-                                        </div>
+                                        <div style={{ padding: 32, textAlign: 'center', color: 'var(--muted)' }}>No recent transactions found.</div>
                                     ) : (
-                                        walletData.recent_transactions.map((tx) => (
-                                            <div key={tx.id} className="p-6 hover:bg-gray-50 transition-colors flex items-center justify-between group">
-                                                <div className="flex items-start gap-3 md:gap-4 overflow-hidden">
-                                                    <div className={`p-2.5 md:p-3 rounded-full shrink-0 ${
-                                                        tx.description.toLowerCase().includes('refund')
-                                                            ? 'bg-blue-100 text-blue-600'
-                                                            : tx.description.toLowerCase().includes('razorpay')
-                                                                ? 'bg-indigo-100 text-indigo-600'
-                                                                : tx.transaction_type === 'CREDIT'
-                                                                    ? 'bg-blue-100 text-blue-600'
-                                                                    : 'bg-red-100 text-red-600'
-                                                        }`}>
-                                                        {tx.description.toLowerCase().includes('refund') ? (
-                                                            <RotateCcw className="w-4 h-4 md:w-5 md:h-5" />
-                                                        ) : tx.description.toLowerCase().includes('razorpay') ? (
-                                                            <CreditCard className="w-4 h-4 md:w-5 md:h-5" />
-                                                        ) : tx.transaction_type === 'CREDIT' ? (
-                                                            <ArrowDownLeft className="w-4 h-4 md:w-5 md:h-5" />
-                                                        ) : (
-                                                            <ArrowUpRight className="w-4 h-4 md:w-5 md:h-5" />
-                                                        )}
-                                                    </div>
-                                                    <div className="min-w-0">
-                                                        <p className="font-medium text-gray-900 text-sm md:text-base truncate">{tx.description}</p>
-                                                        <div className="flex items-center gap-2 mt-1">
-                                                            <p className="text-[10px] md:text-sm text-gray-500">
-                                                                {new Date(tx.timestamp).toLocaleString()}
-                                                            </p>
-                                                            {tx.transaction_id && (
-                                                                <p className="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100 font-mono">
-                                                                    ID: {tx.transaction_id}
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                        {tx.remarks && (
-                                                            <p className="text-[10px] md:text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded px-2 py-1 mt-1.5 italic">
-                                                                Admin Note: {tx.remarks}
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                                <div className="text-right shrink-0">
-                                                    <p className={`font-bold text-sm md:text-base ${tx.transaction_type === 'CREDIT' ? 'text-blue-600' : 'text-slate-900'
-                                                        }`}>
-                                                        {tx.transaction_type === 'CREDIT' ? '+' : '-'} ₹{parseFloat(tx.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                                                    </p>
-                                                    <p className="text-[10px] text-gray-400 mt-1">
-                                                        Bal: ₹{parseFloat(tx.balance_after).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        ))
+                                        <table className="dtable">
+                                            <tbody>
+                                                {walletData.recent_transactions.map((tx) => {
+                                                    const isRefund = tx.description.toLowerCase().includes('refund');
+                                                    const isRazorpay = tx.description.toLowerCase().includes('razorpay');
+                                                    const Icon = isRefund ? RotateCcw : isRazorpay ? CreditCard : tx.transaction_type === 'CREDIT' ? ArrowDownLeft : ArrowUpRight;
+                                                    return (
+                                                        <tr key={tx.id}>
+                                                            <td style={{ width: 36 }}>
+                                                                <Icon size={16} style={{ color: tx.transaction_type === 'CREDIT' ? 'var(--forest)' : '#b8443a' }} />
+                                                            </td>
+                                                            <td>
+                                                                <div style={{ fontWeight: 500 }}>{tx.description}</div>
+                                                                <div className="mono" style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+                                                                    {new Date(tx.timestamp).toLocaleString()}
+                                                                    {tx.transaction_id && ` · ID: ${tx.transaction_id}`}
+                                                                </div>
+                                                                {tx.remarks && (
+                                                                    <div style={{ fontSize: 11, color: '#97712a', fontStyle: 'italic', marginTop: 2 }}>Admin note: {tx.remarks}</div>
+                                                                )}
+                                                            </td>
+                                                            <td className="mono" style={{ textAlign: 'right', fontWeight: 600, color: tx.transaction_type === 'CREDIT' ? 'var(--forest)' : 'var(--ink)' }}>
+                                                                {tx.transaction_type === 'CREDIT' ? '+' : '-'} ₹{parseFloat(tx.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                                                <div style={{ fontSize: 10, color: 'var(--muted)', fontWeight: 400 }}>Bal: ₹{parseFloat(tx.balance_after).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
                                     )}
                                 </div>
                             </div>
                         </div>
 
-                        {/* Top Up Section */}
-                        <div className="space-y-6">
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                                <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                    <CreditCard className="w-5 h-5 text-gray-500" />
-                                    Top Up Wallet
-                                </h3>
-
-                                {user?.profile?.kyc_status === 'SUBMITTED' ? (
-                                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
-                                        <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <Clock className="w-6 h-6 text-blue-600" />
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                            <div className="panel">
+                                <div className="panel-head">
+                                    <h4 className="row" style={{ gap: 8 }}><CreditCard size={16} style={{ color: 'var(--muted)' }} />Top Up Wallet</h4>
+                                </div>
+                                <div className="panel-body">
+                                    {user?.profile?.kyc_status === 'SUBMITTED' ? (
+                                        <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                                            <Clock size={28} style={{ color: '#1e5ab4', margin: '0 auto 12px' }} />
+                                            <h4 style={{ marginBottom: 6 }}>KYC under review</h4>
+                                            <p style={{ fontSize: 13, color: 'var(--muted)' }}>
+                                                Your agency's documents have been submitted and are currently being reviewed. You'll be able to top up once verified.
+                                            </p>
                                         </div>
-                                        <h4 className="font-bold text-blue-900 mb-2">KYC Under Review</h4>
-                                        <p className="text-sm text-blue-700">
-                                            Your documents have been submitted and are currently being reviewed by our team. You'll be able to top up once verified.
-                                        </p>
-                                    </div>
-                                ) : user?.profile?.kyc_status === 'REJECTED' ? (
-                                    <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-                                        <div className="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <AlertCircle className="w-6 h-6 text-red-600" />
+                                    ) : user?.profile?.kyc_status === 'REJECTED' ? (
+                                        <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                                            <AlertCircle size={28} style={{ color: '#b8443a', margin: '0 auto 12px' }} />
+                                            <h4 style={{ marginBottom: 6 }}>KYC rejected</h4>
+                                            <p style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 16 }}>
+                                                Your agency's KYC verification was rejected. Please re-submit your documents.
+                                            </p>
+                                            <button onClick={() => window.dispatchEvent(new CustomEvent('open-kyc-modal'))} className="btn btn-ghost btn-sm" style={{ color: '#b8443a', margin: '0 auto' }}>
+                                                Re-submit KYC
+                                            </button>
                                         </div>
-                                        <h4 className="font-bold text-red-900 mb-2">KYC Rejected</h4>
-                                        <p className="text-sm text-red-700 mb-6">
-                                            Your KYC verification was rejected. Please re-submit your documents.
-                                        </p>
-                                        <button 
-                                            onClick={() => window.dispatchEvent(new CustomEvent('open-kyc-modal'))}
-                                            className="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-lg transition-colors text-sm"
-                                        >
-                                            Re-submit KYC
-                                        </button>
-                                    </div>
-                                ) : user?.profile?.kyc_status !== 'VERIFIED' ? (
-                                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 text-center">
-                                        <div className="bg-amber-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <AlertCircle className="w-6 h-6 text-amber-600" />
+                                    ) : user?.profile?.kyc_status !== 'VERIFIED' ? (
+                                        <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                                            <AlertCircle size={28} style={{ color: '#97712a', margin: '0 auto 12px' }} />
+                                            <h4 style={{ marginBottom: 6 }}>KYC verification required</h4>
+                                            <p style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 16 }}>
+                                                You must verify your agency's KYC documents before you can top up your wallet.
+                                            </p>
+                                            <button onClick={() => window.dispatchEvent(new CustomEvent('open-kyc-modal'))} className="btn btn-primary btn-sm" style={{ margin: '0 auto' }}>
+                                                Complete KYC Now
+                                            </button>
                                         </div>
-                                        <h4 className="font-bold text-amber-900 mb-2">KYC Verification Required</h4>
-                                        <p className="text-sm text-amber-700 mb-6">
-                                            You must verify your KYC documents before you can top up your wallet.
-                                        </p>
-                                        <button 
-                                            onClick={() => window.dispatchEvent(new CustomEvent('open-kyc-modal'))}
-                                            className="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-6 rounded-lg transition-colors text-sm"
-                                        >
-                                            Complete KYC Now
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <form onSubmit={handleTopUp} className="space-y-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                Amount to Add / Pay Dues
-                                            </label>
-                                            <div className="relative">
-                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg font-bold">₹</span>
+                                    ) : (
+                                        <form onSubmit={handleTopUp} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                            <div className="field-group">
+                                                <label>Amount to add / pay dues</label>
                                                 <input
                                                     type="number"
                                                     min="1"
@@ -409,132 +333,76 @@ export default function WalletPage() {
                                                     value={topUpAmount}
                                                     onChange={(e) => setTopUpAmount(e.target.value)}
                                                     placeholder="0.00"
-                                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg font-medium text-gray-900"
+                                                    className="mono"
                                                 />
                                             </div>
-                                        </div>
 
-                                        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3">
-                                            <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                                            <p className="text-sm text-blue-700">
-                                                Top-ups will first clear any outstanding dues before adding to your wallet balance.
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            type="button"
-                                            onClick={handleRazorpayTopUp}
-                                            disabled={isProcessingRazorpay || isProcessingManual || !topUpAmount}
-                                            className="cursor-pointer w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all shadow-md shadow-blue-200 flex justify-center items-center gap-2"
-                                        >
-                                            {isProcessingRazorpay ? (
-                                                <>
-                                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                                    Processing...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    {/* <CreditCard className="w-4 h-4" /> */}
-                                                    Instant Top Up
-                                                </>
-                                            )}
-                                        </button>
-
-                                        <div className="relative flex items-center justify-center py-2">
-                                            <div className="border-t border-gray-200 w-full"></div>
-                                            <span className="absolute bg-white px-3 text-xs text-gray-400 font-medium">OR</span>
-                                        </div>
-
-                                        <button
-                                            type="submit"
-                                            disabled={isProcessingManual || isProcessingRazorpay || !topUpAmount}
-                                            className="cursor-pointer w-full bg-slate-700 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all shadow-md shadow-slate-200 flex justify-center items-center gap-2"
-                                        >
-                                            {isProcessingManual ? (
-                                                <>
-                                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                                    Processing...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    Request Manual Top Up
-                                                    <ArrowUpRight className="w-4 h-4" />
-                                                </>
-                                            )}
-                                        </button>
-                                    </form>
-                                )}
-                            </div>
-
-                            <div className="bg-gray-100 rounded-2xl p-6 text-center">
-                                <p className="text-gray-500 text-sm">
-                                    Need a higher credit limit?
-                                    <br />
-                                    <a href="/contact" className="text-blue-600 font-bold hover:underline">Contact Support</a>
-                                </p>
-                            </div>
-
-                             
-                            {/* Top-up Requests Section */}
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                                <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50">
-                                    <h3 className="font-bold text-gray-800 flex items-center gap-2">
-                                        <Clock className="w-5 h-5 text-gray-500" />
-                                        Recent Top-up Requests
-                                    </h3>
-                                </div>
-                                <div className="divide-y divide-gray-100">
-                                    {topUpRequests.length === 0 ? (
-                                        <div className="p-8 text-center text-gray-400 italic text-sm">
-                                            No recent top-up requests found.
-                                        </div>
-                                    ) : (
-                                        topUpRequests.map((req) => (
-                                            <div key={req.id} className="p-6 flex items-center justify-between group hover:bg-gray-50 transition-colors">
-                                                <div className="flex items-center gap-4">
-                                                    <div className={`p-2 rounded-lg ${
-                                                        req.status === 'PENDING' ? 'bg-amber-100 text-amber-600' :
-                                                        req.status === 'APPROVED' ? 'bg-blue-100 text-blue-600' :
-                                                        'bg-red-100 text-red-600'
-                                                    }`}>
-                                                        {req.status === 'PENDING' ? <Clock className="w-5 h-5" /> :
-                                                         req.status === 'APPROVED' ? <CheckCircle2 className="w-5 h-5" /> :
-                                                         <XCircle className="w-5 h-5" />}
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-bold text-gray-900">₹{parseFloat(req.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
-                                                        <p className="text-xs text-gray-500">{new Date(req.created_at).toLocaleString()}</p>
-                                                        {req.razorpay_payment_id && (
-                                                            <p className="text-[10px] text-blue-600 font-mono mt-0.5">ID: {req.razorpay_payment_id}</p>
-                                                        )}
-                                                        {req.user_remarks && (
-                                                            <p className="text-[11px] text-slate-500 italic mt-1">
-                                                                Your note: {req.user_remarks}
-                                                            </p>
-                                                        )}
-                                                        {req.remarks && (
-                                                            <p className="text-[11px] text-amber-700 bg-amber-50 border border-amber-100 rounded px-2 py-1 mt-1 italic">
-                                                                Admin: {req.remarks}
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                                <div className="text-right flex flex-col items-end gap-1">
-                                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                                                        req.method === 'RAZORPAY' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-gray-50 text-gray-600 border border-gray-100'
-                                                    }`}>
-                                                        {req.method}
-                                                    </span>
-                                                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                                                        req.status === 'PENDING' ? 'bg-amber-100 text-amber-700 border border-amber-200' :
-                                                        req.status === 'APPROVED' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
-                                                        'bg-red-100 text-red-700 border border-red-200'
-                                                    }`}>
-                                                        {req.status}
-                                                    </span>
-                                                </div>
+                                            <div className="row" style={{ gap: 10, fontSize: 13, color: 'var(--muted)', background: 'var(--sand)', padding: 14, borderRadius: 4 }}>
+                                                <AlertCircle size={16} style={{ flexShrink: 0, marginTop: 2, color: 'var(--clay)' }} />
+                                                <p>Top-ups will first clear any outstanding dues before adding to your wallet balance.</p>
                                             </div>
-                                        ))
+
+                                            <button
+                                                type="button"
+                                                onClick={handleRazorpayTopUp}
+                                                disabled={isProcessingRazorpay || isProcessingManual || !topUpAmount}
+                                                className="btn btn-primary"
+                                            >
+                                                {isProcessingRazorpay ? 'Processing…' : 'Instant Top Up'}
+                                            </button>
+
+                                            <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--muted)', fontFamily: 'var(--mono)' }}>OR</div>
+
+                                            <button
+                                                type="submit"
+                                                disabled={isProcessingManual || isProcessingRazorpay || !topUpAmount}
+                                                className="btn btn-ghost"
+                                            >
+                                                {isProcessingManual ? 'Processing…' : (<>Request Manual Top Up <ArrowUpRight size={14} /></>)}
+                                            </button>
+                                        </form>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div style={{ background: 'var(--sand)', borderRadius: 4, padding: 20, textAlign: 'center', fontSize: 13, color: 'var(--muted)' }}>
+                                Need a higher credit limit?<br />
+                                <a href="/contact" className="btn-link" style={{ marginTop: 4, display: 'inline-block' }}>Contact Support</a>
+                            </div>
+
+                            <div className="panel">
+                                <div className="panel-head">
+                                    <h4 className="row" style={{ gap: 8 }}><Clock size={16} style={{ color: 'var(--muted)' }} />Recent Top-up Requests</h4>
+                                </div>
+                                <div>
+                                    {topUpRequests.length === 0 ? (
+                                        <div style={{ padding: 32, textAlign: 'center', color: 'var(--muted)', fontStyle: 'italic', fontSize: 13 }}>No recent top-up requests found.</div>
+                                    ) : (
+                                        <table className="dtable">
+                                            <tbody>
+                                                {topUpRequests.map((req) => {
+                                                    const StatusIcon = req.status === 'PENDING' ? Clock : req.status === 'APPROVED' ? CheckCircle2 : XCircle;
+                                                    const statusClass = req.status === 'PENDING' ? 'pending' : req.status === 'APPROVED' ? 'confirmed' : 'cancelled';
+                                                    return (
+                                                        <tr key={req.id}>
+                                                            <td style={{ width: 28 }}><StatusIcon size={15} style={{ color: 'var(--muted)' }} /></td>
+                                                            <td>
+                                                                <div className="mono" style={{ fontWeight: 600 }}>₹{parseFloat(req.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+                                                                <div className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>{new Date(req.created_at).toLocaleString()}</div>
+                                                                {req.user_remarks && <div style={{ fontSize: 11, color: 'var(--muted)', fontStyle: 'italic', marginTop: 2 }}>Your note: {req.user_remarks}</div>}
+                                                                {req.remarks && <div style={{ fontSize: 11, color: '#97712a', fontStyle: 'italic', marginTop: 2 }}>Admin: {req.remarks}</div>}
+                                                            </td>
+                                                            <td style={{ textAlign: 'right' }}>
+                                                                <div className={`status ${statusClass}`} style={{ display: 'inline-flex' }}>
+                                                                    <span className="d" />{req.status}
+                                                                </div>
+                                                                <div className="mono" style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4 }}>{req.method}</div>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
                                     )}
                                 </div>
                             </div>
@@ -543,6 +411,5 @@ export default function WalletPage() {
                 )}
             </div>
         </div>
-
     );
 }

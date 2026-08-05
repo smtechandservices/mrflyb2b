@@ -5,6 +5,25 @@ import { getAdminTopUpRequests, processTopUpRequest, TopUpRequest, PaginatedResp
 import { Wallet, Search, CheckCircle, XCircle, Clock, Filter, User as UserIcon, History, ArrowUpRight, ArrowDownLeft, RotateCcw, CreditCard } from 'lucide-react';
 import Swal from 'sweetalert2';
 
+const selectStyle: React.CSSProperties = {
+    padding: '9px 12px',
+    border: '1px solid var(--line-2)',
+    background: 'var(--paper)',
+    borderRadius: 'var(--radius)',
+    fontSize: 13.5,
+    fontFamily: 'var(--sans)',
+    color: 'var(--ink)',
+    outline: 'none',
+};
+
+// Map arbitrary backend status strings onto the 3 semantic .status pill variants.
+function statusVariant(status: string): 'confirmed' | 'pending' | 'cancelled' {
+    const s = (status || '').toUpperCase();
+    if (s === 'APPROVED' || s === 'CREDIT') return 'confirmed';
+    if (s === 'PENDING') return 'pending';
+    return 'cancelled';
+}
+
 export default function TopUpRequestsPage() {
     const [requests, setRequests] = useState<TopUpRequest[]>([]);
     const [loading, setLoading] = useState(true);
@@ -81,13 +100,14 @@ export default function TopUpRequestsPage() {
         const result = await Swal.fire({
             title: action === 'APPROVE' ? 'Approve Top-up' : 'Reject Top-up',
             html: `
-                <p class="text-sm text-slate-600 mb-4">Are you sure you want to ${action.toLowerCase()} this top-up request?</p>
-                <textarea id="swal-remarks" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none" rows="3" placeholder="Remarks (optional)..."></textarea>
+                <p style="font-size:13px; color:var(--muted); margin:0 0 12px; text-align:left;">Are you sure you want to ${action.toLowerCase()} this top-up request?</p>
+                <textarea id="swal-remarks" style="width:100%; border:1px solid var(--line-2); border-radius:4px; padding:10px 12px; font-size:13px; color:var(--ink); font-family:var(--sans); resize:none; outline:none;" rows="3" placeholder="Remarks (optional)…"></textarea>
             `,
             icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: action === 'APPROVE' ? '#16a34a' : '#dc2626',
+            confirmButtonColor: action === 'APPROVE' ? '#1f3b30' : '#b8443a',
             confirmButtonText: action === 'APPROVE' ? 'Yes, Approve' : 'Yes, Reject',
+            cancelButtonColor: '#756e63',
             cancelButtonText: 'Cancel',
             preConfirm: () => {
                 const el = document.getElementById('swal-remarks') as HTMLTextAreaElement;
@@ -112,35 +132,28 @@ export default function TopUpRequestsPage() {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
-            {/* Header section */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-end', gap: 20, marginBottom: 24 }}>
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-800 flex items-center gap-3">
-                        <Wallet className="text-blue-600" size={32} />
-                        Transactions & Top-ups
-                    </h1>
-                    <p className="text-slate-500 mt-1">Manage top-up requests and audit all wallet transactions.</p>
+                    <h2 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <Wallet size={26} style={{ color: 'var(--clay)' }} />
+                        Transactions &amp; Top-ups
+                    </h2>
+                    <p className="sub" style={{ margin: '6px 0 0' }}>Manage top-up requests and audit all wallet transactions.</p>
                 </div>
 
-                <div className="bg-slate-100 p-1 rounded-xl flex items-center gap-1">
+                <div style={{ display: 'flex', gap: 6 }}>
                     <button
                         onClick={() => setActiveTab('TOPUPS')}
-                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
-                            activeTab === 'TOPUPS' 
-                            ? 'bg-white text-blue-600 shadow-sm' 
-                            : 'text-slate-500 hover:text-slate-700'
-                        }`}
+                        className="btn btn-sm btn-ghost"
+                        style={activeTab === 'TOPUPS' ? { background: 'var(--forest)', color: 'var(--paper)', borderColor: 'var(--forest)' } : undefined}
                     >
                         Top-up Requests
                     </button>
                     <button
                         onClick={() => setActiveTab('TRANSACTIONS')}
-                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
-                            activeTab === 'TRANSACTIONS' 
-                            ? 'bg-white text-indigo-600 shadow-sm' 
-                            : 'text-slate-500 hover:text-slate-700'
-                        }`}
+                        className="btn btn-sm btn-ghost"
+                        style={activeTab === 'TRANSACTIONS' ? { background: 'var(--forest)', color: 'var(--paper)', borderColor: 'var(--forest)' } : undefined}
                     >
                         Wallet Transactions
                     </button>
@@ -150,325 +163,300 @@ export default function TopUpRequestsPage() {
             {activeTab === 'TOPUPS' ? (
                 <>
                     {/* Filters and search */}
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col lg:flex-row gap-4 items-center">
-                <div className="relative flex-1 w-full">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <input
-                        type="text"
-                        placeholder="Search by username or email..."
-                        className="text-slate-700 w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                        value={search}
-                        onChange={(e) => handleSearchChange(e.target.value)}
-                    />
-                </div>
+                    <div className="panel" style={{ padding: 16, display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'center', marginBottom: 20 }}>
+                        <div className="admin-search" style={{ flex: 1, minWidth: 240 }}>
+                            <Search size={14} color="var(--muted)" />
+                            <input
+                                type="text"
+                                placeholder="Search by username or email…"
+                                value={search}
+                                onChange={(e) => handleSearchChange(e.target.value)}
+                                style={{ border: 'none', outline: 'none', background: 'transparent', font: 'inherit', color: 'inherit', width: '100%' }}
+                            />
+                        </div>
 
-                <div className="flex items-center gap-2 w-full lg:w-auto">
-                    <Filter className="text-slate-400" size={18} />
-                    <select
-                        className="flex-1 lg:w-48 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-600 font-medium"
-                        value={statusFilter}
-                        onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-                    >
-                        <option value="">All Statuses</option>
-                        <option value="PENDING">Pending Only</option>
-                        <option value="APPROVED">Approved</option>
-                        <option value="REJECTED">Rejected</option>
-                    </select>
-                </div>
-            </div>
-
-            {/* Requests Table */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-slate-50/50 border-b border-slate-200">
-                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">User Details</th>
-                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Amount</th>
-                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Method</th>
-                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Requested At</th>
-                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {loading ? (
-                                Array.from({ length: 5 }).map((_, i) => (
-                                    <tr key={i} className="animate-pulse">
-                                        <td colSpan={6} className="px-6 py-6"><div className="h-4 bg-slate-100 rounded w-full"></div></td>
-                                    </tr>
-                                ))
-                            ) : requests.length === 0 ? (
-                                <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-slate-400 italic">
-                                        No top-up requests found matching your criteria.
-                                    </td>
-                                </tr>
-                            ) : (
-                                requests.map((request) => (
-                                    <tr key={request.id} className="hover:bg-slate-50/50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold shrink-0">
-                                                    {request.username.charAt(0).toUpperCase()}
-                                                </div>
-                                                <div>
-                                                    <p className="font-bold text-slate-900">{request.username}</p>
-                                                    <p className="text-xs text-slate-500">{request.user_email}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <p className="text-lg font-extrabold text-slate-800">
-                                                ₹{parseFloat(request.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                                            </p>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${
-                                                request.method === 'RAZORPAY' ? 'bg-blue-50 text-blue-700 border-blue-100' : 'bg-slate-100 text-slate-700 border-slate-200'
-                                            }`}>
-                                                {request.method}
-                                            </span>
-                                            {request.razorpay_payment_id && (
-                                                <p className="text-[10px] text-slate-400 mt-1 font-mono">ID: {request.razorpay_payment_id}</p>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${
-                                                request.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-                                                request.status === 'APPROVED' ? 'bg-green-50 text-green-700 border-green-200' :
-                                                'bg-red-50 text-red-700 border-red-200'
-                                            }`}>
-                                                {request.status === 'PENDING' && <Clock size={12} />}
-                                                {request.status === 'APPROVED' && <CheckCircle size={12} />}
-                                                {request.status === 'REJECTED' && <XCircle size={12} />}
-                                                {request.status}
-                                            </span>
-                                            {request.user_remarks && (
-                                                <p className="text-[11px] text-blue-600 italic mt-1.5 max-w-[180px] truncate" title={`User: ${request.user_remarks}`}>
-                                                    User: {request.user_remarks}
-                                                </p>
-                                            )}
-                                            {request.remarks && (
-                                                <p className="text-[11px] text-slate-500 italic mt-1 max-w-[180px] truncate" title={`Admin: ${request.remarks}`}>
-                                                    Admin: {request.remarks}
-                                                </p>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-slate-500">
-                                            {new Date(request.created_at).toLocaleString()}
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            {request.status === 'PENDING' ? (
-                                                <div className="flex items-center justify-end gap-2 text-xs font-bold">
-                                                    <button
-                                                        onClick={() => handleAction(request.id, 'APPROVE')}
-                                                        disabled={processingId === request.id}
-                                                        className="px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm shadow-green-100 disabled:opacity-50"
-                                                    >
-                                                        Approve
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleAction(request.id, 'REJECT')}
-                                                        disabled={processingId === request.id}
-                                                        className="px-3 py-1.5 bg-red-50 text-red-600 border border-red-100 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
-                                                    >
-                                                        Reject
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <span className="text-slate-400 text-xs italic">
-                                                    Processed {new Date(request.updated_at).toLocaleDateString()}
-                                                </span>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                    <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-                        <p className="text-sm text-slate-500 font-medium">
-                            Page {page} of {totalPages}
-                        </p>
-                        <div className="flex gap-2 font-bold text-xs">
-                            <button
-                                onClick={() => setPage(p => Math.max(1, p - 1))}
-                                disabled={page === 1}
-                                className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition-colors"
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <Filter size={14} color="var(--muted)" />
+                            <select
+                                style={{ ...selectStyle, width: 180 }}
+                                value={statusFilter}
+                                onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
                             >
-                                Previous
-                            </button>
-                            <button
-                                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                                disabled={page === totalPages}
-                                className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition-colors"
-                            >
-                                Next
-                            </button>
+                                <option value="">All Statuses</option>
+                                <option value="PENDING">Pending Only</option>
+                                <option value="APPROVED">Approved</option>
+                                <option value="REJECTED">Rejected</option>
+                            </select>
                         </div>
                     </div>
-                )}
-            </div>
-            </>
+
+                    {/* Requests Table */}
+                    <div className="panel">
+                        <div style={{ overflowX: 'auto' }}>
+                            <table className="dtable" style={{ whiteSpace: 'nowrap' }}>
+                                <thead>
+                                    <tr>
+                                        <th>Agent Details</th>
+                                        <th style={{ textAlign: 'right' }}>Amount</th>
+                                        <th>Method</th>
+                                        <th>Status</th>
+                                        <th>Requested At</th>
+                                        <th style={{ textAlign: 'right' }}>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {loading ? (
+                                        <tr>
+                                            <td colSpan={6} style={{ textAlign: 'center', padding: 32, color: 'var(--muted)' }}>
+                                                Loading top-up requests…
+                                            </td>
+                                        </tr>
+                                    ) : requests.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={6} style={{ textAlign: 'center', padding: 32, color: 'var(--muted)', fontStyle: 'italic' }}>
+                                                No top-up requests found matching your criteria.
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        requests.map((request) => (
+                                            <tr key={request.id}>
+                                                <td>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--sand)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--forest)', fontFamily: 'var(--mono)', fontWeight: 600, fontSize: 13, flexShrink: 0 }}>
+                                                            {request.username.charAt(0).toUpperCase()}
+                                                        </div>
+                                                        <div>
+                                                            <div style={{ fontWeight: 500, color: 'var(--ink)' }}>{request.username}</div>
+                                                            <div style={{ fontSize: 12, color: 'var(--muted)' }}>{request.user_email}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td style={{ textAlign: 'right', fontFamily: 'var(--mono)', fontSize: 15, fontWeight: 600, color: 'var(--ink)' }}>
+                                                    ₹{parseFloat(request.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                                </td>
+                                                <td>
+                                                    <span className="tag" style={{ padding: '3px 9px', fontSize: 10, fontFamily: 'var(--mono)', textTransform: 'uppercase' }}>
+                                                        {request.method}
+                                                    </span>
+                                                    {request.razorpay_payment_id && (
+                                                        <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--muted)', marginTop: 4 }}>ID: {request.razorpay_payment_id}</div>
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    <span className={`status ${statusVariant(request.status)}`}>
+                                                        <span className="d"></span>
+                                                        {request.status === 'PENDING' && <Clock size={11} />}
+                                                        {request.status === 'APPROVED' && <CheckCircle size={11} />}
+                                                        {request.status === 'REJECTED' && <XCircle size={11} />}
+                                                        {request.status}
+                                                    </span>
+                                                    {request.user_remarks && (
+                                                        <p style={{ fontSize: 11, color: 'var(--clay)', fontStyle: 'italic', marginTop: 6, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`User: ${request.user_remarks}`}>
+                                                            User: {request.user_remarks}
+                                                        </p>
+                                                    )}
+                                                    {request.remarks && (
+                                                        <p style={{ fontSize: 11, color: 'var(--muted)', fontStyle: 'italic', marginTop: 4, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`Admin: ${request.remarks}`}>
+                                                            Admin: {request.remarks}
+                                                        </p>
+                                                    )}
+                                                </td>
+                                                <td style={{ fontSize: 13, color: 'var(--ink-2)', fontFamily: 'var(--mono)' }}>
+                                                    {new Date(request.created_at).toLocaleString()}
+                                                </td>
+                                                <td style={{ textAlign: 'right' }}>
+                                                    {request.status === 'PENDING' ? (
+                                                        <div style={{ display: 'inline-flex', gap: 8 }}>
+                                                            <button
+                                                                onClick={() => handleAction(request.id, 'APPROVE')}
+                                                                disabled={processingId === request.id}
+                                                                className="btn btn-primary btn-sm"
+                                                            >
+                                                                Approve
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleAction(request.id, 'REJECT')}
+                                                                disabled={processingId === request.id}
+                                                                className="btn btn-ghost btn-sm"
+                                                                style={{ color: '#b8443a' }}
+                                                            >
+                                                                Reject
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <span style={{ fontSize: 11, color: 'var(--muted)', fontStyle: 'italic', fontFamily: 'var(--mono)' }}>
+                                                            Processed {new Date(request.updated_at).toLocaleDateString()}
+                                                        </span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Pagination */}
+                        {totalPages > 1 && (
+                            <div style={{ padding: '14px 22px', borderTop: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <span style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--muted)' }}>
+                                    Page {page} of {totalPages}
+                                </span>
+                                <div style={{ display: 'flex', gap: 8 }}>
+                                    <button
+                                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                                        disabled={page === 1}
+                                        className="btn btn-ghost btn-sm"
+                                    >
+                                        Previous
+                                    </button>
+                                    <button
+                                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                        disabled={page === totalPages}
+                                        className="btn btn-ghost btn-sm"
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </>
             ) : (
-            <>
-            {/* Recent Transactions Section */}
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
-                            <History size={20} />
+                <>
+                    {/* Transaction Audit Log */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 20 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <History size={18} style={{ color: 'var(--clay)' }} />
+                            <h3 style={{ margin: 0, fontSize: 20 }}>Transaction Audit Log</h3>
                         </div>
-                        <h2 className="text-xl font-bold text-slate-800">Transaction Audit Log</h2>
-                    </div>
-                    
-                    <div className="flex items-center gap-4">
-                        <div className="relative">
-                            <UserIcon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+
+                        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 10 }}>
                             <select
                                 value={selectedUserId}
                                 onChange={(e) => { setSelectedUserId(e.target.value); setTransactionPage(1); }}
-                                className="pl-10 pr-8 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none cursor-pointer"
+                                style={{ ...selectStyle, width: 220 }}
                             >
-                                <option value="">All Users</option>
+                                <option value="">All Agents</option>
                                 {users.map(u => (
                                     <option key={u.id} value={u.id}>{u.username} ({u.email})</option>
                                 ))}
                             </select>
-                        </div>
-                        
-                        <div className="relative">
-                            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                            <input
-                                type="text"
-                                placeholder="Search transactions..."
-                                value={transactionSearch}
-                                onChange={(e) => { setTransactionSearch(e.target.value); setTransactionPage(1); }}
-                                className="pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                            />
+
+                            <div className="admin-search" style={{ width: 220 }}>
+                                <Search size={14} color="var(--muted)" />
+                                <input
+                                    type="text"
+                                    placeholder="Search transactions…"
+                                    value={transactionSearch}
+                                    onChange={(e) => { setTransactionSearch(e.target.value); setTransactionPage(1); }}
+                                    style={{ border: 'none', outline: 'none', background: 'transparent', font: 'inherit', color: 'inherit', width: '100%' }}
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div className="overflow-x-auto no-scrollbar">
-                        <table className="w-full text-left text-sm whitespace-nowrap">
-                            <thead className="bg-slate-50 border-b border-slate-100">
-                                <tr>
-                                    <th className="px-6 py-4 font-medium text-slate-500">Transaction Info</th>
-                                    <th className="px-6 py-4 font-medium text-slate-500">Date & Time</th>
-                                    <th className="px-6 py-4 font-medium text-slate-500">Type</th>
-                                    <th className="px-6 py-4 font-medium text-slate-500">Amount</th>
-                                    <th className="px-6 py-4 font-medium text-slate-500">Reference</th>
-                                    <th className="px-6 py-4 font-medium text-slate-500 text-right">Balances</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                {loadingTransactions ? (
+                    <div className="panel">
+                        <div style={{ overflowX: 'auto' }}>
+                            <table className="dtable" style={{ whiteSpace: 'nowrap' }}>
+                                <thead>
                                     <tr>
-                                        <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
-                                            <div className="flex flex-col items-center gap-3">
-                                                <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                                                <span>Fetching transactions...</span>
-                                            </div>
-                                        </td>
+                                        <th>Transaction Info</th>
+                                        <th>Date &amp; Time</th>
+                                        <th>Type</th>
+                                        <th style={{ textAlign: 'right' }}>Amount</th>
+                                        <th>Reference</th>
+                                        <th style={{ textAlign: 'right' }}>Balances</th>
                                     </tr>
-                                ) : transactions.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
-                                            No transactions found for the selected criteria.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    transactions.map((tx) => (
-                                        <tr key={tx.id} className="hover:bg-slate-50 transition-colors">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className={`p-2 rounded-lg ${
-                                                        tx.description.toLowerCase().includes('refund')
-                                                            ? 'bg-blue-100 text-blue-600'
-                                                            : tx.description.toLowerCase().includes('razorpay')
-                                                                ? 'bg-indigo-100 text-indigo-600'
-                                                                : tx.transaction_type === 'CREDIT'
-                                                                    ? 'bg-green-100 text-green-600'
-                                                                    : 'bg-red-100 text-red-600'
-                                                    }`}>
-                                                        {tx.description.toLowerCase().includes('refund') ? (
-                                                            <RotateCcw size={16} />
-                                                        ) : tx.description.toLowerCase().includes('razorpay') ? (
-                                                            <CreditCard size={16} />
-                                                        ) : tx.transaction_type === 'CREDIT' ? (
-                                                            <ArrowDownLeft size={16} />
-                                                        ) : (
-                                                            <ArrowUpRight size={16} />
-                                                        )}
-                                                    </div>
-                                                    <div>
-                                                        <div className="font-bold text-slate-800">{tx.description}</div>
-                                                        <div className="text-[10px] text-slate-500 uppercase tracking-wider">User ID: {tx.user}</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-slate-600">
-                                                {new Date(tx.timestamp).toLocaleString()}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                                                    tx.transaction_type === 'CREDIT' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                                                }`}>
-                                                    {tx.transaction_type}
-                                                </span>
-                                            </td>
-                                            <td className={`px-6 py-4 font-bold ${tx.transaction_type === 'CREDIT' ? 'text-green-600' : 'text-slate-900'}`}>
-                                                {tx.transaction_type === 'CREDIT' ? '+' : '-'} ₹{parseFloat(tx.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                                            </td>
-                                            <td className="px-6 py-4 font-mono text-xs text-slate-400">
-                                                {tx.transaction_id || '-'}
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <div className="text-xs font-bold text-slate-700">Bal: ₹{parseFloat(tx.balance_after).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
-                                                <div className="text-[10px] text-slate-400">Dues: ₹{parseFloat(tx.dues_after).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+                                </thead>
+                                <tbody>
+                                    {loadingTransactions ? (
+                                        <tr>
+                                            <td colSpan={6} style={{ textAlign: 'center', padding: 32, color: 'var(--muted)' }}>
+                                                Fetching transactions…
                                             </td>
                                         </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {/* Transaction Pagination */}
-                {totalTransactionPages > 1 && (
-                    <div className="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
-                        <p className="text-sm text-slate-500 font-medium">
-                            Page {transactionPage} of {totalTransactionPages}
-                        </p>
-                        <div className="flex gap-2 font-bold text-xs">
-                            <button
-                                onClick={() => setTransactionPage(p => Math.max(1, p - 1))}
-                                disabled={transactionPage === 1}
-                                className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition-colors shadow-sm"
-                            >
-                                Previous
-                            </button>
-                            <button
-                                onClick={() => setTransactionPage(p => Math.min(totalTransactionPages, p + 1))}
-                                disabled={transactionPage === totalTransactionPages}
-                                className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition-colors shadow-sm"
-                            >
-                                Next
-                            </button>
+                                    ) : transactions.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={6} style={{ textAlign: 'center', padding: 32, color: 'var(--muted)' }}>
+                                                No transactions found for the selected criteria.
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        transactions.map((tx) => {
+                                            const isRefund = tx.description.toLowerCase().includes('refund');
+                                            const isRazorpay = tx.description.toLowerCase().includes('razorpay');
+                                            const isCredit = tx.transaction_type === 'CREDIT';
+                                            return (
+                                                <tr key={tx.id}>
+                                                    <td>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                                            <div style={{
+                                                                width: 32, height: 32, borderRadius: 'var(--radius)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                                                                background: isRefund || isRazorpay ? 'var(--sand)' : (isCredit ? 'rgba(31,122,77,0.1)' : 'rgba(184,68,58,0.1)'),
+                                                                color: isRefund || isRazorpay ? 'var(--forest)' : (isCredit ? '#1f7a4d' : '#b8443a'),
+                                                            }}>
+                                                                {isRefund ? <RotateCcw size={15} /> : isRazorpay ? <CreditCard size={15} /> : isCredit ? <ArrowDownLeft size={15} /> : <ArrowUpRight size={15} />}
+                                                            </div>
+                                                            <div>
+                                                                <div style={{ fontWeight: 500, color: 'var(--ink)' }}>{tx.description}</div>
+                                                                <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Agent ID: {tx.user}</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td style={{ fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--ink-2)' }}>
+                                                        {new Date(tx.timestamp).toLocaleString()}
+                                                    </td>
+                                                    <td>
+                                                        <span className={`status ${isCredit ? 'confirmed' : 'cancelled'}`}>
+                                                            <span className="d"></span>{tx.transaction_type}
+                                                        </span>
+                                                    </td>
+                                                    <td style={{ textAlign: 'right', fontFamily: 'var(--mono)', fontWeight: 600, color: isCredit ? '#1f7a4d' : 'var(--ink)' }}>
+                                                        {isCredit ? '+' : '−'} ₹{parseFloat(tx.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                                    </td>
+                                                    <td style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--muted)' }}>
+                                                        {tx.transaction_id || '-'}
+                                                    </td>
+                                                    <td style={{ textAlign: 'right', fontFamily: 'var(--mono)' }}>
+                                                        <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--ink)' }}>Bal: ₹{parseFloat(tx.balance_after).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+                                                        <div style={{ fontSize: 10.5, color: 'var(--muted)' }}>Dues: ₹{parseFloat(tx.dues_after).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
+
+                        {/* Transaction Pagination */}
+                        {totalTransactionPages > 1 && (
+                            <div style={{ padding: '14px 22px', borderTop: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <span style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--muted)' }}>
+                                    Page {transactionPage} of {totalTransactionPages}
+                                </span>
+                                <div style={{ display: 'flex', gap: 8 }}>
+                                    <button
+                                        onClick={() => setTransactionPage(p => Math.max(1, p - 1))}
+                                        disabled={transactionPage === 1}
+                                        className="btn btn-ghost btn-sm"
+                                    >
+                                        Previous
+                                    </button>
+                                    <button
+                                        onClick={() => setTransactionPage(p => Math.min(totalTransactionPages, p + 1))}
+                                        disabled={transactionPage === totalTransactionPages}
+                                        className="btn btn-ghost btn-sm"
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                )}
-            </div>
-            </>
+                </>
             )}
-        </div>
+        </>
     );
 }

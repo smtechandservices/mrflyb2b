@@ -4,8 +4,10 @@ import { useEffect, useState, useCallback, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { FlightCard } from '@/components/FlightCard';
 import { SearchForm } from '@/components/SearchForm';
-import { FlightFilters, FilterState } from '@/components/FlightFilters';
-import { Plane, Filter, X } from 'lucide-react';
+import { RipplesBackground } from '@/components/RipplesBackground';
+import { FlightFilters, FilterState, STOP_OPTIONS, TIME_SLOTS } from '@/components/FlightFilters';
+import { Plane, Filter, X, SearchX } from 'lucide-react';
+import { BRAND } from '@/config/brand';
 
 interface Flight {
     id: number;
@@ -172,218 +174,227 @@ function SearchPageContent() {
         updateUrl({ page: newPage.toString() });
     };
 
+    const clearAllFilters = useCallback(() => {
+        handleFilterChange({ stops: [], airlines: [], departureTime: [], arrivalTime: [] });
+    }, [handleFilterChange]);
+
+    const removeFilterValue = useCallback((category: keyof FilterState, value: string) => {
+        handleFilterChange({ ...currentFilters, [category]: currentFilters[category].filter(v => v !== value) });
+    }, [currentFilters, handleFilterChange]);
+
+    const hasActiveFilters = Object.values(currentFilters).some(arr => arr.length > 0);
+    const activeFilterCount = Object.values(currentFilters).reduce((n, arr) => n + arr.length, 0);
+
+    const activeTags: { key: string; label: string; remove: () => void }[] = [
+        ...currentFilters.stops.map(v => ({
+            key: `stops-${v}`,
+            label: STOP_OPTIONS.find(o => o.value === v)?.label ?? v,
+            remove: () => removeFilterValue('stops', v),
+        })),
+        ...currentFilters.departureTime.map(v => ({
+            key: `dep-${v}`,
+            label: `Departs: ${TIME_SLOTS.find(o => o.value === v)?.label ?? v}`,
+            remove: () => removeFilterValue('departureTime', v),
+        })),
+        ...currentFilters.arrivalTime.map(v => ({
+            key: `arr-${v}`,
+            label: `Arrives: ${TIME_SLOTS.find(o => o.value === v)?.label ?? v}`,
+            remove: () => removeFilterValue('arrivalTime', v),
+        })),
+        ...currentFilters.airlines.map(v => ({
+            key: `air-${v}`,
+            label: v,
+            remove: () => removeFilterValue('airlines', v),
+        })),
+    ];
+
     return (
-        <div className="min-h-screen bg-slate-50">
-
-            {/* Fixed background image */}
-            <div className="fixed top-0 left-0 w-full h-[85vh] bg-slate-900 overflow-hidden z-0">
-                <div
-                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                    style={{ backgroundImage: 'url(/hero-search.png)' }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-slate-900/30 via-slate-900/20 to-slate-900/40" />
-            </div>
-
-            {/* Content */}
-            <div className="relative z-10">
-                <div className="pb-20 pt-24 lg:pt-32 px-4">
-                    <div className="max-w-9xl md:px-10 mx-auto w-full flex flex-col justify-end items-center text-left min-h-[40vh] md:min-h-[50vh]">
-                        <h1 className="max-w-2xl text-4xl md:text-5xl font-extrabold text-white mb-32 tracking-tight text-center">
-                            Find Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">Perfect Flight</span>
-                        </h1>
-
-                        <div className="w-full">
-                            <SearchForm
-                                initialOrigin={origin || undefined}
-                                initialDestination={destination || undefined}
-                                initialDate={date || undefined}
-                                initialReturnDate={returnDate || undefined}
-                                initialTripType={returnDate ? 'round-trip' : 'one-way'}
-                                initialPassengers={passengers}
-                                initialAdults={adults}
-                                initialChildren={children}
-                            />
-                        </div>
+        <>
+            <div className="page-head page-head-search">
+                <div className="page-head-search-ripples">
+                    <RipplesBackground imageUrl="/hero-search.png" />
+                </div>
+                <div className="container">
+                    <div className="crumbs">{BRAND.name} / <span>Flight Search</span></div>
+                    <h1>Search results</h1>
+                    <p style={{ color: 'rgba(244,237,224,0.85)', marginTop: 14, maxWidth: 540, fontSize: 15 }}>
+                        {returnDate ? (
+                            <>Round trip: <strong style={{ color: 'var(--paper)' }}>{origin || 'Anywhere'}</strong> ↔ <strong style={{ color: 'var(--paper)' }}>{destination || 'Anywhere'}</strong></>
+                        ) : (
+                            <>Showing flights from <strong style={{ color: 'var(--paper)' }}>{origin || 'Anywhere'}</strong> to <strong style={{ color: 'var(--paper)' }}>{destination || 'Anywhere'}</strong></>
+                        )}
+                    </p>
+                    <div style={{ marginTop: 28 }}>
+                        <SearchForm
+                            initialOrigin={origin || undefined}
+                            initialDestination={destination || undefined}
+                            initialDate={date || undefined}
+                            initialReturnDate={returnDate || undefined}
+                            initialTripType={returnDate ? 'round-trip' : 'one-way'}
+                            initialPassengers={passengers}
+                            initialAdults={adults}
+                            initialChildren={children}
+                        />
                     </div>
                 </div>
+            </div>
 
-                {/* Results section */}
-                <div className="relative bg-white pb-20">
-                    <div className="max-w-9xl mx-auto px-4 md:px-12 pt-8 md:pt-12">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-                            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                                <Plane className="text-blue-600" />
-                                {totalCount} Flights Found
-                            </h2>
-                            <div className="text-sm text-slate-500">
-                                {returnDate ? (
-                                    <span className="flex items-center flex-wrap gap-1">
-                                        Round Trip:
-                                        <span className="font-semibold text-slate-800">{origin}</span>
-                                        <span className="mx-1">↔</span>
-                                        <span className="font-semibold text-slate-800">{destination}</span>
+            <div className="container">
+                <div className="listing">
+                    <button
+                        type="button"
+                        className="filters-toggle-btn"
+                        onClick={() => setIsMobileFilterOpen(o => !o)}
+                    >
+                        <Filter size={13} />
+                        Filters{hasActiveFilters ? ` (${activeFilterCount})` : ''}
+                        {isMobileFilterOpen ? <X size={14} style={{ marginLeft: 'auto' }} /> : null}
+                    </button>
+
+                    <FlightFilters
+                        filters={currentFilters}
+                        onFilterChange={handleFilterChange}
+                        availableAirlines={availableAirlines}
+                        mobileOpen={isMobileFilterOpen}
+                    />
+
+                    <div className="listing-results">
+                        <div className="listing-toolbar">
+                            <span className="listing-count">
+                                <strong>{totalCount}</strong> flight{totalCount !== 1 ? 's' : ''} found
+                            </span>
+                        </div>
+
+                        {activeTags.length > 0 && (
+                            <div className="listing-tags">
+                                {activeTags.map(t => (
+                                    <span key={t.key} className="tag">
+                                        {t.label}
+                                        <button onClick={t.remove} aria-label={`Remove ${t.label}`}><X size={12} /></button>
                                     </span>
-                                ) : (
-                                    <span>Showing results for <span className="font-semibold text-slate-800">{origin || 'Anywhere'}</span> to <span className="font-semibold text-slate-800">{destination || 'Anywhere'}</span></span>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Mobile Filter Toggle Button */}
-                        <div className="lg:hidden mb-6 z-30 px-2 leading-none relative">
-                            <button
-                                onClick={() => setIsMobileFilterOpen(true)}
-                                className="w-full py-4 shadow-xl bg-slate-900 border border-slate-800 text-white rounded-2xl font-bold flex items-center justify-center gap-3 active:scale-95 transition-transform"
-                            >
-                                <Filter className="w-5 h-5 text-sky-400" />
-                                Filters & Sorting
-                            </button>
-                        </div>
-
-                        {/* Mobile Filter Overlay */}
-                        {isMobileFilterOpen && (
-                            <div className="fixed inset-0 z-[1000] bg-white flex flex-col lg:hidden">
-                                <div className="h-20 px-4 flex items-center justify-between border-b border-slate-200 bg-white">
-                                    <div className="flex items-center gap-2">
-                                        <Filter className="text-blue-600" size={20} />
-                                        <h2 className="text-xl font-bold text-slate-800">Filters</h2>
-                                    </div>
-                                    <button
-                                        onClick={() => setIsMobileFilterOpen(false)}
-                                        className="p-3 bg-slate-100 rounded-full text-slate-600 hover:bg-slate-200 transition-colors"
-                                    >
-                                        <X size={24} />
-                                    </button>
-                                </div>
-                                <div className="flex-1 overflow-y-auto p-6 pb-32">
-                                    <FlightFilters
-                                        filters={currentFilters}
-                                        onFilterChange={handleFilterChange}
-                                        availableAirlines={availableAirlines}
-                                    />
-                                </div>
-                                <div className="fixed bottom-0 left-0 right-0 p-6 bg-white border-t border-slate-200 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-[210]">
-                                    <button
-                                        onClick={() => setIsMobileFilterOpen(false)}
-                                        className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg shadow-blue-600/20 active:scale-[0.98] transition-all"
-                                    >
-                                        Show Results
-                                    </button>
-                                </div>
+                                ))}
+                                <button
+                                    onClick={clearAllFilters}
+                                    className="mono"
+                                    style={{ fontSize: 12, color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px', textDecoration: 'underline' }}
+                                >
+                                    Clear all
+                                </button>
                             </div>
                         )}
 
-                        {/* Grid layout: Filters on left, Results on right */}
-                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                            {/* Desktop Filters Sidebar */}
-                            <div className="hidden lg:block lg:col-span-1">
-                                <FlightFilters
-                                    filters={currentFilters}
-                                    onFilterChange={handleFilterChange}
-                                    availableAirlines={availableAirlines}
-                                />
+                        {loading ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                {Array.from({ length: 4 }).map((_, i) => (
+                                    <div key={i} className="placeholder" style={{ height: 128, borderRadius: 'var(--radius-md)' }} />
+                                ))}
                             </div>
-
-                            {/* Flight Results */}
-                            <div className="lg:col-span-3 space-y-12">
-                                {loading ? (
-                                    <div className="text-center py-20">
-                                        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                                        <p className="mt-4 text-slate-600">Loading flights...</p>
+                        ) : (
+                            <>
+                                {/* Outbound Flights */}
+                                <section>
+                                    {returnDate && (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, paddingBottom: 14, borderBottom: '1px solid var(--line)' }}>
+                                            <Plane size={16} style={{ color: 'var(--clay)', transform: 'rotate(45deg)' }} />
+                                            <div>
+                                                <h4 style={{ margin: 0 }}>Outbound Flight</h4>
+                                                <p className="mono" style={{ fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--muted)', marginTop: 4 }}>
+                                                    {origin} to {destination} • {date ? new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : 'Any Date'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                        {outboundFlights.length > 0 ? (
+                                            outboundFlights.map((flight) => (
+                                                <FlightCard key={flight.id} flight={flight} passengers={passengers} />
+                                            ))
+                                        ) : (
+                                            <EmptyState
+                                                message="No flights match your filters."
+                                                sub="Try adjusting your filters to see more options."
+                                                showClear={hasActiveFilters}
+                                                onClear={clearAllFilters}
+                                            />
+                                        )}
                                     </div>
-                                ) : (
-                                    <>
-                                        {/* Outbound Flights */}
-                                        <section>
-                                            {returnDate && (
-                                                <div className="flex items-center gap-3 mb-6 pb-2 border-b border-slate-200">
-                                                    <div className="p-2 bg-blue-100 rounded-lg text-blue-600">
-                                                        <Plane className="w-5 h-5 rotate-45" />
-                                                    </div>
-                                                    <div>
-                                                        <h3 className="text-lg font-bold text-slate-800">Outbound Flight</h3>
-                                                        <p className="text-sm text-slate-500">
-                                                            {origin} to {destination} • {date ? new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : 'Any Date'}
-                                                        </p>
-                                                    </div>
-                                                </div>
+                                </section>
+
+                                {/* Return Flights */}
+                                {returnDate && (
+                                    <section style={{ marginTop: 48 }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, paddingBottom: 14, borderBottom: '1px solid var(--line)' }}>
+                                            <Plane size={16} style={{ color: 'var(--clay)', transform: 'rotate(-135deg)' }} />
+                                            <div>
+                                                <h4 style={{ margin: 0 }}>Return Flight</h4>
+                                                <p className="mono" style={{ fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--muted)', marginTop: 4 }}>
+                                                    {destination} to {origin} • {new Date(returnDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                            {returnFlights.length > 0 ? (
+                                                returnFlights.map((flight) => (
+                                                    <FlightCard key={flight.id} flight={flight} passengers={passengers} />
+                                                ))
+                                            ) : (
+                                                <EmptyState
+                                                    message="No return flights match your filters."
+                                                    sub="Try adjusting your filters to see more options."
+                                                    showClear={hasActiveFilters}
+                                                    onClear={clearAllFilters}
+                                                />
                                             )}
-                                            <div className="space-y-6">
-                                                {outboundFlights.length > 0 ? (
-                                                    outboundFlights.map((flight) => (
-                                                        <FlightCard key={flight.id} flight={flight} passengers={passengers} />
-                                                    ))
-                                                ) : (
-                                                    <div className="text-center py-10 bg-white rounded-3xl border border-slate-100 shadow-sm">
-                                                        <div className="flex justify-center mb-2 text-slate-300">
-                                                            <Plane className="w-8 h-8" />
-                                                        </div>
-                                                        <p className="text-slate-500">No flights match your filters.</p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </section>
-
-                                        {/* Return Flights */}
-                                        {returnDate && (
-                                            <section>
-                                                <div className="flex items-center gap-3 mb-6 pb-2 border-b border-slate-200">
-                                                    <div className="p-2 bg-blue-100 rounded-lg text-blue-600">
-                                                        <Plane className="w-5 h-5 -rotate-45" />
-                                                    </div>
-                                                    <div>
-                                                        <h3 className="text-lg font-bold text-slate-800">Return Flight</h3>
-                                                        <p className="text-sm text-slate-500">
-                                                            {destination} to {origin} • {new Date(returnDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="space-y-6">
-                                                    {returnFlights.length > 0 ? (
-                                                        returnFlights.map((flight) => (
-                                                            <FlightCard key={flight.id} flight={flight} passengers={passengers} />
-                                                        ))
-                                                    ) : (
-                                                        <div className="text-center py-10 bg-white rounded-3xl border border-slate-100 shadow-sm">
-                                                            <div className="flex justify-center mb-2 text-slate-300">
-                                                                <Plane className="w-8 h-8 rotate-180" />
-                                                            </div>
-                                                            <p className="text-slate-500">No return flights match your filters.</p>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </section>
-                                        )}
-
-                                        {/* Pagination Controls */}
-                                        {!loading && !returnDate && totalPages > 1 && (
-                                            <div className="flex justify-center gap-4 mt-8">
-                                                <button
-                                                    onClick={() => handlePageChange(currentPage - 1)}
-                                                    disabled={currentPage <= 1}
-                                                    className={`px-4 py-2 rounded-lg font-semibold ${currentPage > 1 ? 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
-                                                >
-                                                    Previous
-                                                </button>
-                                                <span className="flex items-center text-slate-600">
-                                                    Page {currentPage} of {totalPages}
-                                                </span>
-                                                <button
-                                                    onClick={() => handlePageChange(currentPage + 1)}
-                                                    disabled={currentPage >= totalPages}
-                                                    className={`px-4 py-2 rounded-lg font-semibold ${currentPage < totalPages ? 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
-                                                >
-                                                    Next
-                                                </button>
-                                            </div>
-                                        )}
-                                    </>
+                                        </div>
+                                    </section>
                                 )}
-                            </div>
-                        </div>
+
+                                {/* Pagination Controls */}
+                                {!loading && !returnDate && totalPages > 1 && (
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginTop: 48 }}>
+                                        <button
+                                            onClick={() => handlePageChange(currentPage - 1)}
+                                            disabled={currentPage <= 1}
+                                            className="btn btn-ghost btn-sm"
+                                            style={{ opacity: currentPage <= 1 ? 0.4 : 1 }}
+                                        >
+                                            Previous
+                                        </button>
+                                        <span className="mono" style={{ fontSize: 12, color: 'var(--muted)', padding: '0 8px' }}>
+                                            Page {currentPage} of {totalPages}
+                                        </span>
+                                        <button
+                                            onClick={() => handlePageChange(currentPage + 1)}
+                                            disabled={currentPage >= totalPages}
+                                            className="btn btn-ghost btn-sm"
+                                            style={{ opacity: currentPage >= totalPages ? 0.4 : 1 }}
+                                        >
+                                            Next
+                                        </button>
+                                    </div>
+                                )}
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
+        </>
+    );
+}
+
+function EmptyState({ message, sub, showClear, onClear }: { message: string; sub: string; showClear: boolean; onClear: () => void }) {
+    return (
+        <div style={{ padding: '64px 0', textAlign: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16, color: 'var(--muted)' }}>
+                <SearchX size={32} />
+            </div>
+            <p style={{ fontFamily: 'var(--serif)', fontSize: 19 }}>{message}</p>
+            <p style={{ color: 'var(--muted)', fontSize: 14, marginTop: 6 }}>{sub}</p>
+            {showClear && (
+                <button className="btn btn-ghost" style={{ marginTop: 20 }} onClick={onClear}>
+                    Clear filters
+                </button>
+            )}
         </div>
     );
 }
@@ -391,11 +402,13 @@ function SearchPageContent() {
 export default function SearchPage() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <div className="text-center">
-                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                    <p className="mt-4 text-slate-600 font-medium tracking-tight">Loading Search results...</p>
+            <div style={{ padding: '120px 40px', textAlign: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16, color: 'var(--clay)' }}>
+                    <Plane size={32} />
                 </div>
+                <p className="mono" style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)' }}>
+                    Loading search results…
+                </p>
             </div>
         }>
             <SearchPageContent />

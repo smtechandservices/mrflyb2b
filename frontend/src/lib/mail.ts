@@ -1,15 +1,27 @@
 import nodemailer from 'nodemailer';
 import { BRAND } from '../config/brand';
 
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: process.env.SMTP_PORT === '465',
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-    },
-});
+// Outside production, missing SMTP credentials shouldn't break flows like OTP
+// login — fall back to a no-op transport so the app keeps working locally
+// (the OTP itself is already logged to the console in development).
+const smtpConfigured = !!process.env.SMTP_HOST;
+const isProduction = process.env.NODE_ENV === 'production';
+
+if (!smtpConfigured && !isProduction) {
+    console.warn('[mail] SMTP_HOST is not set — emails will be logged instead of sent.');
+}
+
+const transporter = (smtpConfigured || isProduction)
+    ? nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: parseInt(process.env.SMTP_PORT || '587'),
+        secure: process.env.SMTP_PORT === '465',
+        auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+        },
+    })
+    : nodemailer.createTransport({ jsonTransport: true });
 
 const FROM = `${process.env.SMTP_FROM}`;
 const YEAR = new Date().getFullYear();

@@ -67,7 +67,7 @@ export function EditProfileModal() {
                 icon: 'error',
                 title: 'Invalid Phone Number',
                 text: 'Please enter a valid Indian phone number',
-                confirmButtonColor: '#ef4444'
+                confirmButtonColor: '#b8443a'
             });
             return;
         }
@@ -81,27 +81,6 @@ export function EditProfileModal() {
                 address: address,
             });
 
-            // Update local user context if possible, or force reload/refetch
-            // Since our AuthContext takes a User object, we can optimistically update it
-            if (user && user.profile) {
-                const updatedUser = {
-                    ...user,
-                    profile: {
-                        ...user.profile,
-                        phone_number: phone,
-                        address: address
-                    }
-                };
-                // We don't have a dedicated 'updateUser' method in AuthContext, 
-                // but we can re-login or better yet, just close for now. relative 
-                // Ideally AuthContext should expose a reloadUser or updateUser method.
-                // For simplicity, we just close. The user might need to refresh to see changes elsewhere 
-                // unless we fetch profile again.
-                // Actually, let's try to fetch profile again if we can. 
-            }
-            // Better approach: Since AuthContext doesn't expose reload, we just close.
-            // But user wants to see changes. 
-            // We can assume success.
             onClose();
             Swal.fire({
                 icon: 'success',
@@ -117,138 +96,87 @@ export function EditProfileModal() {
                 icon: 'error',
                 title: 'Update Failed',
                 text: 'Failed to update profile. Please try again.',
-                confirmButtonColor: '#ef4444'
+                confirmButtonColor: '#b8443a'
             });
         } finally {
             setIsLoading(false);
         }
     };
 
+    const kycLabel = user?.profile?.kyc_status === 'VERIFIED' ? 'Verified'
+        : user?.profile?.kyc_status === 'SUBMITTED' ? 'Under Review'
+        : user?.profile?.kyc_status === 'REJECTED' ? 'Rejected' : 'Not Verified';
+
     return (
-        <>
-            {/* Mobile/Desktop Overlay specifically for the EditProfileModal when it's in view */}
-            <div 
-                className={`fixed inset-0 bg-black/60 lg:bg-black/10 backdrop-blur-sm lg:backdrop-blur-none z-[1000] transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
-                onClick={onClose}
-            />
-            
-            <div className={`
-                ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'}
-                transition-all duration-300
-                fixed inset-x-4 top-[15%] max-w-lg mx-auto bg-white rounded-3xl shadow-2xl border border-slate-100 p-6 z-[1001]
-                lg:inset-auto lg:top-20 lg:right-12 lg:w-96 lg:rounded-2xl
-            `}>
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-slate-800">Edit Profile</h2>
-                <button
-                    onClick={onClose}
-                    className="cursor-pointer text-slate-400 hover:text-slate-600 transition-colors"
-                >
-                    <X size={20} />
-                </button>
-            </div>
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal" onClick={e => e.stopPropagation()}>
+                <button onClick={onClose} className="modal-close"><X size={16} /></button>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Username <span className="text-red-500">*</span></label>
-                    <input
-                        required
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:border-blue-500 outline-none transition-all text-sm font-medium text-slate-700"
-                        placeholder="Your display name"
-                    />
-                </div>
-                <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Email Address</label>
-                    <input
-                        type="email"
-                        value={user?.email || ''}
-                        readOnly
-                        className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-slate-500 outline-none cursor-not-allowed text-sm font-medium"
-                    />
-                </div>
-                <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Phone Number</label>
-                    <input
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => handlePhoneChange(e.target.value)}
-                        className={`w-full px-3 py-2 rounded-lg border ${phoneError
-                                ? 'border-red-300 focus:border-red-500'
-                                : 'border-slate-200 focus:border-blue-500'
-                            } outline-none transition-all text-sm font-medium text-slate-700`}
-                        placeholder="+91 9876543210"
-                    />
-                    {phoneError && (
-                        <p className="mt-1 text-xs text-red-600">{phoneError}</p>
-                    )}
-                    <p className="mt-1 text-xs text-slate-500">Format: 10 digits starting with 6-9</p>
-                </div>
-                <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Address</label>
-                    <textarea
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:border-blue-500 outline-none transition-all min-h-[80px] text-sm font-medium text-slate-700 resize-none"
-                        placeholder="Your address..."
-                    />
-                </div>
+                <h3>Edit Agency Profile</h3>
+                <div className="modal-sub">Update your agency's account details</div>
 
-                <div className="pt-2 border-t border-slate-100 mt-4">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">KYC Status</label>
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
-                        <div className="flex items-center gap-3">
-                            {user?.profile?.kyc_status === 'VERIFIED' ? (
-                                <div className="p-1.5 bg-sky-100 text-sky-600 rounded-lg">
-                                    <ShieldCheck size={16} />
-                                </div>
-                            ) : user?.profile?.kyc_status === 'SUBMITTED' ? (
-                                <div className="p-1.5 bg-blue-100 text-blue-600 rounded-lg">
-                                    <Shield size={16} />
-                                </div>
-                            ) : (
-                                <div className="p-1.5 bg-amber-100 text-amber-600 rounded-lg">
-                                    <ShieldAlert size={16} />
-                                </div>
-                            )}
-                            <div>
-                                <p className="text-sm font-bold text-slate-700">
-                                    {user?.profile?.kyc_status === 'VERIFIED' ? 'Verified' : 
-                                     user?.profile?.kyc_status === 'SUBMITTED' ? 'Under Review' : 
-                                     user?.profile?.kyc_status === 'REJECTED' ? 'Rejected' : 'Not Verified'}
-                                </p>
-                                <p className="text-[10px] text-slate-500 font-medium">Identity Verification</p>
-                            </div>
-                        </div>
-                        
-                        {user?.profile?.kyc_status !== 'VERIFIED' && user?.profile?.kyc_status !== 'SUBMITTED' && (
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    onClose();
-                                    window.dispatchEvent(new CustomEvent('open-kyc-modal'));
-                                }}
-                                className="px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-all shadow-sm shadow-blue-200"
-                            >
-                                Verify Now
-                            </button>
-                        )}
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                    <div className="field-group">
+                        <label>Username</label>
+                        <input required type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Your display name" />
                     </div>
-                </div>
+                    <div className="field-group">
+                        <label>Email Address</label>
+                        <input type="email" value={user?.email || ''} readOnly style={{ color: 'var(--muted)', cursor: 'not-allowed' }} />
+                    </div>
+                    <div className="field-group">
+                        <label>Phone Number</label>
+                        <input
+                            type="tel"
+                            value={phone}
+                            onChange={(e) => handlePhoneChange(e.target.value)}
+                            className="mono"
+                            placeholder="+91 9876543210"
+                            style={phoneError ? { borderColor: '#b8443a' } : undefined}
+                        />
+                        {phoneError && <p style={{ marginTop: 4, fontSize: 12, color: '#b8443a' }}>{phoneError}</p>}
+                        <p style={{ marginTop: 4, fontSize: 11, color: 'var(--muted)' }}>Format: 10 digits starting with 6-9</p>
+                    </div>
+                    <div className="field-group">
+                        <label>Address</label>
+                        <textarea
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            style={{ minHeight: 80, resize: 'none' }}
+                            placeholder="Your address..."
+                        />
+                    </div>
 
-                <div className="pt-2">
-                    <button
-                        type="submit"
-                        disabled={isLoading}
-                        className="w-full bg-blue-600 text-white py-2.5 rounded-xl font-bold hover:bg-blue-700 transition-colors disabled:opacity-50 text-sm"
-                    >
-                        {isLoading ? 'Saving...' : 'Save Changes'}
+                    <div style={{ paddingTop: 16, borderTop: '1px solid var(--line)' }}>
+                        <label style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: 10 }}>KYC Status</label>
+                        <div className="row between" style={{ padding: 12, background: 'var(--sand)', borderRadius: 'var(--radius)' }}>
+                            <div className="row" style={{ gap: 10 }}>
+                                {user?.profile?.kyc_status === 'VERIFIED' ? <ShieldCheck size={18} style={{ color: 'var(--forest)' }} />
+                                    : user?.profile?.kyc_status === 'SUBMITTED' ? <Shield size={18} style={{ color: '#1e5ab4' }} />
+                                    : <ShieldAlert size={18} style={{ color: '#97712a' }} />}
+                                <div>
+                                    <p style={{ fontWeight: 600, fontSize: 14 }}>{kycLabel}</p>
+                                    <p style={{ fontSize: 11, color: 'var(--muted)' }}>Agency Verification</p>
+                                </div>
+                            </div>
+
+                            {user?.profile?.kyc_status !== 'VERIFIED' && user?.profile?.kyc_status !== 'SUBMITTED' && (
+                                <button
+                                    type="button"
+                                    onClick={() => { onClose(); window.dispatchEvent(new CustomEvent('open-kyc-modal')); }}
+                                    className="btn btn-primary btn-sm"
+                                >
+                                    Verify Now
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    <button type="submit" disabled={isLoading} className="btn btn-primary" style={{ width: '100%' }}>
+                        {isLoading ? 'Saving…' : 'Save Changes'}
                     </button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-        </>
     );
 }

@@ -29,38 +29,34 @@ export function BookingSuccessWrapper({
                     icon: 'success',
                     title: 'Booking Confirmed!',
                     html: `
-                        <div class="space-y-4 font-sans text-left">
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                <p class="text-xs text-slate-500 uppercase font-bold tracking-wider mb-2">Booking Confirmation</p>
-                                <p class="text-lg font-bold text-slate-800">ID: <span class="text-blue-600 font-mono">${bookingId}</span></p>
+                        <div style="text-align:left;display:flex;flex-direction:column;gap:16px;">
+                            <div style="background:#f4ede0;padding:16px;border-radius:8px;border:1px solid #d8cdb6;">
+                                <p style="font-family:monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#756e63;margin-bottom:8px;">Booking Confirmation</p>
+                                <p style="font-size:16px;font-weight:700;color:#1c1916;">ID: <span style="color:#1f3b30;font-family:monospace;">${bookingId}</span></p>
                             </div>
-                            
-                            <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100 mb-4">
-                                <div class="flex justify-between items-center mb-1">
-                                    <span class="text-sm font-bold text-slate-700">${flight.origin} → ${flight.destination}</span>
-                                    <span class="text-xs font-semibold px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">${flight.airline}</span>
+
+                            <div style="background:#faf7f0;padding:16px;border-radius:8px;border:1px solid #d8cdb6;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                                    <span style="font-size:14px;font-weight:700;color:#3a3530;">${flight.origin} → ${flight.destination}</span>
+                                    <span style="font-size:11px;font-weight:600;padding:3px 8px;background:#f4ede0;color:#1f3b30;border-radius:20px;">${flight.airline}</span>
                                 </div>
-                                <div class="text-xs text-slate-500">
-                                    ${flight.stops === 0 && !flight.stop_details ? 'Non-stop' : `<span class="font-bold text-slate-600">${flight.stops} Stop(s)</span> via ${flight.stop_details || 'N/A'}`}
+                                <div style="font-size:12px;color:#756e63;">
+                                    ${flight.stops === 0 && !flight.stop_details ? 'Non-stop' : `<span style="font-weight:700;color:#3a3530;">${flight.stops} Stop(s)</span> via ${flight.stop_details || 'N/A'}`}
                                 </div>
                             </div>
 
-                            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 text-blue-800 text-sm">
-                                <div class="flex items-center gap-2">
-                                    <div class="h-2 w-2 rounded-full bg-blue-500"></div>
-                                    <strong class="font-bold">Status: Confirmed</strong>
+                            <div style="background:rgba(31,59,48,0.06);padding:16px;border-radius:8px;border:1px solid rgba(31,59,48,0.15);color:#1f3b30;font-size:14px;">
+                                <div style="display:flex;align-items:center;gap:8px;">
+                                    <div style="width:8px;height:8px;border-radius:50%;background:#1f3b30;"></div>
+                                    <strong style="font-weight:700;">Status: Confirmed</strong>
                                 </div>
-                                <p class="opacity-80 mt-1">Your flight has been successfully booked. A confirmation email has been sent. You can also view and download your ticket in the <strong>"Bookings"</strong> tab. <br/><br/><span class="text-xs italic opacity-70 block mt-2 font-medium">Didn't receive the email? Check your <b>spam folder</b>.</span></p>
+                                <p style="opacity:0.85;margin-top:4px;">Your flight has been successfully booked. A confirmation email has been sent. You can also view and download your ticket in the <strong>"Bookings"</strong> tab. <br/><br/><span style="font-size:12px;font-style:italic;opacity:0.7;">Didn't receive the email? Check your <b>spam folder</b>.</span></p>
                             </div>
                         </div>
                     `,
                     confirmButtonText: 'View My Bookings',
-                    confirmButtonColor: '#2563eb',
+                    confirmButtonColor: '#1f3b30',
                     allowOutsideClick: false,
-                    customClass: {
-                        popup: 'rounded-3xl',
-                        confirmButton: 'rounded-xl px-8 py-3 font-bold'
-                    }
                 }).then(() => {
                     router.push('/my-bookings');
                 });

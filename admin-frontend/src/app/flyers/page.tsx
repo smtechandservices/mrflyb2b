@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getAdminFlyers, createFlyer, updateFlyer, deleteFlyer, Flyer } from '@/lib/api';
-import { Plus, Edit2, Trash2, X, Image as ImageIcon, Check, XCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Image as ImageIcon } from 'lucide-react';
 import Swal from 'sweetalert2';
 
 export default function AdminFlyersPage() {
@@ -114,170 +114,142 @@ export default function AdminFlyersPage() {
     };
 
     return (
-        <div className='pt-8'>
-            <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-bold text-slate-800">Flyer Management</h2>
-                <button
-                    onClick={() => openModal()}
-                    className="cursor-pointer flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition border border-slate-400"
-                >
-                    <Plus className="w-5 h-5" />
-                    Add Flyer
+        <>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-end', gap: 20, marginBottom: 28 }}>
+                <div>
+                    <h2>Flyer Management</h2>
+                    <p className="sub" style={{ margin: '6px 0 0' }}>Promotional flyers shown to agents on the booking site.</p>
+                </div>
+                <button onClick={() => openModal()} className="btn btn-primary btn-sm">
+                    <Plus size={14} /> Add Flyer
                 </button>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <table className="w-full text-left text-sm">
-                    <thead className="bg-slate-50 border-b border-slate-100">
-                        <tr>
-                            <th className="px-6 py-4 font-medium text-slate-500">Image</th>
-                            <th className="px-6 py-4 font-medium text-slate-500">Description</th>
-                            <th className="px-6 py-4 font-medium text-slate-500">Status</th>
-                            <th className="px-6 py-4 font-medium text-slate-500">Created At</th>
-                            <th className="px-6 py-4 font-medium text-slate-500 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                        {loading ? (
-                            <tr>
-                                <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
-                                    <div className="flex flex-col items-center gap-3">
-                                        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                                        <span>Loading flyers...</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        ) : flyers.length === 0 ? (
-                            <tr>
-                                <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
-                                    No flyers found.
-                                </td>
-                            </tr>
-                        ) : (
-                            flyers.map((flyer) => (
-                                <tr key={flyer.id} className="hover:bg-slate-50">
-                                    <td className="px-6 py-4">
-                                        <div className="h-16 w-24 bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
-                                            {flyer.image_url ? (
-                                                <img src={flyer.image_url} alt="Flyer" className="w-full h-full object-cover" />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-slate-400">
-                                                    <ImageIcon className="w-6 h-6" />
-                                                </div>
-                                            )}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-slate-600 max-w-xs truncate">
-                                        {flyer.description || 'No description'}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {flyer.is_active ? (
-                                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                <Check className="w-3 h-3" /> Active
-                                            </span>
-                                        ) : (
-                                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
-                                                <XCircle className="w-3 h-3" /> Inactive
-                                            </span>
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-4 text-slate-500">
-                                        {new Date(flyer.created_at).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button
-                                            onClick={() => openModal(flyer)}
-                                            className="p-1 rounded text-slate-400 hover:text-slate-600 hover:bg-slate-100 mr-2"
-                                        >
-                                            <Edit2 className="cursor-pointer w-4 h-4" />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(flyer.id)}
-                                            className="p-1 rounded text-red-400 hover:text-red-600 hover:bg-red-50"
-                                        >
-                                            <Trash2 className="cursor-pointer w-4 h-4" />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
-
-            {/* Modal */}
-            {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-                        <div className="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
-                            <h3 className="text-xl font-bold text-slate-800">
-                                {editingFlyer ? 'Edit Flyer' : 'Add New Flyer'}
-                            </h3>
-                            <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">
-                                <X className="cursor-pointer w-6 h-6" />
-                            </button>
-                        </div>
-                        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                            {/* Image Upload */}
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">Flyer Image</label>
-                                <div 
-                                    className="relative h-48 w-full border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100 transition cursor-pointer overflow-hidden"
-                                    onClick={() => document.getElementById('image-upload')?.click()}
-                                >
-                                    {imagePreview ? (
-                                        <img src={imagePreview} alt="Preview" className="w-full h-full object-contain" />
-                                    ) : (
-                                        <>
-                                            <ImageIcon className="w-10 h-10 text-slate-400 mb-2" />
-                                            <p className="text-sm text-slate-500">Click to upload image</p>
-                                        </>
-                                    )}
-                                    <input 
-                                        type="file" 
-                                        id="image-upload" 
-                                        className="hidden" 
-                                        accept="image/*"
-                                        onChange={handleImageChange}
-                                    />
-                                </div>
+            {loading ? (
+                <div className="panel">
+                    <div style={{ padding: 64, textAlign: 'center', color: 'var(--muted)' }}>Loading flyers…</div>
+                </div>
+            ) : flyers.length === 0 ? (
+                <div className="panel">
+                    <div style={{ padding: 64, textAlign: 'center', color: 'var(--muted)' }}>No flyers found.</div>
+                </div>
+            ) : (
+                <div className="cards" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}>
+                    {flyers.map((flyer) => (
+                        <div key={flyer.id} className="card" style={{ cursor: 'default' }}>
+                            <div
+                                className="card-img wide"
+                                style={{
+                                    backgroundImage: flyer.image_url ? `url(${flyer.image_url})` : undefined,
+                                    display: flyer.image_url ? undefined : 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                {!flyer.image_url && <ImageIcon size={28} color="var(--muted)" />}
+                                <span className={`status ${flyer.is_active ? 'confirmed' : 'cancelled'}`} style={{ position: 'absolute', top: 14, right: 14 }}>
+                                    <span className="d"></span>{flyer.is_active ? 'Active' : 'Inactive'}
+                                </span>
                             </div>
 
-                            {/* Description */}
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">Description (Optional)</label>
+                            <p className="clamp-2" style={{ fontSize: 13.5, color: 'var(--ink-2)', minHeight: '2.6em', margin: 0 }}>
+                                {flyer.description || 'No description'}
+                            </p>
+
+                            <div className="card-foot">
+                                <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--muted)' }}>
+                                    {new Date(flyer.created_at).toLocaleDateString()}
+                                </span>
+                                <div style={{ display: 'flex', gap: 4 }}>
+                                    <button onClick={() => openModal(flyer)} className="btn btn-ghost btn-sm" style={{ padding: 6 }} title="Edit flyer">
+                                        <Edit2 size={14} />
+                                    </button>
+                                    <button onClick={() => handleDelete(flyer.id)} className="btn btn-ghost btn-sm" style={{ padding: 6, color: '#b8443a' }} title="Delete flyer">
+                                        <Trash2 size={14} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Add/Edit Flyer Modal */}
+            {isModalOpen && (
+                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+                    <div className="modal" onClick={(e) => e.stopPropagation()}>
+                        <button className="modal-close" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
+                        <h3>{editingFlyer ? 'Edit Flyer' : 'Add New Flyer'}</h3>
+                        <p className="modal-sub">Upload the promotional image and optional caption.</p>
+
+                        <form onSubmit={handleSubmit}>
+                            <div className="field-group" style={{ marginBottom: 18 }}>
+                                <label>Flyer Image</label>
+                                <div style={{
+                                    border: '1px solid var(--line)',
+                                    borderRadius: 'var(--radius-md)',
+                                    overflow: 'hidden',
+                                    background: 'var(--sand)',
+                                    height: 180,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginBottom: 10,
+                                }}>
+                                    {imagePreview ? (
+                                        <img src={imagePreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                    ) : (
+                                        <ImageIcon size={32} color="var(--muted)" />
+                                    )}
+                                </div>
+                                <input
+                                    type="file"
+                                    id="image-upload"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    onChange={handleImageChange}
+                                />
+                                <button type="button" onClick={() => document.getElementById('image-upload')?.click()} className="btn btn-ghost btn-sm">
+                                    {imagePreview ? 'Change Image' : 'Choose Image'}
+                                </button>
+                            </div>
+
+                            <div className="field-group" style={{ marginBottom: 18 }}>
+                                <label>Description (Optional)</label>
                                 <textarea
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-700 h-24"
-                                    placeholder="Enter flyer description..."
+                                    placeholder="Enter flyer description…"
+                                    rows={4}
+                                    style={{
+                                        padding: '12px 14px',
+                                        border: '1px solid var(--line-2)',
+                                        background: 'var(--paper)',
+                                        borderRadius: 'var(--radius)',
+                                        fontSize: 14,
+                                        fontFamily: 'var(--sans)',
+                                        color: 'var(--ink)',
+                                        outline: 'none',
+                                        resize: 'vertical',
+                                    }}
                                 />
                             </div>
 
-                            {/* Is Active */}
-                            <div className="flex items-center gap-3">
+                            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13.5, color: 'var(--ink-2)', marginBottom: 24 }}>
                                 <input
                                     type="checkbox"
-                                    id="is-active"
                                     checked={isActive}
                                     onChange={(e) => setIsActive(e.target.checked)}
-                                    className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                    style={{ width: 15, height: 15 }}
                                 />
-                                <label htmlFor="is-active" className="text-sm font-medium text-slate-700">Active (Visible to users)</label>
-                            </div>
+                                Active (visible to agents)
+                            </label>
 
-                            <div className="flex gap-4 pt-4">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="flex-1 px-6 py-3 border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition font-medium"
-                                >
+                            <div style={{ display: 'flex', gap: 12 }}>
+                                <button type="button" onClick={() => setIsModalOpen(false)} className="btn btn-ghost" style={{ flex: 1 }}>
                                     Cancel
                                 </button>
-                                <button
-                                    type="submit"
-                                    className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition font-medium shadow-sm shadow-blue-200"
-                                >
+                                <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>
                                     {editingFlyer ? 'Update Flyer' : 'Create Flyer'}
                                 </button>
                             </div>
@@ -285,6 +257,6 @@ export default function AdminFlyersPage() {
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 }

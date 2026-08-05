@@ -5,7 +5,7 @@ import { register } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, X } from 'lucide-react';
 import { BRAND } from '@/config/brand';
 
 export default function SignupPage() {
@@ -14,7 +14,7 @@ export default function SignupPage() {
     const [username, setUsername] = useState('');
     const [phone, setPhone] = useState('');
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
-    
+
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [phoneError, setPhoneError] = useState('');
@@ -22,7 +22,7 @@ export default function SignupPage() {
     const [step, setStep] = useState<'details' | 'otp'>('details');
     const [resendTimer, setResendTimer] = useState(0);
     const [canResend, setCanResend] = useState(true);
-    
+
     const router = useRouter();
 
     useEffect(() => {
@@ -61,7 +61,7 @@ export default function SignupPage() {
     const handleSendOTP = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        
+
         if (phone && !validatePhoneNumber(phone)) {
             setError('Please enter a valid phone number');
             return;
@@ -168,179 +168,173 @@ export default function SignupPage() {
     };
 
     return (
-        <div className="min-h-screen relative flex items-center justify-center px-4 py-8">
-            <div
-                className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-                style={{ backgroundImage: 'url(/hero-search.png)' }}
-            />
-            <div className="fixed inset-0 bg-gradient-to-br from-slate-900/70 via-slate-900/60 to-blue-900/70" />
+        <div className="auth-page">
+            <div className="auth-visual" style={{ backgroundImage: 'url(/hero-booking.png)' }}>
+                <div className="auth-visual-content">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--serif)', fontSize: 22 }}>
+                        {BRAND.name}<span className="dot" />
+                    </div>
+                    <div className="auth-visual-quote">
+                        &ldquo;{BRAND.tagline}&rdquo;
+                        <span>— {BRAND.name}</span>
+                    </div>
+                </div>
+            </div>
 
-            <div className="relative z-10 max-w-xl w-full">
-                <div className="bg-white/95 backdrop-blur-lg p-8 md:p-10 rounded-3xl shadow-2xl border border-white/20">
-                    <div className="flex justify-center">
-                        <div className="h-20 w-20 relative">
-                            <Image
-                                src={BRAND.logoTransparent}
-                                alt={`${BRAND.name} Logo`}
-                                fill
-                                className="object-contain"
-                            />
-                        </div>
+            <div className="auth-panel">
+                <div className="auth-panel-inner">
+                    <div className="auth-brand">
+                        <Image src={BRAND.logoTransparent} alt={`${BRAND.name} Logo`} width={508} height={491} style={{ height: 34, width: 'auto' }} />
+                        {BRAND.name}<span className="dot" />
                     </div>
 
-                    <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2 text-center">
-                        {step === 'details' ? 'Create Account' : 'Verify Email'}
+                    <h1 style={{ fontSize: 32, marginBottom: 8 }}>
+                        {step === 'details' ? 'Register your agency.' : 'Verify your email'}
                     </h1>
-                    <p className="text-slate-600 mb-8 text-center">
-                        {step === 'details'
-                            ? `Join ${BRAND.name} for exclusive deals`
-                            : (
-                                <>
-                                    We&apos;ve sent a 6-digit code to <span className="font-semibold text-slate-800">{email}</span>.
-                                    <br />
-                                    <span className="text-xs mt-2 block text-slate-500 italic">
-                                        Didn&apos;t receive it? Check your <span className="font-bold text-blue-600">spam folder</span>.
-                                    </span>
-                                </>
-                            )}
+                    <p style={{ color: 'var(--muted)', marginBottom: 32, fontSize: 15 }}>
+                        {step === 'details' ? (
+                            `Join ${BRAND.name} to book flights for your clients.`
+                        ) : (
+                            <>
+                                We&apos;ve sent a 6-digit code to <strong style={{ color: 'var(--ink)' }}>{email}</strong>.
+                                {' '}Check your spam folder if it doesn&apos;t arrive shortly.
+                            </>
+                        )}
                     </p>
 
                     {error && (
-                        <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl text-sm font-medium mb-6">
-                            {error}
+                        <div style={{
+                            padding: '12px 16px', background: 'rgba(199, 154, 74, 0.1)', color: '#97712a',
+                            borderRadius: 4, fontSize: 13, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 8
+                        }}>
+                            <AlertCircle size={14} style={{ flexShrink: 0 }} /> {error}
                         </div>
                     )}
 
                     {step === 'details' ? (
-                        <form onSubmit={handleSendOTP} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">Username <span className="text-red-500">*</span></label>
+                        <form onSubmit={handleSendOTP} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                            <div className="field-group">
+                                <label>Agency username</label>
                                 <input
                                     required
                                     type="text"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
-                                    className="text-black w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white"
                                     placeholder="username"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">Email <span className="text-red-500">*</span></label>
+                            <div className="field-group">
+                                <label>Email address</label>
                                 <input
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="text-black w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white"
-                                    placeholder="your@email.com"
+                                    placeholder="you@email.com"
                                     required
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">Password <span className="text-red-500">*</span></label>
-                                <div className="relative">
+                            <div className="field-group">
+                                <label>Password</label>
+                                <div style={{ position: 'relative' }}>
                                     <input
-                                        type={showPassword ? "text" : "password"}
+                                        type={showPassword ? 'text' : 'password'}
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="text-black w-full px-4 py-3 pr-12 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white"
                                         placeholder="Create a strong password"
+                                        style={{ paddingRight: 40 }}
                                         required
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                        style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 0, padding: 0, color: 'var(--muted)', cursor: 'pointer', display: 'flex' }}
                                     >
-                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
                                 </div>
                             </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">Phone Number</label>
+                            <div className="field-group">
+                                <label>Phone number</label>
                                 <input
                                     type="tel"
                                     value={phone}
                                     onChange={(e) => handlePhoneChange(e.target.value)}
-                                    className={`text-black w-full px-4 py-3 rounded-xl border-2 ${phoneError
-                                            ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                                            : 'border-slate-200 focus:border-blue-500 focus:ring-blue-200'
-                                        } focus:ring-2 outline-none transition-all bg-white`}
                                     placeholder="+91 9876543210"
+                                    style={phoneError ? { borderColor: '#b8443a' } : undefined}
                                 />
                                 {phoneError && (
-                                    <p className="mt-1 text-xs text-red-600">{phoneError}</p>
+                                    <p style={{ fontSize: 12, color: '#b8443a', margin: 0 }}>{phoneError}</p>
                                 )}
                             </div>
 
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="cursor-pointer w-full bg-gradient-to-r from-blue-600 to-sky-600 text-white py-3.5 rounded-xl font-bold hover:from-blue-700 hover:to-sky-700 transition-all shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 transform hover:scale-[1.02] mt-6 flex items-center justify-center gap-2"
+                                className="btn btn-primary btn-lg"
+                                style={{ marginTop: 8, justifyContent: 'center' }}
                             >
-                                {isLoading ? <Loader2 className="animate-spin" /> : 'Get Verification Code'}
+                                {isLoading ? 'Sending…' : 'Get verification code'}
                             </button>
                         </form>
                     ) : (
-                        <form onSubmit={handleVerifyOTP} className="space-y-6">
-                            <div className="flex justify-between gap-2 md:gap-4">
+                        <form onSubmit={handleVerifyOTP} style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', gap: 10 }}>
                                 {otp.map((digit, index) => (
                                     <input
                                         key={index}
                                         id={`otp-${index}`}
                                         type="text"
-                                        maxLength={6} // Allow paste but visually restricted to 1
+                                        inputMode="numeric"
+                                        maxLength={6}
                                         value={digit}
                                         onChange={(e) => handleOtpChange(e.target.value, index)}
                                         onKeyDown={(e) => handleKeyDown(e, index)}
-                                        className="text-black text-center text-2xl font-bold w-full h-12 md:h-16 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white font-mono"
-                                        placeholder="•"
+                                        style={{
+                                            width: 44, height: 56, textAlign: 'center', fontSize: 20,
+                                            fontFamily: 'var(--mono)', border: '1px solid var(--line-2)',
+                                            borderRadius: 4, color: 'var(--ink)', outline: 'none'
+                                        }}
                                     />
                                 ))}
                             </div>
 
-                            <button
-                                type="submit"
-                                disabled={isLoading || otp.some(d => !d)}
-                                className="cursor-pointer w-full bg-gradient-to-r from-blue-600 to-sky-600 text-white py-3.5 rounded-xl font-bold hover:from-blue-700 hover:to-sky-700 transition-all shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 transform hover:scale-[1.02] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isLoading ? <Loader2 className="animate-spin" /> : 'Verify & Sign Up'}
-                            </button>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                <button
+                                    type="submit"
+                                    disabled={isLoading || otp.some(d => !d)}
+                                    className="btn btn-primary btn-lg"
+                                    style={{ justifyContent: 'center' }}
+                                >
+                                    {isLoading ? 'Verifying…' : 'Verify & sign up'}
+                                </button>
 
-                            <div className="text-center space-y-4">
-                                <button
-                                    type="button"
-                                    disabled={!canResend || isLoading}
-                                    onClick={handleResendOTP}
-                                    className="text-sm font-medium text-blue-600 hover:text-blue-700 disabled:text-slate-400 transition-colors"
-                                >
-                                    {resendTimer > 0 
-                                        ? `Resend code in ${resendTimer}s` 
-                                        : 'Didn\'t receive code? Resend'}
-                                </button>
-                                <br />
-                                <button
-                                    type="button"
-                                    onClick={() => setStep('details')}
-                                    className="text-slate-500 hover:text-slate-700 text-sm font-medium transition-colors"
-                                >
-                                    ← Edit registration details
-                                </button>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                                    <button
+                                        type="button"
+                                        disabled={!canResend || isLoading}
+                                        onClick={handleResendOTP}
+                                        className="btn btn-link"
+                                        style={{ borderBottom: 0, fontSize: 13, color: canResend ? 'var(--clay)' : 'var(--muted)', fontWeight: 400 }}
+                                    >
+                                        {resendTimer > 0 ? `Resend code in ${resendTimer}s` : "Didn't receive it? Resend"}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setStep('details')}
+                                        className="btn btn-link"
+                                        style={{ borderBottom: 0, fontSize: 13, color: 'var(--muted)', fontWeight: 400 }}
+                                    >
+                                        ← Edit registration details
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     )}
 
-                    <p className="mt-8 text-center text-slate-600 text-sm">
-                        Already have an account?{' '}
-                        <Link href="/login" className="text-blue-600 font-bold hover:text-blue-700 hover:underline transition-colors">
-                            Log in
-                        </Link>
+                    <p style={{ marginTop: 28, fontSize: 14, color: 'var(--muted)', textAlign: 'center' }}>
+                        Already registered your agency? <Link href="/login" style={{ color: 'var(--clay)' }}>Log in</Link>
                     </p>
-                </div>
-
-                <div className="text-center mt-6">
-                    <Link href="/" className="text-white/90 hover:text-white text-sm font-medium hover:underline transition-colors">
-                        ← Back to Home
-                    </Link>
                 </div>
             </div>
         </div>

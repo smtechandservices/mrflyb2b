@@ -1,7 +1,7 @@
 {
   "name": "MrFlyB2B",
   "shortName": "MrFlyB2B",
-  "tagline": "Where Every Journey Begins and Ends with Excellence.",
+  "tagline": "Flight Booking, Built for Travel Agents.",
   "domain": "mrflyb2b.com",
   "websiteUrl": "https://www.mrflyb2b.com",
   "supportEmail": "support@mrflyb2b.com",
@@ -17,6 +17,6 @@
   },
   "admin": {
     "name": "MrFlyB2B Admin",
-    "description": "MrFlyB2B Admin Dashboard for managing flights, bookings, users and more."
+    "description": "MrFlyB2B Admin Dashboard for managing flights, bookings, agents and more."
   }
 }

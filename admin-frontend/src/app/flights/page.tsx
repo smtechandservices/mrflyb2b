@@ -55,6 +55,14 @@ const getISOPart = (isoString: string | undefined, part: 'date' | 'time') => {
     }
 };
 
+// Shared input style helper for read-only/locked itinerary-leg fields (values
+// pinned to the master flight or propagated from the previous leg).
+const lockedFieldStyle: React.CSSProperties = {
+    background: 'var(--sand)',
+    color: 'var(--muted)',
+    cursor: 'not-allowed',
+};
+
 export default function AdminFlightsPage() {
     const [flights, setFlights] = useState<Flight[]>([]);
     const [loading, setLoading] = useState(true);
@@ -182,13 +190,13 @@ export default function AdminFlightsPage() {
         try {
             const legs = JSON.parse(stopInfo);
             if (!Array.isArray(legs) || legs.length !== stops + 1) return false;
-            return legs.every(leg => 
-                leg.flight_number?.trim() && 
-                leg.origin?.trim() && 
-                leg.destination?.trim() && 
-                leg.date_departure?.trim() && 
-                leg.time_departure?.trim() && 
-                leg.date_arrival?.trim() && 
+            return legs.every(leg =>
+                leg.flight_number?.trim() &&
+                leg.origin?.trim() &&
+                leg.destination?.trim() &&
+                leg.date_departure?.trim() &&
+                leg.time_departure?.trim() &&
+                leg.date_arrival?.trim() &&
                 leg.time_arrival?.trim()
             );
         } catch {
@@ -199,7 +207,7 @@ export default function AdminFlightsPage() {
     const toggleVisibility = async (flight: Flight) => {
         try {
             const newHiddenStatus = !flight.is_hidden;
-            
+
             // Guard: Cannot show flight if itinerary is missing or incomplete
             if (!newHiddenStatus && flight.stops > 0 && !isItineraryComplete(flight.stop_info, flight.stops)) {
                 Swal.fire({
@@ -274,7 +282,7 @@ export default function AdminFlightsPage() {
         try {
             const dataToSave = { ...formData };
             const currentStops = dataToSave.stops || 0;
-            
+
             // Strictly enforce: if stops > 0, check if the EXISTING stop_info is complete
             // Note: We use editingFlight.stop_info because stop_info isn't in formData
             let hasValidItinerary = isItineraryComplete(editingFlight?.stop_info, currentStops);
@@ -291,17 +299,17 @@ export default function AdminFlightsPage() {
 
             setIsModalOpen(false);
             fetchFlights(currentPage);
-            
+
             const isActuallyHidden = dataToSave.is_hidden === true;
             const needsSetup = currentStops > 0 && !hasValidItinerary;
 
             Swal.fire({
                 icon: 'success',
-                title: editingFlight 
-                    ? `Flight Updated (${isActuallyHidden ? 'Hidden' : 'Visible'})` 
+                title: editingFlight
+                    ? `Flight Updated (${isActuallyHidden ? 'Hidden' : 'Visible'})`
                     : `Flight Created (${isActuallyHidden ? 'Hidden' : 'Visible'})`,
-                text: needsSetup 
-                    ? 'Flight is forcibly hidden until the itinerary matches the stop count and all fields are filled.' 
+                text: needsSetup
+                    ? 'Flight is forcibly hidden until the itinerary matches the stop count and all fields are filled.'
                     : (isActuallyHidden ? 'Flight is manually set to hidden.' : 'Flight is now visible for bookings.'),
                 timer: 3000,
                 showConfirmButton: true
@@ -318,7 +326,7 @@ export default function AdminFlightsPage() {
     const updateLegInput = (idx: number, field: string, value: any) => {
         const newLegs = [...legInputs];
         newLegs[idx][field] = value;
-        
+
         // Propagation logic: Source fields update dependent fields in the next leg
         if (newLegs[idx + 1]) {
             if (field === 'destination') newLegs[idx + 1].origin = value;
@@ -326,7 +334,7 @@ export default function AdminFlightsPage() {
             if (field === 'date_arrival') newLegs[idx + 1].date_departure = value;
             if (field === 'time_arrival') newLegs[idx + 1].time_departure = value;
         }
-        
+
         setLegInputs(newLegs);
     };
 
@@ -334,7 +342,7 @@ export default function AdminFlightsPage() {
         setStopFlightId(flight.id);
         const numStops = flight.stops || 0;
         const numLegs = numStops + 1;
-        
+
         let existingLegs: any[] = [];
         try {
             if (flight.stop_info && flight.stop_info.startsWith('[')) {
@@ -352,10 +360,10 @@ export default function AdminFlightsPage() {
         // Initialize legs with strict Master Flight enforcement for start/end
         const initialLegs = Array(numLegs).fill(0).map((_, i) => {
             const existing = existingLegs[i] || {};
-            
+
             let origin = existing.origin || '';
             let destination = existing.destination || '';
-            
+
             if (!origin && i < fullRoute.length) origin = fullRoute[i];
             if (!destination && (i + 1) < fullRoute.length) destination = fullRoute[i + 1];
 
@@ -365,44 +373,44 @@ export default function AdminFlightsPage() {
 
             return {
                 flight_number: isFirst ? flight.flight_number : (existing.flight_number || ''),
-                airline: existing.airline || flight.airline, 
+                airline: existing.airline || flight.airline,
                 origin: isFirst ? flight.origin : origin,
                 destination: isLast ? flight.destination : destination,
                 departure_time: isFirst ? flight.departure_time : (existing.departure_time || ''),
                 arrival_time: isLast ? flight.arrival_time : (existing.arrival_time || ''),
                 departure_terminal: isFirst ? flight.departure_terminal : (existing.departure_terminal || ''),
                 arrival_terminal: isLast ? flight.arrival_terminal : (existing.arrival_terminal || ''),
-                
+
                 date_departure: formatDateToDDMMYYYY(isFirst ? flight.departure_time : (existing.departure_time || '')),
                 time_departure: getISOPart(isFirst ? flight.departure_time : (existing.departure_time || ''), 'time'),
                 date_arrival: formatDateToDDMMYYYY(isLast ? flight.arrival_time : (existing.arrival_time || '')),
                 time_arrival: getISOPart(isLast ? flight.arrival_time : (existing.arrival_time || ''), 'time')
             };
         });
-        
+
         setLegInputs(initialLegs);
         setIsStopModalOpen(true);
     };
 
     const handleSaveStops = async () => {
         if (!stopFlightId) return;
-        
+
         // Validation: Verify all fields for all legs
-        const incomplete = legInputs.some(leg => 
-            !leg.flight_number?.trim() || 
-            !leg.origin?.trim() || 
-            !leg.destination?.trim() || 
-            !leg.date_departure?.trim() || 
-            !leg.time_departure?.trim() || 
-            !leg.date_arrival?.trim() || 
+        const incomplete = legInputs.some(leg =>
+            !leg.flight_number?.trim() ||
+            !leg.origin?.trim() ||
+            !leg.destination?.trim() ||
+            !leg.date_departure?.trim() ||
+            !leg.time_departure?.trim() ||
+            !leg.date_arrival?.trim() ||
             !leg.time_arrival?.trim()
         );
 
         if (incomplete) {
-            Swal.fire({ 
-                icon: 'error', 
-                title: 'Incomplete Details', 
-                text: 'Please fill all flight numbers, airports, dates, and times for all legs.' 
+            Swal.fire({
+                icon: 'error',
+                title: 'Incomplete Details',
+                text: 'Please fill all flight numbers, airports, dates, and times for all legs.'
             });
             return;
         }
@@ -412,7 +420,7 @@ export default function AdminFlightsPage() {
             const finishedLegs = legInputs.map(leg => {
                 const depDate = parseDDMMYYYYToYYYYMMDD(leg.date_departure);
                 const arrDate = parseDDMMYYYYToYYYYMMDD(leg.date_arrival);
-                
+
                 // Keep existing ISO if date/time hasn't changed or is invalid
                 const departure_time = (depDate && leg.time_departure) ? `${depDate}T${leg.time_departure}:00.000Z` : leg.departure_time;
                 const arrival_time = (arrDate && leg.time_arrival) ? `${arrDate}T${leg.time_arrival}:00.000Z` : leg.arrival_time;
@@ -428,10 +436,10 @@ export default function AdminFlightsPage() {
             // Comma separated list for stop_details (compatible with old fields)
             const stopAirports = finishedLegs.slice(0, -1).map(leg => leg.destination).join(', ');
 
-            await updateFlight(stopFlightId, { 
+            await updateFlight(stopFlightId, {
                 stop_details: stopAirports,
                 stop_info: legData,
-                is_hidden: false 
+                is_hidden: false
             });
             setIsStopModalOpen(false);
             fetchFlights(currentPage);
@@ -643,185 +651,183 @@ export default function AdminFlightsPage() {
     };
 
     const totalPages = Math.ceil(totalCount / pageSize);
+    const filteredAirlineOptions = PREDEFINED_AIRLINES.filter(a => a.toLowerCase().includes((formData.airline || '').toLowerCase()));
 
     return (
-        <div className='pt-8'>
-            <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-bold text-slate-800">Flight Management</h2>
-                <div className="flex gap-4">
-                    <div className="relative">
-                        <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+        <>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-end', gap: 20, marginBottom: 24 }}>
+                <div>
+                    <h2>Flight Management</h2>
+                    <p className="sub" style={{ margin: '6px 0 0' }}>{totalCount} flight{totalCount !== 1 ? 's' : ''} in inventory.</p>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
+                    <div className="admin-search" style={{ width: 240 }}>
+                        <Search size={14} color="var(--muted)" />
                         <input
                             type="text"
-                            placeholder="Search flights..."
+                            placeholder="Search flights…"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="text-slate-700 pl-10 pr-4 py-2 border border-slate-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            style={{ border: 'none', outline: 'none', background: 'transparent', font: 'inherit', color: 'inherit', width: '100%' }}
                         />
                     </div>
-                    <div className="flex gap-2">
-                        <button
-                            onClick={downloadSampleExcel}
-                            className="cursor-pointer flex items-center gap-2 border border-slate-400 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition"
-                        >
-                            <Download className="w-5 h-5" />
-                            Download Sample
-                        </button>
-                        <input
-                            type="file"
-                            id="excel-upload"
-                            accept=".xlsx, .xls"
-                            className="hidden"
-                            onChange={handleExcelUpload}
-                        />
-                        <button
-                            onClick={() => document.getElementById('excel-upload')?.click()}
-                            className="cursor-pointer flex items-center gap-2 border border-slate-400 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition"
-                        >
-                            <FileDigit className="w-5 h-5" />
-                            Upload Excel
-                        </button>
-                        <button
-                            onClick={() => openModal()}
-                            className="cursor-pointer flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition border border-slate-400"
-                        >
-                            <Plus className="w-5 h-5" />
-                            Add Flight
-                        </button>
-                    </div>
+                    <button onClick={downloadSampleExcel} className="btn btn-ghost btn-sm">
+                        <Download size={14} /> Sample
+                    </button>
+                    <input
+                        type="file"
+                        id="excel-upload"
+                        accept=".xlsx, .xls"
+                        style={{ display: 'none' }}
+                        onChange={handleExcelUpload}
+                    />
+                    <button onClick={() => document.getElementById('excel-upload')?.click()} className="btn btn-ghost btn-sm">
+                        <FileDigit size={14} /> Upload Excel
+                    </button>
+                    <button onClick={() => openModal()} className="btn btn-primary btn-sm">
+                        <Plus size={14} /> Add Flight
+                    </button>
                 </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <table className="w-full text-left text-sm">
-                    <thead className="bg-slate-50 border-b border-slate-100">
-                        <tr>
-                            <th className="px-6 py-4 font-medium text-slate-500">Airline</th>
-                            <th className="px-6 py-4 font-medium text-slate-500">Route</th>
-                            <th className="px-6 py-4 font-medium text-slate-500">Dep. Date</th>
-                            <th className="px-6 py-4 font-medium text-slate-500">Dep. Time</th>
-                            <th className="px-6 py-4 font-medium text-slate-500">Price</th>
-                            <th className="px-6 py-4 font-medium text-slate-500">Seats</th>
-                            <th className="px-6 py-4 font-medium text-slate-500 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                        {loading ? (
+            <div className="panel">
+                <div style={{ overflowX: 'auto' }}>
+                    <table className="dtable" style={{ whiteSpace: 'nowrap' }}>
+                        <thead>
                             <tr>
-                                <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
-                                    <div className="flex flex-col items-center gap-3">
-                                        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                                        <span>Searching flights...</span>
-                                    </div>
-                                </td>
+                                <th>Airline</th>
+                                <th>Route</th>
+                                <th>Dep. Date</th>
+                                <th>Dep. Time</th>
+                                <th style={{ textAlign: 'right' }}>Price</th>
+                                <th style={{ textAlign: 'center' }}>Seats</th>
+                                <th style={{ textAlign: 'right' }}>Actions</th>
                             </tr>
-                        ) : flights.length === 0 ? (
-                            <tr>
-                                <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
-                                    No flights found matching your search.
-                                </td>
-                            </tr>
-                        ) : (
-                            flights.map((flight) => (
-                                <tr key={flight.id} className="hover:bg-slate-50">
-                                    <td className="px-6 py-4 flex items-center gap-3">
-                                        {getAirlineLogo(flight.airline) ? (
-                                            <div className="h-8 w-8">
-                                                <img src={getAirlineLogo(flight.airline)!} alt={flight.airline} className="w-full h-full object-contain" />
-                                            </div>
-                                        ) : (
-                                            <div className="h-8 w-8 bg-blue-50 rounded flex items-center justify-center text-blue-600 font-bold text-sm flex-shrink-0">
-                                                {flight.airline[0]}
-                                            </div>
-                                        )}
-                                        <div>
-                                            <div className="font-medium text-slate-900 leading-tight">{flight.airline}</div>
-                                            <div className="text-slate-500 text-[11px] mt-0.5">{flight.flight_number}</div>
-                                            {flight.departure_terminal && <div className="text-[10px] text-blue-500 mt-0.5">T{flight.departure_terminal}</div>}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-slate-600">
-                                        <div className="flex flex-col">
-                                            <span>{flight.origin} → {flight.destination}</span>
-                                            <div className="text-[10px] text-slate-500 flex items-center gap-2">
-                                                {flight.stops === 0 ? 'Non-stop' : `${flight.stops} Stop(s)`}
-                                                {flight.stops > 0 && (flight.stop_info || flight.stop_details) ? (
-                                                    <span className="text-blue-600 font-medium flex items-center gap-1">
-                                                        <Map className="w-3 h-3" /> via {flight.stop_details || 'Detailed Itinerary'}
-                                                    </span>
-                                                ) : flight.stops > 0 ? (
-                                                    <span className="text-amber-600 font-bold bg-amber-50 px-2 py-1 rounded-full border border-amber-200 flex items-center gap-1.5 animate-pulse text-[10px] uppercase tracking-wider">
-                                                        <X className="w-3 h-3" /> Pending Itinerary
-                                                    </span>
-                                                ) : null}
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-slate-600">
-                                        {formatDateToDDMMYYYY(flight.departure_time)}
-                                    </td>
-                                    <td className="px-6 py-4 text-slate-600">
-                                        {new Date(flight.departure_time).toLocaleTimeString([], { hour12: false })}
-                                    </td>
-                                    <td className="px-6 py-4 font-medium text-slate-900">
-                                        ₹{parseFloat(flight.price).toLocaleString('en-IN')}
-                                    </td>
-                                    <td className="px-6 py-4 text-slate-600">
-                                        {flight.available_seats !== undefined ? flight.available_seats : '-'} / {flight.total_seats || 0}
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button
-                                            onClick={() => toggleVisibility(flight)}
-                                            className={`p-1 rounded mr-2 transition-colors ${flight.is_hidden ? 'text-amber-500 hover:text-amber-700 hover:bg-amber-50' : 'text-blue-500 hover:text-blue-700 hover:bg-blue-50'}`}
-                                            title={flight.is_hidden ? "Show Flight" : "Hide Flight"}
-                                        >
-                                            {flight.is_hidden ? <EyeOff className="cursor-pointer w-4 h-4" /> : <Eye className="cursor-pointer w-4 h-4" />}
-                                        </button>
-                                        <button
-                                            onClick={() => openModal(flight)}
-                                            className="p-1 rounded text-slate-400 hover:text-slate-600 hover:bg-slate-100 mr-2"
-                                        >
-                                            <Edit2 className="cursor-pointer w-4 h-4" />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(flight.id)}
-                                            className="p-1 rounded text-red-400 hover:text-red-600 hover:bg-red-50"
-                                        >
-                                            <Trash2 className="cursor-pointer w-4 h-4" />
-                                        </button>
-                                        {flight.stops > 0 && (
-                                            <button
-                                                onClick={() => openStopModal(flight)}
-                                                className={`ml-2 p-1 rounded transition-colors ${!(flight.stop_info || flight.stop_details) ? 'bg-amber-100 text-amber-600 hover:bg-amber-200' : 'text-blue-500 hover:text-blue-700 hover:bg-blue-50'}`}
-                                                title="Manage Itinerary/Stops"
-                                            >
-                                                <Map className="cursor-pointer w-4 h-4" />
-                                            </button>
-                                        )}
+                        </thead>
+                        <tbody>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={7} style={{ textAlign: 'center', padding: 32, color: 'var(--muted)' }}>
+                                        Searching flights…
                                     </td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                            ) : flights.length === 0 ? (
+                                <tr>
+                                    <td colSpan={7} style={{ textAlign: 'center', padding: 32, color: 'var(--muted)' }}>
+                                        No flights found matching your search.
+                                    </td>
+                                </tr>
+                            ) : (
+                                flights.map((flight) => (
+                                    <tr key={flight.id}>
+                                        <td>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                                {getAirlineLogo(flight.airline) ? (
+                                                    <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--sand)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                                                        <img src={getAirlineLogo(flight.airline)!} alt={flight.airline} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                                    </div>
+                                                ) : (
+                                                    <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--sand)', color: 'var(--forest)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--mono)', fontWeight: 600, fontSize: 12, flexShrink: 0 }}>
+                                                        {flight.airline[0]}
+                                                    </div>
+                                                )}
+                                                <div>
+                                                    <div style={{ fontWeight: 500, color: 'var(--ink)' }}>{flight.airline}</div>
+                                                    <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+                                                        {flight.flight_number}{flight.departure_terminal ? ` · T${flight.departure_terminal}` : ''}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style={{ color: 'var(--ink-2)' }}>
+                                            <div>{flight.origin} → {flight.destination}</div>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                                                <span style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--muted)' }}>
+                                                    {flight.stops === 0 ? 'Non-stop' : `${flight.stops} stop(s)`}
+                                                </span>
+                                                {flight.stops > 0 && (flight.stop_info || flight.stop_details) ? (
+                                                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--clay)' }}>
+                                                        <Map size={10} /> via {flight.stop_details || 'itinerary'}
+                                                    </span>
+                                                ) : flight.stops > 0 ? (
+                                                    <span className="status pending"><span className="d"></span>Pending itinerary</span>
+                                                ) : null}
+                                            </div>
+                                        </td>
+                                        <td style={{ fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--ink-2)' }}>
+                                            {formatDateToDDMMYYYY(flight.departure_time)}
+                                        </td>
+                                        <td style={{ fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--ink-2)' }}>
+                                            {new Date(flight.departure_time).toLocaleTimeString([], { hour12: false })}
+                                        </td>
+                                        <td style={{ textAlign: 'right', fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 500, color: 'var(--ink)' }}>
+                                            ₹{parseFloat(flight.price).toLocaleString('en-IN')}
+                                        </td>
+                                        <td style={{ textAlign: 'center', fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--ink-2)' }}>
+                                            {flight.available_seats !== undefined ? flight.available_seats : '-'} / {flight.total_seats || 0}
+                                        </td>
+                                        <td style={{ textAlign: 'right' }}>
+                                            <div style={{ display: 'inline-flex', gap: 4 }}>
+                                                <button
+                                                    onClick={() => toggleVisibility(flight)}
+                                                    className="btn btn-ghost btn-sm"
+                                                    style={{ padding: 6, color: flight.is_hidden ? '#97712a' : 'var(--forest)' }}
+                                                    title={flight.is_hidden ? 'Show Flight' : 'Hide Flight'}
+                                                >
+                                                    {flight.is_hidden ? <EyeOff size={14} /> : <Eye size={14} />}
+                                                </button>
+                                                {flight.stops > 0 && (
+                                                    <button
+                                                        onClick={() => openStopModal(flight)}
+                                                        className="btn btn-ghost btn-sm"
+                                                        style={{ padding: 6, color: !(flight.stop_info || flight.stop_details) ? '#97712a' : 'var(--ink)' }}
+                                                        title="Manage Itinerary/Stops"
+                                                    >
+                                                        <Map size={14} />
+                                                    </button>
+                                                )}
+                                                <button
+                                                    onClick={() => openModal(flight)}
+                                                    className="btn btn-ghost btn-sm"
+                                                    style={{ padding: 6 }}
+                                                    title="Edit flight"
+                                                >
+                                                    <Edit2 size={14} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(flight.id)}
+                                                    className="btn btn-ghost btn-sm"
+                                                    style={{ padding: 6, color: '#b8443a' }}
+                                                    title="Delete flight"
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
 
                 {/* Pagination */}
-                <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-sm text-slate-500">
+                <div style={{ padding: '14px 22px', borderTop: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--muted)' }}>
                         Page {currentPage} of {Math.max(1, totalPages)} ({totalCount} flights)
                     </span>
-                    <div className="text-slate-700 flex gap-2">
+                    <div style={{ display: 'flex', gap: 8 }}>
                         <button
                             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                             disabled={currentPage === 1}
-                            className="px-3 py-1 text-sm border border-slate-200 rounded hover:bg-slate-50 disabled:opacity-50"
+                            className="btn btn-ghost btn-sm"
                         >
                             Previous
                         </button>
                         <button
                             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                             disabled={currentPage >= totalPages}
-                            className="px-3 py-1 text-sm border border-slate-200 rounded hover:bg-slate-50 disabled:opacity-50"
+                            className="btn btn-ghost btn-sm"
                         >
                             Next
                         </button>
@@ -829,27 +835,22 @@ export default function AdminFlightsPage() {
                 </div>
             </div>
 
-            {/* Modal */}
+            {/* Add/Edit Flight Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                        <div className="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white">
-                            <h3 className="text-xl font-bold text-slate-800">
-                                {editingFlight ? 'Edit Flight' : 'Add New Flight'}
-                            </h3>
-                            <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">
-                                <X className="cursor-pointerw-6 h-6" />
-                            </button>
-                        </div>
-                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="relative">
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Airline</label>
+                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+                    <div className="modal modal-wide" onClick={(e) => e.stopPropagation()}>
+                        <button className="modal-close" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
+                        <h3>{editingFlight ? 'Edit Flight' : 'Add New Flight'}</h3>
+                        <p className="modal-sub">Inventory, pricing, seats and itinerary details for this flight.</p>
+
+                        <form onSubmit={handleSubmit}>
+                            <div className="formgrid">
+                                <div className="field-group" style={{ position: 'relative' }}>
+                                    <label>Airline</label>
                                     <input
                                         type="text"
                                         required
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm outline-none"
-                                        placeholder="Type or select airline..."
+                                        placeholder="Type or select airline…"
                                         value={formData.airline || ''}
                                         onChange={e => {
                                             setFormData({ ...formData, airline: e.target.value.toUpperCase() });
@@ -860,84 +861,77 @@ export default function AdminFlightsPage() {
                                         autoComplete="off"
                                     />
                                     {isAirlineDropdownOpen && (
-                                        <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] shadow-blue-900/10 max-h-60 overflow-y-auto overflow-x-hidden p-1.5 scrollbar-thin scrollbar-thumb-slate-200">
-                                            {PREDEFINED_AIRLINES.filter(a => a.toLowerCase().includes((formData.airline || '').toLowerCase())).length > 0 ? (
-                                                PREDEFINED_AIRLINES
-                                                    .filter(a => a.toLowerCase().includes((formData.airline || '').toLowerCase()))
-                                                    .map((airline) => (
-                                                        <div
-                                                            key={airline}
-                                                            className="flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-blue-50 hover:text-blue-800 rounded-lg text-slate-700 transition duration-150"
-                                                            onMouseDown={(e) => {
-                                                                e.preventDefault(); // Prevent input onBlur from firing first
-                                                                setFormData({ ...formData, airline });
-                                                                setIsAirlineDropdownOpen(false);
-                                                            }}
-                                                        >
-                                                            {getAirlineLogo(airline) ? (
-                                                                <div className="h-7 w-7 bg-white rounded border border-slate-100 flex items-center justify-center p-0.5 shadow-sm flex-shrink-0">
-                                                                    <img src={getAirlineLogo(airline)!} alt={airline} className="w-full h-full object-contain" />
-                                                                </div>
-                                                            ) : (
-                                                                <div className="h-7 w-7 bg-blue-100/50 border border-blue-100 rounded flex items-center justify-center text-blue-700 font-bold text-xs flex-shrink-0">
-                                                                    {airline[0]}
-                                                                </div>
-                                                            )}
-                                                            <span className="font-medium text-[13px]">{airline}</span>
-                                                        </div>
-                                                    ))
+                                        <div className="sb-drop" style={{ top: 'calc(100% + 4px)', left: 0, width: '100%', maxHeight: 220, overflowY: 'auto' }}>
+                                            {filteredAirlineOptions.length > 0 ? (
+                                                filteredAirlineOptions.map((airline) => (
+                                                    <div
+                                                        key={airline}
+                                                        className="sb-opt"
+                                                        style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+                                                        onMouseDown={(e) => {
+                                                            e.preventDefault(); // Prevent input onBlur from firing first
+                                                            setFormData({ ...formData, airline });
+                                                            setIsAirlineDropdownOpen(false);
+                                                        }}
+                                                    >
+                                                        {getAirlineLogo(airline) ? (
+                                                            <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--sand)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                                                                <img src={getAirlineLogo(airline)!} alt={airline} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                                            </div>
+                                                        ) : (
+                                                            <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--sand)', color: 'var(--forest)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--mono)', fontWeight: 600, fontSize: 10, flexShrink: 0 }}>
+                                                                {airline[0]}
+                                                            </div>
+                                                        )}
+                                                        <span>{airline}</span>
+                                                    </div>
+                                                ))
                                             ) : (
-                                                <div className="px-3 py-4 text-xs text-slate-400 italic text-center rounded-lg bg-slate-50/50">
+                                                <div style={{ padding: '12px 10px', fontSize: 12, color: 'var(--muted)', fontStyle: 'italic', textAlign: 'center' }}>
                                                     Will be created as a custom airline
                                                 </div>
                                             )}
                                         </div>
                                     )}
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Flight Number</label>
+                                <div className="field-group">
+                                    <label>Flight Number</label>
                                     <input
                                         type="text"
                                         required
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
                                         placeholder="AI101"
                                         value={formData.flight_number || ''}
                                         onChange={e => setFormData({ ...formData, flight_number: e.target.value })}
                                     />
                                 </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Origin</label>
+
+                                <div className="field-group">
+                                    <label>Origin</label>
                                     <input
                                         type="text"
                                         required
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
                                         placeholder="DEL"
                                         value={formData.origin || ''}
                                         onChange={e => setFormData({ ...formData, origin: e.target.value })}
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Destination</label>
+                                <div className="field-group">
+                                    <label>Destination</label>
                                     <input
                                         type="text"
                                         required
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
                                         placeholder="BOM"
                                         value={formData.destination || ''}
                                         onChange={e => setFormData({ ...formData, destination: e.target.value })}
                                     />
                                 </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Departure Date (dd/mm/yyyy)</label>
+
+                                <div className="field-group">
+                                    <label>Departure Date (dd/mm/yyyy)</label>
                                     <input
                                         type="text"
                                         required
                                         placeholder="dd/mm/yyyy"
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
                                         value={modalDateStrings.departure}
                                         onChange={e => {
                                             const val = e.target.value;
@@ -950,18 +944,17 @@ export default function AdminFlightsPage() {
                                         }}
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Departure Time (HH:mm - 24h)</label>
+                                <div className="field-group">
+                                    <label>Departure Time (HH:mm — 24h)</label>
                                     <input
                                         type="text"
                                         required
                                         placeholder="HH:mm"
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
                                         value={modalTimeStrings.departure}
                                         onChange={e => {
                                             const val = e.target.value;
                                             setModalTimeStrings({ ...modalTimeStrings, departure: val });
-                                            
+
                                             if (/^\d{2}:\d{2}$/.test(val)) {
                                                 const manualDate = parseDDMMYYYYToYYYYMMDD(modalDateStrings.departure);
                                                 const date = manualDate || getISOPart(formData.departure_time, 'date');
@@ -970,13 +963,12 @@ export default function AdminFlightsPage() {
                                         }}
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Arrival Date (dd/mm/yyyy)</label>
+                                <div className="field-group">
+                                    <label>Arrival Date (dd/mm/yyyy)</label>
                                     <input
                                         type="text"
                                         required
                                         placeholder="dd/mm/yyyy"
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
                                         value={modalDateStrings.arrival}
                                         onChange={e => {
                                             const val = e.target.value;
@@ -989,18 +981,17 @@ export default function AdminFlightsPage() {
                                         }}
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Arrival Time (HH:mm - 24h)</label>
+                                <div className="field-group">
+                                    <label>Arrival Time (HH:mm — 24h)</label>
                                     <input
                                         type="text"
                                         required
                                         placeholder="HH:mm"
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
                                         value={modalTimeStrings.arrival}
                                         onChange={e => {
                                             const val = e.target.value;
                                             setModalTimeStrings({ ...modalTimeStrings, arrival: val });
-                                            
+
                                             if (/^\d{2}:\d{2}$/.test(val)) {
                                                 const manualDate = parseDDMMYYYYToYYYYMMDD(modalDateStrings.arrival);
                                                 const date = manualDate || getISOPart(formData.arrival_time, 'date');
@@ -1009,38 +1000,35 @@ export default function AdminFlightsPage() {
                                         }}
                                     />
                                 </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Price (Adult)</label>
+
+                                <div className="field-group">
+                                    <label>Price (Adult)</label>
                                     <input
                                         type="number"
                                         required
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
                                         placeholder="12345"
                                         value={formData.price || ''}
                                         onChange={e => setFormData({ ...formData, price: e.target.value })}
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Infant Price (0-2 Yrs)</label>
+                                <div className="field-group">
+                                    <label>Infant Price (0–2 Yrs)</label>
                                     <input
                                         type="number"
                                         min="0"
                                         placeholder="0 for free"
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
                                         value={formData.infant_price ?? ''}
                                         onChange={e => setFormData({ ...formData, infant_price: e.target.value })}
                                     />
-                                    <p className="text-[10px] text-slate-400 mt-1">Leave 0 for free infant seats</p>
+                                    <p style={{ fontSize: 11, color: 'var(--muted)', margin: 0 }}>Leave 0 for free infant seats</p>
                                 </div>
-                                <div className='hidden'>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Duration (hh:mm:ss)</label>
+
+                                <div className="field-group" style={{ display: 'none' }}>
+                                    <label>Duration (hh:mm:ss)</label>
                                     <input
                                         type="text"
                                         disabled
                                         placeholder="Auto-calculated"
-                                        className="text-slate-500 bg-slate-100 w-full px-3 py-2 border border-slate-300 rounded-lg cursor-not-allowed"
                                         title="Duration is automatically computed by the system"
                                         value={(() => {
                                             if (formData.departure_time && formData.arrival_time) {
@@ -1059,21 +1047,19 @@ export default function AdminFlightsPage() {
                                         onChange={() => {}}
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Stops</label>
+                                <div className="field-group">
+                                    <label>Stops</label>
                                     <input
                                         type="number"
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
                                         value={formData.stops || 0}
                                         onChange={e => setFormData({ ...formData, stops: parseInt(e.target.value) || 0 })}
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Stop Details (Airports)</label>
+                                <div className="field-group">
+                                    <label>Stop Details (Airports)</label>
                                     <input
                                         type="text"
                                         placeholder="DXB, AUH"
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
                                         value={formData.stop_details || ''}
                                         onChange={e => {
                                             const val = e.target.value;
@@ -1082,110 +1068,102 @@ export default function AdminFlightsPage() {
                                         }}
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Total Seats</label>
+
+                                <div className="field-group">
+                                    <label>Total Seats</label>
                                     <input
                                         type="number"
                                         required
                                         min={bookedCount}
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
                                         value={formData.total_seats || ''}
                                         onChange={e => handleTotalSeatsChange(parseInt(e.target.value) || 0)}
                                     />
                                     {bookedCount > 0 && (
-                                        <p className="text-[10px] text-slate-500 mt-1">
+                                        <p style={{ fontSize: 11, color: 'var(--muted)', margin: 0 }}>
                                             Minimum {bookedCount} seats required (already booked)
                                         </p>
                                     )}
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Available Seats</label>
+                                <div className="field-group">
+                                    <label>Available Seats</label>
                                     <input
                                         type="number"
                                         required
                                         min="0"
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-blue-700"
+                                        style={{ fontFamily: 'var(--mono)', fontWeight: 500, color: 'var(--forest)' }}
                                         value={formData.available_seats !== undefined ? formData.available_seats : ''}
                                         onChange={e => handleAvailableSeatsChange(parseInt(e.target.value) || 0)}
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Baggage Allowance</label>
+
+                                <div className="field-group">
+                                    <label>Baggage Allowance</label>
                                     <input
                                         type="text"
                                         placeholder="e.g. 15kg / 7kg"
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
                                         value={formData.baggage_allowance || ''}
                                         onChange={e => setFormData({ ...formData, baggage_allowance: e.target.value })}
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Layover Duration</label>
+                                <div className="field-group">
+                                    <label>Layover Duration</label>
                                     <input
                                         type="text"
                                         placeholder="e.g. 2h 30m"
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
                                         value={formData.layover_duration || ''}
                                         onChange={e => setFormData({ ...formData, layover_duration: e.target.value })}
                                     />
                                 </div>
-                                <div className="col-span-2 grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">Departure Terminal</label>
-                                        <input
-                                            type="text"
-                                            placeholder="T3"
-                                            className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
-                                            value={formData.departure_terminal || ''}
-                                            onChange={e => setFormData({ ...formData, departure_terminal: e.target.value })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">Arrival Terminal</label>
-                                        <input
-                                            type="text"
-                                            placeholder="T1"
-                                            className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg"
-                                            value={formData.arrival_terminal || ''}
-                                            onChange={e => setFormData({ ...formData, arrival_terminal: e.target.value })}
-                                        />
-                                    </div>
+
+                                <div className="field-group">
+                                    <label>Departure Terminal</label>
+                                    <input
+                                        type="text"
+                                        placeholder="T3"
+                                        value={formData.departure_terminal || ''}
+                                        onChange={e => setFormData({ ...formData, departure_terminal: e.target.value })}
+                                    />
                                 </div>
-                                <div className="col-span-2">
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Flight PNR</label>
+                                <div className="field-group">
+                                    <label>Arrival Terminal</label>
+                                    <input
+                                        type="text"
+                                        placeholder="T1"
+                                        value={formData.arrival_terminal || ''}
+                                        onChange={e => setFormData({ ...formData, arrival_terminal: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="field-group full">
+                                    <label>Flight PNR</label>
                                     <input
                                         type="text"
                                         required
                                         placeholder="e.g. INDBOM001"
-                                        className="text-slate-700 w-full px-3 py-2 border border-slate-300 rounded-lg font-mono uppercase bg-slate-50 focus:bg-white"
+                                        style={{ fontFamily: 'var(--mono)', textTransform: 'uppercase' }}
                                         value={formData.pnr || ''}
                                         onChange={e => setFormData({ ...formData, pnr: e.target.value.toUpperCase() })}
                                     />
                                 </div>
-                                <div className="col-span-2">
-                                    <label className="flex items-center gap-2 cursor-pointer">
+
+                                <div className="full">
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13.5, color: 'var(--ink-2)' }}>
                                         <input
                                             type="checkbox"
-                                            className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
                                             checked={formData.is_hidden || false}
                                             onChange={e => setFormData({ ...formData, is_hidden: e.target.checked })}
+                                            style={{ width: 15, height: 15 }}
                                         />
-                                        <span className="text-sm font-medium text-slate-700">Temporarily hide this flight from users</span>
+                                        Temporarily hide this flight from agents
                                     </label>
                                 </div>
                             </div>
-                            <div className="flex justify-end gap-3 pt-4">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="cursor-pointer px-4 py-2 text-slate-600 hover:text-slate-800"
-                                >
+
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 28 }}>
+                                <button type="button" onClick={() => setIsModalOpen(false)} className="btn btn-ghost">
                                     Cancel
                                 </button>
-                                <button
-                                    type="submit"
-                                    className="cursor-pointer px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
-                                >
+                                <button type="submit" className="btn btn-primary">
                                     Save Flight
                                 </button>
                             </div>
@@ -1194,200 +1172,172 @@ export default function AdminFlightsPage() {
                 </div>
             )}
 
-            {/* Stop Details Modal */}
+            {/* Itinerary / Stop Details Modal */}
             {isStopModalOpen && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
-                    <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl border border-white/20 overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
-                        <div className="bg-gradient-to-r from-blue-600 to-sky-800 p-6 text-white flex-shrink-0">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <h3 className="text-xl font-bold">Configure Detailed Itinerary</h3>
-                                    <p className="text-blue-50 text-xs mt-1">Define details for each leg of the journey</p>
-                                </div>
-                                <button onClick={() => setIsStopModalOpen(false)} className="bg-white/20 hover:bg-white/30 p-2 rounded-full transition">
-                                    <X className="w-5 h-5" />
-                                </button>
+                <div className="modal-overlay" onClick={() => setIsStopModalOpen(false)}>
+                    <div
+                        className="modal modal-wide"
+                        style={{ maxWidth: 900, padding: 0, display: 'flex', flexDirection: 'column', maxHeight: '90vh' }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexShrink: 0 }}>
+                            <div>
+                                <h3 style={{ margin: 0 }}>Configure Detailed Itinerary</h3>
+                                <p className="modal-sub" style={{ margin: '4px 0 0' }}>Define details for each leg of the journey.</p>
                             </div>
+                            <button className="modal-close" style={{ position: 'static' }} onClick={() => setIsStopModalOpen(false)}>
+                                <X size={16} />
+                            </button>
                         </div>
-                        
-                        <div className="p-6 overflow-y-auto space-y-8 bg-slate-50/50">
-                            {legInputs.map((leg, idx) => (
-                                <div key={idx} className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 relative group">
-                                    <div className="absolute -top-3 left-6 px-3 bg-blue-600 text-white text-[10px] font-bold rounded-full py-0.5 shadow-sm">
-                                        LEG #{idx + 1}
-                                    </div>
-                                    
-                                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 pt-2">
-                                        <div className="md:col-span-1">
-                                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Airline</label>
-                                            <input 
-                                                type="text" 
-                                                list={`airline-options-${idx}`}
-                                                className="text-slate-800 w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all"
-                                                placeholder="e.g. Air India" 
-                                                value={leg.airline} 
-                                                onChange={e => updateLegInput(idx, 'airline', e.target.value)} 
-                                            />
-                                            <datalist id={`airline-options-${idx}`}>
-                                                {PREDEFINED_AIRLINES.map(a => <option key={a} value={a} />)}
-                                            </datalist>
-                                        </div>
-                                        <div className="md:col-span-1">
-                                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Flight Number</label>
-                                            <input
-                                                type="text"
-                                                readOnly={idx === 0}
-                                                className={`text-slate-800 w-full px-3 py-2 border rounded-lg outline-none font-semibold uppercase transition-all ${
-                                                    idx === 0 
-                                                    ? 'bg-slate-200/60 border-slate-300 cursor-not-allowed text-slate-500 shadow-inner' 
-                                                    : 'bg-white border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm'
-                                                }`}
-                                                placeholder="e.g. 6E 123"
-                                                value={leg.flight_number}
-                                                onChange={e => updateLegInput(idx, 'flight_number', e.target.value.toUpperCase())}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Origin</label>
-                                            <input
-                                                type="text"
-                                                readOnly={idx >= 0} // Always readonly as it's either master start or previous leg's destination
-                                                className="text-slate-800 w-full px-3 py-2 border border-slate-300 rounded-lg outline-none font-semibold uppercase transition-all bg-slate-200/60 cursor-not-allowed text-slate-500 shadow-inner"
-                                                placeholder="Airport Code"
-                                                value={leg.origin}
-                                                tabIndex={-1}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Destination</label>
-                                            <input
-                                                type="text"
-                                                readOnly={idx === legInputs.length - 1}
-                                                className={`text-slate-800 w-full px-3 py-2 border rounded-lg outline-none font-semibold uppercase transition-all ${
-                                                    idx === legInputs.length - 1 
-                                                    ? 'bg-slate-200/60 border-slate-300 cursor-not-allowed text-slate-500 shadow-inner' 
-                                                    : 'bg-white border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm'
-                                                }`}
-                                                placeholder="Airport Code"
-                                                value={leg.destination}
-                                                onChange={e => updateLegInput(idx, 'destination', e.target.value.toUpperCase())}
-                                            />
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <div className="flex-1">
-                                                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Dep. Tml</label>
-                                                <input 
-                                                    type="text" 
-                                                    className={`w-full px-2 py-2 border rounded-lg text-sm transition-all focus:outline-none ${
-                                                        idx > 0 || idx === 0 // All origins are either master or synced
-                                                        ? 'bg-slate-200/60 border-slate-300 cursor-not-allowed text-slate-500 shadow-inner' 
-                                                        : 'bg-white border-slate-200 text-slate-700 focus:ring-2 focus:ring-blue-500 shadow-sm'
-                                                    }`} 
-                                                    placeholder="T3" 
-                                                    value={leg.departure_terminal} 
-                                                    readOnly={idx >= 0}
+
+                        <div style={{ padding: '24px 28px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: 28, background: '#fbf8f1' }}>
+                            {legInputs.map((leg, idx) => {
+                                const isFirst = idx === 0;
+                                const isLast = idx === legInputs.length - 1;
+                                return (
+                                    <div key={idx} style={{ background: 'var(--paper)', border: '1px solid var(--line)', borderRadius: 'var(--radius-md)', padding: '22px 20px 20px', position: 'relative' }}>
+                                        <span
+                                            className="eyebrow"
+                                            style={{ position: 'absolute', top: -9, left: 20, background: 'var(--paper)', padding: '0 8px', color: 'var(--clay)' }}
+                                        >
+                                            Leg {idx + 1}
+                                        </span>
+
+                                        <div className="formgrid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: 14 }}>
+                                            <div className="field-group">
+                                                <label>Airline</label>
+                                                <input
+                                                    type="text"
+                                                    list={`airline-options-${idx}`}
+                                                    placeholder="e.g. Air India"
+                                                    value={leg.airline}
+                                                    onChange={e => updateLegInput(idx, 'airline', e.target.value)}
+                                                />
+                                                <datalist id={`airline-options-${idx}`}>
+                                                    {PREDEFINED_AIRLINES.map(a => <option key={a} value={a} />)}
+                                                </datalist>
+                                            </div>
+                                            <div className="field-group">
+                                                <label>Flight Number</label>
+                                                <input
+                                                    type="text"
+                                                    readOnly={isFirst}
+                                                    style={isFirst ? { ...lockedFieldStyle, fontWeight: 500, textTransform: 'uppercase' } : { fontWeight: 500, textTransform: 'uppercase' }}
+                                                    placeholder="e.g. 6E 123"
+                                                    value={leg.flight_number}
+                                                    onChange={e => updateLegInput(idx, 'flight_number', e.target.value.toUpperCase())}
+                                                />
+                                            </div>
+                                            <div className="field-group">
+                                                <label>Origin</label>
+                                                <input
+                                                    type="text"
+                                                    readOnly
+                                                    style={{ ...lockedFieldStyle, fontWeight: 500, textTransform: 'uppercase' }}
+                                                    placeholder="Airport Code"
+                                                    value={leg.origin}
                                                     tabIndex={-1}
                                                 />
                                             </div>
-                                            <div className="flex-1">
-                                                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Arr. Tml</label>
-                                                <input 
-                                                    type="text" 
-                                                    readOnly={idx === legInputs.length - 1}
-                                                    className={`w-full px-2 py-2 border rounded-lg text-sm transition-all focus:outline-none ${
-                                                        idx === legInputs.length - 1 
-                                                        ? 'bg-slate-200/60 border-slate-300 cursor-not-allowed text-slate-500 shadow-inner' 
-                                                        : 'bg-white border-slate-200 text-slate-700 focus:ring-2 focus:ring-blue-500 shadow-sm'
-                                                    }`} 
-                                                    placeholder="T1" 
-                                                    value={leg.arrival_terminal} 
-                                                    onChange={e => updateLegInput(idx, 'arrival_terminal', e.target.value)} 
+                                            <div className="field-group">
+                                                <label>Destination</label>
+                                                <input
+                                                    type="text"
+                                                    readOnly={isLast}
+                                                    style={isLast ? { ...lockedFieldStyle, fontWeight: 500, textTransform: 'uppercase' } : { fontWeight: 500, textTransform: 'uppercase' }}
+                                                    placeholder="Airport Code"
+                                                    value={leg.destination}
+                                                    onChange={e => updateLegInput(idx, 'destination', e.target.value.toUpperCase())}
+                                                />
+                                            </div>
+                                            <div style={{ display: 'flex', gap: 8 }}>
+                                                <div className="field-group" style={{ flex: 1 }}>
+                                                    <label>Dep. Tml</label>
+                                                    <input
+                                                        type="text"
+                                                        readOnly
+                                                        style={lockedFieldStyle}
+                                                        placeholder="T3"
+                                                        value={leg.departure_terminal}
+                                                        tabIndex={-1}
+                                                    />
+                                                </div>
+                                                <div className="field-group" style={{ flex: 1 }}>
+                                                    <label>Arr. Tml</label>
+                                                    <input
+                                                        type="text"
+                                                        readOnly={isLast}
+                                                        style={isLast ? lockedFieldStyle : undefined}
+                                                        placeholder="T1"
+                                                        value={leg.arrival_terminal}
+                                                        onChange={e => updateLegInput(idx, 'arrival_terminal', e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="formgrid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginTop: 14 }}>
+                                            <div className="field-group">
+                                                <label>Dep. Date</label>
+                                                <input
+                                                    type="text"
+                                                    readOnly
+                                                    style={lockedFieldStyle}
+                                                    placeholder="DD/MM/YYYY"
+                                                    value={leg.date_departure}
+                                                    tabIndex={-1}
+                                                />
+                                            </div>
+                                            <div className="field-group">
+                                                <label>Dep. Time</label>
+                                                <input
+                                                    type="text"
+                                                    readOnly
+                                                    style={lockedFieldStyle}
+                                                    placeholder="HH:mm"
+                                                    value={leg.time_departure}
+                                                    tabIndex={-1}
+                                                />
+                                            </div>
+                                            <div className="field-group">
+                                                <label>Arr. Date</label>
+                                                <input
+                                                    type="text"
+                                                    readOnly={isLast}
+                                                    style={isLast ? lockedFieldStyle : undefined}
+                                                    placeholder="DD/MM/YYYY"
+                                                    value={leg.date_arrival}
+                                                    onChange={e => updateLegInput(idx, 'date_arrival', e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="field-group">
+                                                <label>Arr. Time</label>
+                                                <input
+                                                    type="text"
+                                                    readOnly={isLast}
+                                                    style={isLast ? lockedFieldStyle : undefined}
+                                                    placeholder="HH:mm"
+                                                    value={leg.time_arrival}
+                                                    onChange={e => updateLegInput(idx, 'time_arrival', e.target.value)}
                                                 />
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-                                        <div>
-                                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Dep. Date</label>
-                                            <input
-                                                type="text"
-                                                readOnly={idx >= 0}
-                                                className="text-slate-800 w-full px-3 py-2 border border-slate-300 rounded-lg outline-none transition-all bg-slate-200/60 cursor-not-allowed text-slate-500 shadow-inner"
-                                                placeholder="DD/MM/YYYY"
-                                                value={leg.date_departure}
-                                                tabIndex={-1}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Dep. Time</label>
-                                            <input
-                                                type="text"
-                                                readOnly={idx >= 0}
-                                                className="text-slate-800 w-full px-3 py-2 border border-slate-300 rounded-lg outline-none transition-all bg-slate-200/60 cursor-not-allowed text-slate-500 shadow-inner"
-                                                placeholder="HH:mm"
-                                                value={leg.time_departure}
-                                                tabIndex={-1}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Arr. Date</label>
-                                            <input
-                                                type="text"
-                                                readOnly={idx === legInputs.length - 1}
-                                                className={`text-slate-800 w-full px-3 py-2 border rounded-lg outline-none transition-all ${
-                                                    idx === legInputs.length - 1 
-                                                    ? 'bg-slate-200/60 border-slate-300 cursor-not-allowed text-slate-500 shadow-inner' 
-                                                    : 'bg-white border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm'
-                                                }`}
-                                                placeholder="DD/MM/YYYY"
-                                                value={leg.date_arrival}
-                                                onChange={e => updateLegInput(idx, 'date_arrival', e.target.value)}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Arr. Time</label>
-                                            <input
-                                                type="text"
-                                                readOnly={idx === legInputs.length - 1}
-                                                className={`text-slate-800 w-full px-3 py-2 border rounded-lg outline-none transition-all ${
-                                                    idx === legInputs.length - 1 
-                                                    ? 'bg-slate-200/60 border-slate-300 cursor-not-allowed text-slate-500 shadow-inner' 
-                                                    : 'bg-white border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm'
-                                                }`}
-                                                placeholder="HH:mm"
-                                                value={leg.time_arrival}
-                                                onChange={e => updateLegInput(idx, 'time_arrival', e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {idx < legInputs.length - 1 && (
-                                        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center">
-                                            <div className="w-[1px] h-8 bg-dashed bg-slate-300 border-l border-dashed"></div>
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
-                        
-                        <div className="p-6 bg-white border-t border-slate-100 flex gap-4 shrink-0">
-                            <button 
-                                onClick={() => setIsStopModalOpen(false)}
-                                className="px-6 py-3 border border-slate-200 text-slate-500 font-semibold rounded-xl hover:bg-slate-50 transition"
-                            >
+
+                        <div style={{ padding: '20px 28px', background: 'var(--paper)', borderTop: '1px solid var(--line)', display: 'flex', gap: 12, flexShrink: 0 }}>
+                            <button onClick={() => setIsStopModalOpen(false)} className="btn btn-ghost">
                                 Back
                             </button>
-                            <button 
-                                onClick={handleSaveStops}
-                                className="flex-1 px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition transform active:scale-95"
-                            >
+                            <button onClick={handleSaveStops} className="btn btn-primary" style={{ flex: 1 }}>
                                 Save Complete Itinerary
                             </button>
                         </div>
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 }

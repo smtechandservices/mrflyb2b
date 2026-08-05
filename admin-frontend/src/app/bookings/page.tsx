@@ -34,6 +34,34 @@ interface GroupedBooking {
     payment_mode: string;
 }
 
+// Map arbitrary backend status strings onto the 3 semantic .status pill variants.
+function statusVariant(status: string): 'confirmed' | 'pending' | 'cancelled' {
+    const s = (status || '').toUpperCase();
+    if (s === 'CONFIRMED') return 'confirmed';
+    if (s === 'PENDING') return 'pending';
+    return 'cancelled';
+}
+
+function StatusPill({ status }: { status: string }) {
+    return (
+        <span className={`status ${statusVariant(status)}`}>
+            <span className="d"></span>
+            {status}
+        </span>
+    );
+}
+
+function InfoField({ label, value }: { label: string; value: React.ReactNode }) {
+    return (
+        <div>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 4 }}>
+                {label}
+            </div>
+            <div style={{ fontSize: 14, color: 'var(--ink)' }}>{value}</div>
+        </div>
+    );
+}
+
 export default function AdminBookingsPage() {
     const [groupedBookings, setGroupedBookings] = useState<GroupedBooking[]>([]);
     const [loading, setLoading] = useState(true);
@@ -156,9 +184,9 @@ export default function AdminBookingsPage() {
 
         const result = await Swal.fire({
             title: isGroup ? 'Reject Entire Group?' : 'Are you sure?',
-            text: isGroup 
-                ? "All eligible passengers in this group will be rejected and the user will be refunded the full amount."
-                : "This booking will be rejected and the user will be refunded the full amount.",
+            text: isGroup
+                ? "All eligible passengers in this group will be rejected and the agent will be refunded the full amount."
+                : "This booking will be rejected and the agent will be refunded the full amount.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -169,7 +197,7 @@ export default function AdminBookingsPage() {
         if (result.isConfirmed) {
             try {
                 const data = await rejectBooking(effectiveBookingId, effectiveGroup);
-                
+
                 // Refresh list to update all states correctly
                 fetchBookings(currentPage, debouncedSearch);
                 if (selectedGroup) {
@@ -178,7 +206,7 @@ export default function AdminBookingsPage() {
 
                 Swal.fire(
                     'Rejected!',
-                    isGroup 
+                    isGroup
                         ? `Successfully rejected ${data.processed_count} booking(s) and refunded ₹${parseFloat(data.total_refunded as any).toLocaleString('en-IN')}.`
                         : `Successfully rejected the booking and refunded ₹${parseFloat(data.total_refunded as any).toLocaleString('en-IN')}.`,
                     'success'
@@ -190,124 +218,116 @@ export default function AdminBookingsPage() {
         }
     };
 
-    if (loading && groupedBookings.length === 0) return <div>Loading bookings...</div>;
+    if (loading && groupedBookings.length === 0) return (
+        <div className="admin-content">
+            <div style={{ padding: 48, textAlign: 'center', color: 'var(--muted)' }}>Loading bookings…</div>
+        </div>
+    );
 
     return (
-        <div className='pt-8'>
-            <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-bold text-slate-800">Booking Management</h2>
-                <div className="flex items-center gap-4">
-                    <div className="flex flex-col items-end">
-                        <span className="text-[10px] uppercase tracking-wider text-green-600 font-bold">Net Revenue</span>
-                        <span className="text-xl font-bold text-green-700">₹{netRevenue.toLocaleString('en-IN')}</span>
+        <div className="admin-content">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 24, marginBottom: 24, flexWrap: 'wrap' }}>
+                <div>
+                    <h2>Booking Management</h2>
+                    <p className="sub" style={{ margin: '6px 0 0' }}>
+                        {groupedBookings.length} booking group{groupedBookings.length !== 1 ? 's' : ''} on this page · {totalCount} total.
+                    </p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
+                        <span className="eyebrow" style={{ color: '#1f7a4d' }}>Net Revenue</span>
+                        <span style={{ fontFamily: 'var(--mono)', fontSize: 20, fontWeight: 500, color: '#1f7a4d', letterSpacing: '-0.005em' }}>
+                            ₹{netRevenue.toLocaleString('en-IN')}
+                        </span>
                     </div>
-                    <div className="relative">
-                        <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <div className="admin-search">
+                        <Search size={14} />
                         <input
                             type="text"
-                            placeholder="Search by booked by or passenger..."
+                            placeholder="Search by booked by or passenger…"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="text-slate-700 pl-10 pr-12 py-4 border border-slate-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            style={{ border: 'none', outline: 'none', background: 'transparent', font: 'inherit', color: 'inherit', width: '100%' }}
                         />
                     </div>
                 </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div className="overflow-x-auto no-scrollbar">
-                    <table className="w-full text-left text-sm whitespace-nowrap">
-                        <thead className="bg-slate-50 border-b border-slate-100">
+            <div className="panel">
+                <div style={{ overflowX: 'auto' }}>
+                    <table className="dtable" style={{ whiteSpace: 'nowrap' }}>
+                        <thead>
                             <tr>
-                                <th className="px-6 py-4 font-medium text-slate-500">Group Ref</th>
-                                <th className="px-6 py-4 font-medium text-slate-500">Booked By</th>
-                                <th className="px-6 py-4 font-medium text-slate-500">Flight</th>
-                                <th className="px-6 py-4 font-medium text-slate-500">Route</th>
-                                <th className="px-6 py-4 font-medium text-slate-500">Travel Date</th>
-                                <th className="px-6 py-4 font-medium text-slate-500">Passengers</th>
-                                <th className="px-6 py-4 font-medium text-slate-500">Total Price</th>
-                                <th className="px-6 py-4 font-medium text-slate-500">Refunded</th>
-                                <th className="px-6 py-4 font-medium text-slate-500 text-center">PNR Status</th>
-                                <th className="px-6 py-4 font-medium text-slate-500 text-center">Payment Status</th>
+                                <th>Group Ref</th>
+                                <th>Booked By</th>
+                                <th>Flight</th>
+                                <th>Route</th>
+                                <th>Travel Date</th>
+                                <th style={{ textAlign: 'center' }}>Passengers</th>
+                                <th style={{ textAlign: 'right' }}>Total Price</th>
+                                <th style={{ textAlign: 'right' }}>Refunded</th>
+                                <th style={{ textAlign: 'center' }}>Flight Status</th>
+                                <th style={{ textAlign: 'center' }}>Payment Status</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={10} className="px-6 py-12 text-center text-slate-500">
-                                        <div className="flex flex-col items-center gap-3">
-                                            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                                            <span>Searching bookings...</span>
-                                        </div>
+                                    <td colSpan={10} style={{ textAlign: 'center', padding: 32, color: 'var(--muted)' }}>
+                                        Searching bookings…
                                     </td>
                                 </tr>
                             ) : groupedBookings.length === 0 ? (
                                 <tr>
-                                    <td colSpan={10} className="px-6 py-12 text-center text-slate-500">
+                                    <td colSpan={10} style={{ textAlign: 'center', padding: 32, color: 'var(--muted)' }}>
                                         No bookings found matching your search.
                                     </td>
                                 </tr>
                             ) : (
                                 groupedBookings.map((group) => (
-                                    <tr key={group.booking_group} className="hover:bg-slate-50">
-                                        <td className="px-6 py-4 font-mono text-xs text-slate-400">
+                                    <tr key={group.booking_group}>
+                                        <td style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--muted)' }}>
                                             {group.booking_group || 'N/A'}
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div className="font-bold text-slate-900">{group.broker.username}</div>
-                                            <div className="text-slate-500 text-xs">{group.broker.email}</div>
+                                        <td>
+                                            <div style={{ fontWeight: 500, color: 'var(--ink)' }}>{group.broker.username}</div>
+                                            <div style={{ color: 'var(--muted)', fontSize: 12 }}>{group.broker.email}</div>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div className="font-medium text-slate-900">{group.flight_details.airline}</div>
-                                            <div className="text-slate-500 text-xs">{group.flight_details.flight_number}</div>
+                                        <td>
+                                            <div style={{ color: 'var(--ink)' }}>{group.flight_details.airline}</div>
+                                            <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--muted)' }}>{group.flight_details.flight_number}</div>
                                         </td>
-                                        <td className="px-6 py-4 text-slate-600">
-                                            <div className="font-medium">{group.flight_details.origin} → {group.flight_details.destination}</div>
+                                        <td style={{ color: 'var(--ink-2)' }}>
+                                            <div>{group.flight_details.origin} → {group.flight_details.destination}</div>
                                             {group.flight_details.stops > 0 && (
-                                                <div className="text-[10px] text-slate-400">via {group.flight_details.stop_details}</div>
+                                                <div style={{ fontSize: 10, color: 'var(--muted)' }}>via {group.flight_details.stop_details}</div>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-slate-600">
+                                        <td style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--ink-2)' }}>
                                             {new Date(group.travel_date).toLocaleDateString()}
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <button
-                                                onClick={() => setSelectedGroup(group)}
-                                                className="cursor-pointer inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold hover:bg-blue-100 transition-colors"
-                                            >
-                                                {group.passengers.length} Passenger(s)
+                                        <td style={{ textAlign: 'center' }}>
+                                            <button className="btn btn-ghost btn-sm" style={{ padding: '4px 10px' }} onClick={() => setSelectedGroup(group)}>
+                                                {group.passengers.length} pax
                                             </button>
                                         </td>
-                                        <td className={`px-6 py-4 font-bold ${group.status === 'CONFIRMED' ? 'text-green-600' : 'text-slate-900'}`}>
+                                        <td style={{ textAlign: 'right', fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 500, color: group.status === 'CONFIRMED' ? '#1f7a4d' : 'var(--ink)' }}>
                                             ₹{group.total_price.toLocaleString('en-IN')}
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td style={{ textAlign: 'right', fontFamily: 'var(--mono)', fontSize: 13 }}>
                                             {(group as any).total_refunded > 0 ? (
-                                                <span className="font-bold text-red-600">
-                                                    - ₹{((group as any).total_refunded).toLocaleString('en-IN')}
+                                                <span style={{ color: '#b8443a', fontWeight: 500 }}>
+                                                    − ₹{((group as any).total_refunded).toLocaleString('en-IN')}
                                                 </span>
                                             ) : (
-                                                <span className="text-slate-400">-</span>
+                                                <span style={{ color: 'var(--muted)' }}>—</span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4">
-                                            {/* Flight Status Badge */}
-                                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-tighter ${
-                                                group.flight_status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                                            }`}>
-                                                {group.flight_status}
-                                            </span>                     
+                                        <td style={{ textAlign: 'center' }}>
+                                            <StatusPill status={group.flight_status} />
                                         </td>
-                                        <td className="px-6 py-4">
-                                            {/* Payment Status Badge */}
-                                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-tighter ${
-                                                group.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-700' :
-                                                group.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
-                                                group.status === 'REJECTED' ? 'bg-red-100 text-red-700' :
-                                                'bg-slate-100 text-slate-700'
-                                            }`}>
-                                                {group.status}
-                                            </span>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <StatusPill status={group.status} />
                                         </td>
                                     </tr>
                                 ))
@@ -316,22 +336,22 @@ export default function AdminBookingsPage() {
                     </table>
                 </div>
                 {!loading && (
-                    <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
-                        <span className="text-sm text-slate-500">
+                    <div style={{ padding: '14px 22px', borderTop: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--muted)' }}>
                             Page {currentPage} of {Math.max(1, totalPages)} ({totalCount} bookings)
                         </span>
-                        <div className="text-slate-700 flex gap-2">
+                        <div style={{ display: 'flex', gap: 8 }}>
                             <button
+                                className="btn btn-ghost btn-sm"
                                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                 disabled={currentPage === 1}
-                                className="px-3 py-1 text-sm border border-slate-200 rounded hover:bg-slate-50 disabled:opacity-50"
                             >
                                 Previous
                             </button>
                             <button
+                                className="btn btn-ghost btn-sm"
                                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                 disabled={currentPage >= totalPages}
-                                className="px-3 py-1 text-sm border border-slate-200 rounded hover:bg-slate-50 disabled:opacity-50"
                             >
                                 Next
                             </button>
@@ -341,111 +361,75 @@ export default function AdminBookingsPage() {
             </div>
 
             {selectedGroup && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 shadow-2xl max-h-[90vh] flex flex-col">
-                        <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 backdrop-blur-md z-10">
+                <div className="modal-overlay" onClick={() => setSelectedGroup(null)}>
+                    <div className="modal modal-wide" style={{ padding: 0, display: 'flex', flexDirection: 'column', maxHeight: '90vh' }} onClick={e => e.stopPropagation()}>
+                        <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
                             <div>
-                                <h3 className="text-xl font-bold text-slate-800">Group Passenger Details</h3>
-                                <p className="text-xs text-slate-500 mt-1">
-                                    Booked by <span className="font-bold text-slate-700">{selectedGroup.broker.username}</span> • {selectedGroup.passengers.length} travelers
+                                <h3 style={{ margin: 0 }}>Group Passenger Details</h3>
+                                <p className="modal-sub" style={{ margin: '4px 0 0' }}>
+                                    Booked by <strong style={{ color: 'var(--ink)', fontWeight: 500 }}>{selectedGroup.broker.username}</strong> · {selectedGroup.passengers.length} traveler{selectedGroup.passengers.length !== 1 ? 's' : ''}
                                 </p>
                             </div>
-                            <button
-                                onClick={() => setSelectedGroup(null)}
-                                className="p-2 -mr-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
-                            >
-                                <X className="cursor-pointer w-5 h-5" />
+                            <button className="modal-close" style={{ position: 'static' }} onClick={() => setSelectedGroup(null)}>
+                                <X size={16} />
                             </button>
                         </div>
 
-                        <div className="p-6 space-y-8 overflow-y-auto">
+                        <div style={{ padding: '24px 28px', overflowY: 'auto', flex: 1 }}>
                             {selectedGroup.passengers.map((passenger, index) => {
                                 const age = calculateAge(passenger.date_of_birth);
                                 const isInfant = passenger.is_infant || (age !== null && age <= 2);
                                 const isChild = age !== null && age > 2 && age <= 18;
-                                
+
                                 return (
-                                <div key={passenger.booking_id} className={`${index !== 0 ? 'pt-8 border-t border-slate-100' : ''}`}>
-                                    <div className="flex items-center gap-4 mb-6">
-                                        <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm uppercase">
-                                            {passenger.first_name[0]}{passenger.last_name[0]}
-                                        </div>
-                                        <div>
-                                            <h4 className="font-bold text-slate-900 flex items-center gap-2">
-                                                {passenger.first_name} {passenger.last_name}
-                                                {isChild && (
-                                                    <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[10px] uppercase tracking-wider rounded border border-indigo-200 font-bold">
-                                                        Child
-                                                    </span>
-                                                )}
-                                                {isInfant && (
-                                                    <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-[10px] uppercase tracking-wider rounded border border-blue-200 font-bold">
-                                                        Infant
-                                                    </span>
-                                                )}
-                                            </h4>
-                                            <div className="flex items-center gap-4">
-                                                <p className="text-slate-400 text-[10px] font-mono uppercase tracking-wider">
-                                                    ID: {passenger.booking_id}
-                                                </p>
-                                                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-                                                    Price: ₹{parseFloat((parseFloat(passenger.charged_price) > 0 || passenger.is_infant) ? passenger.charged_price : passenger.flight_details.price).toLocaleString('en-IN')}
-                                                </p>
-                                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-tighter ${
-                                                    passenger.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-700' :
-                                                    passenger.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
-                                                    passenger.status === 'REJECTED' ? 'bg-red-100 text-red-700' :
-                                                    'bg-slate-100 text-slate-700'
-                                                }`}>
-                                                    {passenger.status}
-                                                </span>
+                                    <div key={passenger.booking_id} style={index !== 0 ? { paddingTop: 28, marginTop: 28, borderTop: '1px solid var(--line)' } : undefined}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
+                                            <div style={{
+                                                width: 40, height: 40, borderRadius: '50%', background: 'var(--sand)', color: 'var(--forest)',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                fontFamily: 'var(--mono)', fontWeight: 600, fontSize: 13, textTransform: 'uppercase', flexShrink: 0,
+                                            }}>
+                                                {passenger.first_name[0]}{passenger.last_name[0]}
                                             </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-x-8 gap-y-4 px-2">
-                                        <div>
-                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">First Name</label>
-                                            <div className="text-slate-800 font-medium text-sm">{passenger.first_name}</div>
-                                        </div>
-                                        <div>
-                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Last Name</label>
-                                            <div className="text-slate-800 font-medium text-sm">{passenger.last_name}</div>
-                                        </div>
-                                        <div>
-                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Booking ID</label>
-                                            <div className="text-slate-800 font-medium text-sm font-mono">{passenger.booking_id}</div>
-                                        </div>
-                                        <div>
-                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Email</label>
-                                            <div className="text-slate-800 font-medium text-sm break-all">{passenger.passenger_email || '-'}</div>
-                                        </div>
-                                        <div>
-                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Phone</label>
-                                            <div className="text-slate-800 font-medium text-sm">{passenger.passenger_phone || '-'}</div>
-                                        </div>
-                                        {passenger.date_of_birth && (
                                             <div>
-                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">DOB</label>
-                                                <div className="text-slate-800 font-medium text-sm">{new Date(passenger.date_of_birth).toLocaleDateString()}</div>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                                    <h4 style={{ margin: 0, fontSize: 17 }}>{passenger.first_name} {passenger.last_name}</h4>
+                                                    {isChild && <span className="tag" style={{ padding: '2px 8px', fontSize: 10 }}>Child</span>}
+                                                    {isInfant && <span className="tag" style={{ padding: '2px 8px', fontSize: 10 }}>Infant</span>}
+                                                </div>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 4 }}>
+                                                    <span style={{ fontFamily: 'var(--mono)', fontSize: 10, textTransform: 'uppercase', color: 'var(--muted)' }}>
+                                                        ID: {passenger.booking_id}
+                                                    </span>
+                                                    <span style={{ fontFamily: 'var(--mono)', fontSize: 10, textTransform: 'uppercase', color: 'var(--muted)' }}>
+                                                        ₹{parseFloat((parseFloat(passenger.charged_price) > 0 || passenger.is_infant) ? passenger.charged_price : passenger.flight_details.price).toLocaleString('en-IN')}
+                                                    </span>
+                                                    <StatusPill status={passenger.status} />
+                                                </div>
                                             </div>
-                                        )}
-                                        {passenger.frequent_flyer_number && (
-                                            <div>
-                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Freq. Flyer #</label>
-                                                <div className="text-slate-800 font-medium text-sm font-mono">{passenger.frequent_flyer_number}</div>
-                                            </div>
-                                        )}
-                                    </div>
+                                        </div>
 
-                                    <div className="mt-4 pt-4 border-t border-slate-100">
-                                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">PNR / Booking Reference</label>
-                                        <div className="flex items-center gap-2">
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 24px', padding: '4px 0 20px' }}>
+                                            <InfoField label="First Name" value={passenger.first_name} />
+                                            <InfoField label="Last Name" value={passenger.last_name} />
+                                            <InfoField label="Booking ID" value={<span style={{ fontFamily: 'var(--mono)' }}>{passenger.booking_id}</span>} />
+                                            <InfoField label="Email" value={passenger.passenger_email || '—'} />
+                                            <InfoField label="Phone" value={passenger.passenger_phone || '—'} />
+                                            {passenger.date_of_birth && (
+                                                <InfoField label="DOB" value={<span style={{ fontFamily: 'var(--mono)' }}>{new Date(passenger.date_of_birth).toLocaleDateString()}</span>} />
+                                            )}
+                                            {passenger.frequent_flyer_number && (
+                                                <InfoField label="Freq. Flyer #" value={<span style={{ fontFamily: 'var(--mono)' }}>{passenger.frequent_flyer_number}</span>} />
+                                            )}
+                                        </div>
+
+                                        <div className="field-group" style={{ maxWidth: 320, marginBottom: (passenger.passport_number || passenger.passport_issue_date || passenger.passport_expiry_date) ? 20 : 0 }}>
+                                            <label>PNR / Booking Reference</label>
                                             <input
                                                 type="text"
                                                 defaultValue={passenger.pnr || ''}
                                                 placeholder="Enter PNR"
-                                                className="text-slate-800 border border-slate-200 rounded-lg px-3 py-2 text-sm w-full font-mono uppercase focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                                style={{ fontFamily: 'var(--mono)', textTransform: 'uppercase' }}
                                                 onBlur={(e) => {
                                                     if (e.target.value !== (passenger.pnr || '')) {
                                                         handleUpdatePnr(passenger.booking_id, e.target.value);
@@ -458,55 +442,41 @@ export default function AdminBookingsPage() {
                                                 }}
                                             />
                                         </div>
-                                    </div>
 
-                                    {(passenger.passport_number || passenger.passport_issue_date || passenger.passport_expiry_date) && (
-                                        <div className="mt-4 bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                                            <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                                                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                                                Passport Details
-                                            </h5>
-                                            <div className="grid grid-cols-3 gap-4 text-xs">
-                                                {passenger.passport_number && (
-                                                    <div className="col-span-1">
-                                                        <label className="text-slate-400 mb-0.5 block">Number</label>
-                                                        <div className="font-bold font-mono text-slate-800">{passenger.passport_number}</div>
-                                                    </div>
-                                                )}
-                                                {passenger.passport_issue_date && (
-                                                    <div className="col-span-1">
-                                                        <label className="text-slate-400 mb-0.5 block">Issued</label>
-                                                        <div className="font-medium text-slate-800">{new Date(passenger.passport_issue_date).toLocaleDateString()}</div>
-                                                    </div>
-                                                )}
-                                                {passenger.passport_expiry_date && (
-                                                    <div className="col-span-1">
-                                                        <label className="text-slate-400 mb-0.5 block">Expiry</label>
-                                                        <div className="font-medium text-slate-800">{new Date(passenger.passport_expiry_date).toLocaleDateString()}</div>
-                                                    </div>
-                                                )}
+                                        {(passenger.passport_number || passenger.passport_issue_date || passenger.passport_expiry_date) && (
+                                            <div style={{ background: 'var(--sand)', border: '1px solid var(--line)', borderRadius: 4, padding: 16 }}>
+                                                <div className="eyebrow" style={{ marginBottom: 10 }}>Passport Details</div>
+                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+                                                    {passenger.passport_number && (
+                                                        <InfoField label="Number" value={<span style={{ fontFamily: 'var(--mono)', fontWeight: 500 }}>{passenger.passport_number}</span>} />
+                                                    )}
+                                                    {passenger.passport_issue_date && (
+                                                        <InfoField label="Issued" value={<span style={{ fontFamily: 'var(--mono)' }}>{new Date(passenger.passport_issue_date).toLocaleDateString()}</span>} />
+                                                    )}
+                                                    {passenger.passport_expiry_date && (
+                                                        <InfoField label="Expiry" value={<span style={{ fontFamily: 'var(--mono)' }}>{new Date(passenger.passport_expiry_date).toLocaleDateString()}</span>} />
+                                                    )}
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
-                                </div>
-                            )})}
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
 
-                        <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center px-6">
-                            <div className="flex gap-2">
+                        <div style={{ padding: '16px 28px', background: 'var(--sand)', borderTop: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
+                            <div>
                                 {selectedGroup.passengers.some(p => p.status !== 'REJECTED' && p.status !== 'CANCELLED' && p.status !== 'REFUNDED') && (
                                     <button
+                                        className="btn btn-ghost btn-sm"
+                                        style={{ color: '#b8443a', borderColor: 'rgba(184,68,58,0.3)' }}
                                         onClick={() => handleReject(undefined, selectedGroup.booking_group)}
-                                        className="cursor-pointer px-4 py-2 bg-red-50 text-red-600 font-bold rounded-xl hover:bg-red-100 transition-all text-xs border border-red-100"
                                     >
                                         Reject Group
                                     </button>
                                 )}
                             </div>
-                            <button
-                                onClick={() => setSelectedGroup(null)}
-                                className="cursor-pointer px-8 py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm text-sm"
-                            >
+                            <button className="btn btn-ghost" onClick={() => setSelectedGroup(null)}>
                                 Close Details
                             </button>
                         </div>

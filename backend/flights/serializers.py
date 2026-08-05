@@ -383,11 +383,12 @@ class FlyerSerializer(serializers.ModelSerializer):
     def get_image_url(self, obj):
         if not obj.image_data:
             return None
-        
+
         request = self.context.get('request')
         from django.urls import reverse
         url = reverse('serve-flyer-image', kwargs={'pk': obj.pk})
-        
+        url = f"{url}?v={int(obj.updated_at.timestamp())}"
+
         if request:
             absolute_uri = request.build_absolute_uri(url)
             # Ensure HTTPS for production-like environments
