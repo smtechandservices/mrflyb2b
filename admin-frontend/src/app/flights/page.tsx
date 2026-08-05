@@ -1,69 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getAdminFlights, createFlight, updateFlight, deleteFlight, bulkCreateFlights, Flight } from '@/lib/api';
+import { useRouter } from 'next/navigation';
+import { getAdminFlights, updateFlight, deleteFlight, bulkCreateFlights, Flight } from '@/lib/api';
 import { getAirlineLogo, PREDEFINED_AIRLINES } from '@/lib/airlines';
+import { formatDateToDDMMYYYY, parseDDMMYYYYToYYYYMMDD, getISOPart, lockedFieldStyle } from '@/lib/flightDateUtils';
 import { Plus, Edit2, Trash2, Search, X, FileDigit, Download, Eye, EyeOff, Map } from 'lucide-react';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
 import { BRAND } from '@/config/brand';
 
-// Helper to format ISO to dd/mm/yyyy
-const formatDateToDDMMYYYY = (isoString: string | undefined) => {
-    if (!isoString) return '';
-    const date = new Date(isoString);
-    if (isNaN(date.getTime())) return '';
-    const d = String(date.getDate()).padStart(2, '0');
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const y = date.getFullYear();
-    return `${d}/${m}/${y}`;
-};
-
-// Helper to parse dd/mm/yyyy to yyyy-mm-dd
-const parseDDMMYYYYToYYYYMMDD = (dateStr: string) => {
-    if (!dateStr || !dateStr.includes('/')) return null;
-    const parts = dateStr.split('/');
-    if (parts.length === 3) {
-        const [d, m, y] = parts;
-        if (y.length === 4 && d.length <= 2 && m.length <= 2) {
-            return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-        }
-    }
-    return null;
-};
-
-// Helper to safely get parts from ISO string without throwing RangeError
-const getISOPart = (isoString: string | undefined, part: 'date' | 'time') => {
-    if (!isoString) return part === 'date' ? new Date().toISOString().split('T')[0] : '00:00';
-
-    // First try simple string split to avoid timezone/Date object issues
-    const split = isoString.split('T');
-    if (split.length === 2) {
-        if (part === 'date') return split[0];
-        const timePart = split[1].slice(0, 5);
-        if (/^\d{2}:\d{2}$/.test(timePart)) return timePart;
-    }
-
-    try {
-        const date = new Date(isoString);
-        if (isNaN(date.getTime())) return part === 'date' ? new Date().toISOString().split('T')[0] : '00:00';
-        const fullISO = date.toISOString();
-        if (part === 'date') return fullISO.split('T')[0];
-        return fullISO.split('T')[1].slice(0, 5);
-    } catch {
-        return part === 'date' ? new Date().toISOString().split('T')[0] : '00:00';
-    }
-};
-
-// Shared input style helper for read-only/locked itinerary-leg fields (values
-// pinned to the master flight or propagated from the previous leg).
-const lockedFieldStyle: React.CSSProperties = {
-    background: 'var(--sand)',
-    color: 'var(--muted)',
-    cursor: 'not-allowed',
-};
-
 export default function AdminFlightsPage() {
+    const router = useRouter();
     const [flights, setFlights] = useState<Flight[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -143,44 +91,21 @@ export default function AdminFlightsPage() {
         }
     };
 
-    const openModal = (flight?: Flight) => {
-        if (flight) {
-            setEditingFlight(flight);
-            setFormData(flight);
-            setModalDateStrings({
-                departure: formatDateToDDMMYYYY(flight.departure_time),
-                arrival: formatDateToDDMMYYYY(flight.arrival_time)
-            });
-            setModalTimeStrings({
-                departure: getISOPart(flight.departure_time, 'time'),
-                arrival: getISOPart(flight.arrival_time, 'time')
-            });
-            // Calculate booked count: Total - Available
-            const available = flight.available_seats || 0;
-            const total = flight.total_seats || 0;
-            setBookedCount(total - available);
-        } else {
-            setEditingFlight(null);
-            setBookedCount(0);
-            setFormData({
-                airline: '',
-                flight_number: '',
-                origin: '',
-                destination: '',
-                price: '',
-                infant_price: '0',
-                stops: 0,
-                stop_details: '',
-                total_seats: 150,
-                available_seats: 150,
-                is_hidden: false,
-                pnr: '',
-                baggage_allowance: '',
-                layover_duration: ''
-            });
-            setModalDateStrings({ departure: '', arrival: '' });
-            setModalTimeStrings({ departure: '', arrival: '' });
-        }
+    const openEditModal = (flight: Flight) => {
+        setEditingFlight(flight);
+        setFormData(flight);
+        setModalDateStrings({
+            departure: formatDateToDDMMYYYY(flight.departure_time),
+            arrival: formatDateToDDMMYYYY(flight.arrival_time)
+        });
+        setModalTimeStrings({
+            departure: getISOPart(flight.departure_time, 'time'),
+            arrival: getISOPart(flight.arrival_time, 'time')
+        });
+        // Calculate booked count: Total - Available
+        const available = flight.available_seats || 0;
+        const total = flight.total_seats || 0;
+        setBookedCount(total - available);
         setIsModalOpen(true);
     };
 
@@ -267,12 +192,13 @@ export default function AdminFlightsPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!editingFlight) return;
 
         const result = await Swal.fire({
-            title: `Are you sure you want to ${editingFlight ? 'update' : 'create'} this flight?`,
+            title: 'Are you sure you want to update this flight?',
             icon: 'question',
             showCancelButton: true,
-            confirmButtonText: editingFlight ? 'Yes, update' : 'Yes, create',
+            confirmButtonText: 'Yes, update',
             confirmButtonColor: '#16a34a',
             cancelButtonColor: '#64748b',
         });
@@ -285,17 +211,13 @@ export default function AdminFlightsPage() {
 
             // Strictly enforce: if stops > 0, check if the EXISTING stop_info is complete
             // Note: We use editingFlight.stop_info because stop_info isn't in formData
-            let hasValidItinerary = isItineraryComplete(editingFlight?.stop_info, currentStops);
+            const hasValidItinerary = isItineraryComplete(editingFlight.stop_info, currentStops);
 
             if (currentStops > 0 && !hasValidItinerary) {
                 dataToSave.is_hidden = true;
             }
 
-            if (editingFlight) {
-                await updateFlight(editingFlight.id, dataToSave);
-            } else {
-                await createFlight(dataToSave);
-            }
+            await updateFlight(editingFlight.id, dataToSave);
 
             setIsModalOpen(false);
             fetchFlights(currentPage);
@@ -305,9 +227,7 @@ export default function AdminFlightsPage() {
 
             Swal.fire({
                 icon: 'success',
-                title: editingFlight
-                    ? `Flight Updated (${isActuallyHidden ? 'Hidden' : 'Visible'})`
-                    : `Flight Created (${isActuallyHidden ? 'Hidden' : 'Visible'})`,
+                title: `Flight Updated (${isActuallyHidden ? 'Hidden' : 'Visible'})`,
                 text: needsSetup
                     ? 'Flight is forcibly hidden until the itinerary matches the stop count and all fields are filled.'
                     : (isActuallyHidden ? 'Flight is manually set to hidden.' : 'Flight is now visible for bookings.'),
@@ -684,7 +604,7 @@ export default function AdminFlightsPage() {
                     <button onClick={() => document.getElementById('excel-upload')?.click()} className="btn btn-ghost btn-sm">
                         <FileDigit size={14} /> Upload Excel
                     </button>
-                    <button onClick={() => openModal()} className="btn btn-primary btn-sm">
+                    <button onClick={() => router.push('/flights/add')} className="btn btn-primary btn-sm">
                         <Plus size={14} /> Add Flight
                     </button>
                 </div>
@@ -734,7 +654,7 @@ export default function AdminFlightsPage() {
                                                 <div>
                                                     <div style={{ fontWeight: 500, color: 'var(--ink)' }}>{flight.airline}</div>
                                                     <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
-                                                        {flight.flight_number}{flight.departure_terminal ? ` · T${flight.departure_terminal}` : ''}
+                                                        {flight.flight_number}{flight.departure_terminal ? ` · ${flight.departure_terminal}` : ''}
                                                     </div>
                                                 </div>
                                             </div>
@@ -787,7 +707,7 @@ export default function AdminFlightsPage() {
                                                     </button>
                                                 )}
                                                 <button
-                                                    onClick={() => openModal(flight)}
+                                                    onClick={() => openEditModal(flight)}
                                                     className="btn btn-ghost btn-sm"
                                                     style={{ padding: 6 }}
                                                     title="Edit flight"
@@ -835,12 +755,12 @@ export default function AdminFlightsPage() {
                 </div>
             </div>
 
-            {/* Add/Edit Flight Modal */}
+            {/* Edit Flight Modal */}
             {isModalOpen && (
                 <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
                     <div className="modal modal-wide" onClick={(e) => e.stopPropagation()}>
                         <button className="modal-close" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
-                        <h3>{editingFlight ? 'Edit Flight' : 'Add New Flight'}</h3>
+                        <h3>Edit Flight</h3>
                         <p className="modal-sub">Inventory, pricing, seats and itinerary details for this flight.</p>
 
                         <form onSubmit={handleSubmit}>

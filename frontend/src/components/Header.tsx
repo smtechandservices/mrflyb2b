@@ -92,8 +92,8 @@ export function Header() {
                                     <span className="mono" style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)' }}>{fmt(spendingPower)}</span>
                                 </Link>
                             )}
-                            <button
-                                onClick={() => window.dispatchEvent(new CustomEvent('open-edit-profile-modal'))}
+                            <Link
+                                href="/profile"
                                 className="btn btn-ghost btn-sm"
                             >
                                 <User size={14} />
@@ -101,7 +101,7 @@ export function Header() {
                                 <span className={`status ${kyc.cls}`} style={{ padding: '2px 6px' }}>
                                     <span className="d" />
                                 </span>
-                            </button>
+                            </Link>
                             <button onClick={logout} className="btn btn-ghost btn-sm" title="Log out">
                                 <LogOut size={14} />
                             </button>
@@ -142,12 +142,13 @@ export function Header() {
 
                 {isAuthenticated ? (
                     <div className="nav-mobile-actions">
-                        <button
-                            onClick={() => { setIsMenuOpen(false); window.dispatchEvent(new CustomEvent('open-edit-profile-modal')); }}
+                        <Link
+                            href="/profile"
+                            onClick={() => setIsMenuOpen(false)}
                             className="btn btn-ghost btn-sm"
                         >
                             <User size={14} /> {user?.username}
-                        </button>
+                        </Link>
                         <button
                             onClick={() => { setIsMenuOpen(false); window.dispatchEvent(new CustomEvent('open-kyc-modal')); }}
                             className={`status ${kyc.cls}`}

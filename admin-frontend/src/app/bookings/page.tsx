@@ -219,13 +219,11 @@ export default function AdminBookingsPage() {
     };
 
     if (loading && groupedBookings.length === 0) return (
-        <div className="admin-content">
-            <div style={{ padding: 48, textAlign: 'center', color: 'var(--muted)' }}>Loading bookings…</div>
-        </div>
+        <div style={{ padding: 48, textAlign: 'center', color: 'var(--muted)' }}>Loading bookings…</div>
     );
 
     return (
-        <div className="admin-content">
+        <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 24, marginBottom: 24, flexWrap: 'wrap' }}>
                 <div>
                     <h2>Booking Management</h2>
@@ -483,6 +481,6 @@ export default function AdminBookingsPage() {
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 }

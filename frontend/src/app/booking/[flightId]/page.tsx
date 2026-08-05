@@ -130,14 +130,14 @@ export default function BookingPage() {
                                                 <div className="mono" style={{ fontWeight: 600 }}>{leg.origin}</div>
                                                 <div className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>
                                                     {new Date(leg.departure_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
-                                                    {leg.departure_terminal && ` · T${leg.departure_terminal}`}
+                                                    {leg.departure_terminal && ` · ${leg.departure_terminal}`}
                                                 </div>
                                             </div>
                                             <div style={{ textAlign: 'right' }}>
                                                 <div className="mono" style={{ fontWeight: 600 }}>{leg.destination}</div>
                                                 <div className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>
                                                     {new Date(leg.arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
-                                                    {leg.arrival_terminal && ` · T${leg.arrival_terminal}`}
+                                                    {leg.arrival_terminal && ` · ${leg.arrival_terminal}`}
                                                 </div>
                                             </div>
                                         </div>
@@ -154,7 +154,7 @@ export default function BookingPage() {
                                 <div className="row" style={{ gap: 6 }}>
                                     <Clock size={13} style={{ color: 'var(--clay)' }} />
                                     <span className="mono" style={{ fontWeight: 600 }}>{new Date(flight.departure_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</span>
-                                    {flight.departure_terminal && <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>Dep T{flight.departure_terminal}</span>}
+                                    {flight.departure_terminal && <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>Dep {flight.departure_terminal}</span>}
                                 </div>
                                 <div style={{ fontSize: 12, color: 'var(--muted)', marginLeft: 19 }}>
                                     {new Date(flight.departure_time).toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' })}
@@ -162,7 +162,7 @@ export default function BookingPage() {
                                 <div className="row" style={{ gap: 6, marginTop: 8 }}>
                                     <Clock size={13} style={{ color: 'var(--clay)' }} />
                                     <span className="mono" style={{ fontWeight: 600 }}>{new Date(flight.arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</span>
-                                    {flight.arrival_terminal && <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>Arr T{flight.arrival_terminal}</span>}
+                                    {flight.arrival_terminal && <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>Arr {flight.arrival_terminal}</span>}
                                 </div>
                                 <div style={{ fontSize: 12, color: 'var(--muted)', marginLeft: 19, marginTop: 2 }}>Duration: {flight.duration}</div>
                             </div>

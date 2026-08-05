@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Newsreader, Geist, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import 'react-datepicker/dist/react-datepicker.css';
 import { AdminLayoutClient } from '@/components/AdminLayoutClient';
 import { BRAND } from '@/config/brand';
 

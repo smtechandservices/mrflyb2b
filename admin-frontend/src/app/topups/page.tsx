@@ -136,7 +136,6 @@ export default function TopUpRequestsPage() {
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-end', gap: 20, marginBottom: 24 }}>
                 <div>
                     <h2 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <Wallet size={26} style={{ color: 'var(--clay)' }} />
                         Transactions &amp; Top-ups
                     </h2>
                     <p className="sub" style={{ margin: '6px 0 0' }}>Manage top-up requests and audit all wallet transactions.</p>

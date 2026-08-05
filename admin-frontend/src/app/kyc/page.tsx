@@ -79,11 +79,10 @@ export default function KYCManagementPage() {
     const totalPages = Math.ceil(totalCount / pageSize);
 
     return (
-        <div className="admin-content">
+        <>
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-end', gap: 20, marginBottom: 28 }}>
                 <div>
                     <h2 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <Shield size={26} style={{ color: 'var(--clay)' }} />
                         KYC Management
                     </h2>
                     <p className="sub">Review and verify agent business documents</p>
@@ -118,11 +117,11 @@ export default function KYCManagementPage() {
 
             {loading && users.length === 0 ? (
                 <div className="panel">
-                    <div style={{ padding: 64, textAlign: 'center', color: 'var(--muted)' }}>Loading KYC submissions…</div>
+                    <div style={{ padding: 24, textAlign: 'center', color: 'var(--muted)' }}>Loading KYC submissions…</div>
                 </div>
             ) : users.length === 0 ? (
                 <div className="panel">
-                    <div style={{ padding: 64, textAlign: 'center', color: 'var(--muted)' }}>
+                    <div style={{ padding: 24, textAlign: 'center', color: 'var(--muted)' }}>
                         <Shield size={32} style={{ marginBottom: 16, color: 'var(--clay)' }} />
                         <p>No KYC submissions found for the selected filter.</p>
                     </div>
@@ -287,7 +286,7 @@ export default function KYCManagementPage() {
                     onClose={() => setSelectedDoc(null)}
                 />
             )}
-        </div>
+        </>
     );
 }
 

@@ -353,7 +353,7 @@ export default function MyBookingsPage() {
                                         )}
                                     </div>
 
-                                    <div className="panel-body" style={{ paddingTop: 0, overflowX: 'auto' }}>
+                                    <div style={{ paddingTop: 0, overflowX: 'auto' }}>
                                         <table className="dtable">
                                             <thead>
                                                 <tr>
@@ -422,6 +422,8 @@ export default function MyBookingsPage() {
                                         </table>
                                     </div>
 
+                                    <hr style={{marginBottom: 18, borderColor: 'var(--line)' }}/>
+                                    
                                     {(isDownloadable || isRefundable) && (
                                         <div className="panel-body" style={{ paddingTop: 0, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
                                             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>

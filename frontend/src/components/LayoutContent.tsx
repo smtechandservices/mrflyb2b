@@ -7,7 +7,6 @@ import { useAuth } from '@/context/AuthContext';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { KYCModal } from '@/components/KYCModal';
-import { EditProfileModal } from '@/components/EditProfileModal';
 
 export function LayoutContent({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -28,7 +27,6 @@ export function LayoutContent({ children }: { children: React.ReactNode }) {
             <>
                 {children}
                 <KYCModal />
-                <EditProfileModal />
             </>
         );
     }
@@ -49,7 +47,6 @@ export function LayoutContent({ children }: { children: React.ReactNode }) {
             </main>
             <Footer />
             <KYCModal />
-            <EditProfileModal />
         </div>
     );
 }

@@ -83,7 +83,7 @@ export function FlightCard({ flight, passengers = 1 }: FlightCardProps) {
                     <div className="time">{formatTime(flight.departure_time)}</div>
                     <div className="code">
                         {flight.origin}
-                        {flight.departure_terminal ? ` · T${flight.departure_terminal}` : ''}
+                        {flight.departure_terminal ? ` · ${flight.departure_terminal}` : ''}
                     </div>
                     <div className="mono" style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4 }}>{formatDate(flight.departure_time)}</div>
                 </div>
@@ -107,7 +107,7 @@ export function FlightCard({ flight, passengers = 1 }: FlightCardProps) {
                     <div className="time">{formatTime(flight.arrival_time)}</div>
                     <div className="code">
                         {flight.destination}
-                        {flight.arrival_terminal ? ` · T${flight.arrival_terminal}` : ''}
+                        {flight.arrival_terminal ? ` · ${flight.arrival_terminal}` : ''}
                     </div>
                     <div className="mono" style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4 }}>{formatDate(flight.arrival_time)}</div>
                 </div>

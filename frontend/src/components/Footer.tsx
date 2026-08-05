@@ -20,7 +20,7 @@ export function Footer() {
                     <div className="footer-col">
                         <h5>Explore</h5>
                         <Link href="/search">Flights</Link>
-                        <Link href="/my-bookings">My Bookings</Link>
+                        <Link href="/my-bookings">Bookings</Link>
                         <Link href="/wallet">Wallet</Link>
                     </div>
 

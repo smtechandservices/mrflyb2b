@@ -1,5 +1,6 @@
 import { SearchForm } from '@/components/SearchForm';
 import FlyerSection from '@/components/FlyerSection';
+import RecentFlights from '@/components/RecentFlights';
 import { RipplesBackground } from '@/components/RipplesBackground';
 import { BRAND } from '@/config/brand';
 
@@ -47,6 +48,8 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      <RecentFlights />
 
       <div className="spacer" />
     </>

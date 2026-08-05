@@ -931,6 +931,59 @@ button { font-family: inherit; cursor: pointer; }
   padding-right: 4px;
 }
 
+/* ─── Recent flights marquee ─────────────────────────────────────── */
+.recent-flights {
+  padding: 42px 0 0;
+}
+.recent-flights-head {
+  margin-bottom: 32px;
+}
+.recent-flights-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.recent-flights-track {
+  display: flex;
+  width: max-content;
+  animation: recent-flights-scroll 42s linear infinite;
+}
+.recent-flights-track:hover {
+  animation-play-state: paused;
+}
+.recent-flight-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  padding: 14px 32px;
+  border-right: 1px solid var(--line);
+  font-family: var(--serif);
+  font-size: 17px;
+  white-space: nowrap;
+}
+.recent-flight-city {
+  color: var(--ink);
+}
+.recent-flight-code {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.recent-flight-plane {
+  color: var(--clay);
+  transform: rotate(90deg);
+  flex-shrink: 0;
+}
+@keyframes recent-flights-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .recent-flights-track { animation: none; }
+}
+
 /* ─── Footer ─────────────────────────────────────── */
 .footer {
   background: var(--ink);

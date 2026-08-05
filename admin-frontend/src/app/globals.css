@@ -1508,7 +1508,7 @@ button { font-family: inherit; cursor: pointer; }
 .admin {
   display: grid;
   grid-template-columns: 240px 1fr;
-  min-height: 100vh;
+  height: 100vh;
   background: #faf9f6;
 }
 .admin-side {
@@ -1517,6 +1517,7 @@ button { font-family: inherit; cursor: pointer; }
   padding: 24px 0;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 .admin-brand {
   padding: 0 24px 24px;
@@ -1581,7 +1582,8 @@ button { font-family: inherit; cursor: pointer; }
 
 .admin-main {
   padding: 0;
-  overflow: auto;
+  overflow-y: auto;
+  height: 100vh;
 }
 .admin-top {
   padding: 18px 32px;
@@ -2577,3 +2579,182 @@ button { font-family: inherit; cursor: pointer; }
   100% { transform: translateX(-6px) translateY(0) rotate(0deg); }
 }
 .animate-plane-loading { animation: plane-loading 1.4s ease-in-out infinite; }
+
+/* ─── Add Flight wizard (step-by-step full page form) ───────────── */
+.wizard-steps {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  max-width: 880px;
+}
+.wizard-step-wrap { display: flex; align-items: center; flex: 1; }
+.wizard-step-wrap:last-child { flex: 0; }
+.wizard-step { display: flex; align-items: center; gap: 10px; }
+.wizard-step-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--line-2);
+  background: var(--paper);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.wizard-step-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.wizard-step.active .wizard-step-dot { border-color: var(--forest); background: var(--forest); color: var(--paper); }
+.wizard-step.active .wizard-step-label { color: var(--ink); font-weight: 500; }
+.wizard-step.done .wizard-step-dot { border-color: var(--forest); background: var(--paper); color: var(--forest); }
+.wizard-step.done .wizard-step-label { color: var(--ink-2); }
+.wizard-connector { flex: 1; height: 1px; background: var(--line); margin: 0 14px; }
+.wizard-connector.done { background: var(--forest); }
+
+.flight-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.flight-type-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-md);
+  background: var(--paper);
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.flight-type-card:hover { border-color: var(--forest); }
+.flight-type-card.selected { border-color: var(--forest); background: var(--sand); }
+.flight-type-title { font-weight: 500; font-size: 14.5px; }
+.flight-type-desc { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+.review-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--sand);
+  padding: 6px 20px;
+}
+.review-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.review-row:last-child { border-bottom: none; }
+.review-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.review-value { font-size: 13.5px; color: var(--ink); text-align: right; }
+
+@media (max-width: 720px) {
+  .flight-type-grid { grid-template-columns: 1fr; }
+  .wizard-step-label { display: none; }
+  .wizard-connector { margin: 0 8px; }
+}
+
+/* ─── react-datepicker theme (overrides the library default look to match
+   the app's earthy/serif design system). Every selector is scoped under
+   `.react-datepicker` — the library's own CSS uses bare, unscoped classes
+   (and a tag+class selector for the h2 month header), so plain class
+   overrides can tie or lose on specificity/merge order. Scoping one level
+   deeper plus !important on the properties that matter avoids that. ───── */
+.react-datepicker-popper { z-index: 20; }
+.react-datepicker.react-datepicker {
+  font-family: var(--sans) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-md) !important;
+  background: var(--paper) !important;
+  overflow: hidden;
+}
+.react-datepicker .react-datepicker__triangle { display: none; }
+.react-datepicker .react-datepicker__header {
+  background: var(--sand) !important;
+  border-bottom: 1px solid var(--line) !important;
+  padding: 14px 10px 10px;
+}
+.react-datepicker .react-datepicker__current-month,
+.react-datepicker h2.react-datepicker__current-month,
+.react-datepicker .react-datepicker-year-header,
+.react-datepicker .react-datepicker-time__header {
+  font-family: var(--sans) !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  color: var(--ink) !important;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+.react-datepicker .react-datepicker__year-dropdown-container--select select {
+  padding: 5px 8px;
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+  background: var(--paper);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: var(--ink);
+}
+.react-datepicker .react-datepicker__day-name,
+.react-datepicker .react-datepicker__day,
+.react-datepicker .react-datepicker__time-name {
+  font-family: var(--mono) !important;
+  font-size: 12px !important;
+  color: var(--ink-2);
+  width: 2rem;
+  line-height: 2rem;
+  margin: 2px;
+  border-radius: 50%;
+}
+.react-datepicker .react-datepicker__day-name { color: var(--muted); font-weight: 500; }
+.react-datepicker .react-datepicker__day:hover { background: var(--sand); border-radius: 50%; }
+.react-datepicker .react-datepicker__day--outside-month { color: var(--muted); opacity: 0.55; }
+.react-datepicker .react-datepicker__day--selected,
+.react-datepicker .react-datepicker__day--keyboard-selected {
+  background: var(--forest) !important;
+  color: var(--paper) !important;
+}
+.react-datepicker .react-datepicker__day--today { font-weight: 700; color: var(--forest); }
+.react-datepicker .react-datepicker__day--disabled { color: var(--line-2); }
+.react-datepicker .react-datepicker__navigation { top: 14px; }
+.react-datepicker .react-datepicker__navigation-icon::before { border-color: var(--muted); }
+.react-datepicker .react-datepicker__navigation:hover .react-datepicker__navigation-icon::before { border-color: var(--ink); }
+
+/* Time-only list (Departure/Arrival Time pickers) */
+.react-datepicker .react-datepicker__time-container {
+  border-left: 1px solid var(--line) !important;
+  width: 100px;
+}
+.react-datepicker .react-datepicker__time-box { width: 100% !important; }
+.react-datepicker .react-datepicker__time-list { padding: 0 !important; }
+.react-datepicker .react-datepicker__time-list-item {
+  font-family: var(--mono) !important;
+  font-size: 12.5px !important;
+  color: var(--ink-2) !important;
+  height: auto !important;
+  padding: 8px 10px !important;
+}
+.react-datepicker .react-datepicker__time-list-item:hover {
+  background: var(--sand) !important;
+}
+.react-datepicker .react-datepicker__time-list-item--selected {
+  background: var(--forest) !important;
+  color: var(--paper) !important;
+  font-weight: 600 !important;
+}

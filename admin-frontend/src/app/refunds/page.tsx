@@ -2,20 +2,22 @@
 
 import { useEffect, useState, Fragment } from 'react';
 import { getAdminBookings, processRefund, cancelRefundRequest, Booking } from '@/lib/api';
-import { RefreshCw, CheckCircle } from 'lucide-react';
+import { RefreshCw, CheckCircle, Search } from 'lucide-react';
 import Swal from 'sweetalert2';
 
 export default function RefundPage() {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'pending' | 'completed'>('pending');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
 
-    const fetchRefundRequests = async (tab: 'pending' | 'completed' = activeTab) => {
+    const fetchRefundRequests = async (tab: 'pending' | 'completed' = activeTab, search: string = debouncedSearch) => {
         setLoading(true);
         try {
             // Fetch based on active tab
             const status = tab === 'pending' ? 'REFUND_REQUESTED' : 'REFUNDED';
-            const data = await getAdminBookings(1, '', status);
+            const data = await getAdminBookings(1, search, status);
             setBookings(data.results);
         } catch (error) {
             console.error('Failed to fetch refund requests', error);
@@ -25,8 +27,15 @@ export default function RefundPage() {
     };
 
     useEffect(() => {
-        fetchRefundRequests(activeTab);
-    }, [activeTab]);
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
+
+    useEffect(() => {
+        fetchRefundRequests(activeTab, debouncedSearch);
+    }, [activeTab, debouncedSearch]);
 
     const adminRemarksField = `
         <div style="margin-top:12px; text-align:left;">
@@ -265,13 +274,25 @@ export default function RefundPage() {
                     <h2>Refund Management</h2>
                     <p className="sub" style={{ margin: '6px 0 0' }}>Manage pending and completed refunds.</p>
                 </div>
-                <button
-                    onClick={() => fetchRefundRequests(activeTab)}
-                    className="btn btn-ghost btn-sm"
-                    title="Refresh List"
-                >
-                    <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-                </button>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
+                    <div className="admin-search" style={{ width: 240 }}>
+                        <Search size={14} color="var(--muted)" />
+                        <input
+                            type="text"
+                            placeholder="Search refunds…"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            style={{ border: 'none', outline: 'none', background: 'transparent', font: 'inherit', color: 'inherit', width: '100%' }}
+                        />
+                    </div>
+                    <button
+                        onClick={() => fetchRefundRequests(activeTab, debouncedSearch)}
+                        className="btn btn-ghost btn-sm"
+                        title="Refresh List"
+                    >
+                        <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+                    </button>
+                </div>
             </div>
 
             {/* Filter Tabs */}
