@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { getUserProfile } from '@/lib/api';
+import { useAutoLogout } from '@/hooks/useAutoLogout';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -17,6 +18,8 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+
+  useAutoLogout(isAdmin && pathname !== '/login');
 
   // Close sidebar on navigation
   useEffect(() => {
@@ -146,6 +149,8 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
           <button
             onClick={() => {
               localStorage.removeItem('token');
+              localStorage.removeItem('loginTime');
+              localStorage.removeItem('lastActivity');
               router.push('/login');
             }}
             className="btn btn-ghost btn-sm"

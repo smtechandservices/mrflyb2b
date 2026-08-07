@@ -102,7 +102,7 @@ export function Header() {
                                     <span className="d" />
                                 </span>
                             </Link>
-                            <button onClick={logout} className="btn btn-ghost btn-sm" title="Log out">
+                            <button onClick={() => logout()} className="btn btn-ghost btn-sm" title="Log out">
                                 <LogOut size={14} />
                             </button>
                         </>
@@ -155,7 +155,7 @@ export function Header() {
                         >
                             {kyc.icon}<span className="d" />{kyc.label}
                         </button>
-                        <button onClick={logout} className="btn btn-ghost btn-sm">
+                        <button onClick={() => logout()} className="btn btn-ghost btn-sm">
                             <LogOut size={14} /> Log out
                         </button>
                     </div>

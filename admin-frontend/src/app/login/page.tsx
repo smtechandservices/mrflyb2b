@@ -24,6 +24,9 @@ export default function LoginPage() {
             const { token } = await loginApi(email, password);
 
             localStorage.setItem('token', token);
+            const now = Date.now().toString();
+            localStorage.setItem('loginTime', now);
+            localStorage.setItem('lastActivity', now);
 
             // Verify admin status
             const userProfile = await getUserProfile();
@@ -32,6 +35,8 @@ export default function LoginPage() {
             } else {
                 setError('Access denied: Admin privileges required.');
                 localStorage.removeItem('token');
+                localStorage.removeItem('loginTime');
+                localStorage.removeItem('lastActivity');
             }
         } catch (err: any) {
             setError(err.message || 'Login failed');
