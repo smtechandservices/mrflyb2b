@@ -335,6 +335,10 @@ export default function SignupPage() {
                     <p style={{ marginTop: 28, fontSize: 14, color: 'var(--muted)', textAlign: 'center' }}>
                         Already registered your agency? <Link href="/login" style={{ color: 'var(--clay)' }}>Log in</Link>
                     </p>
+
+                    <p style={{ marginTop: 16, fontSize: 12, color: 'var(--muted)', textAlign: 'center' }}>
+                        Payments powered by SSD GLOBAL TRAVELS
+                    </p>
                 </div>
             </div>
         </div>

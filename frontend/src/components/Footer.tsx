@@ -49,6 +49,7 @@ export function Footer() {
                 </div>
                 <div className="footer-bot">
                     <span>© {new Date().getFullYear()} {BRAND.name}</span>
+                    <span>Payments powered by SSD GLOBAL TRAVELS</span>
                 </div>
             </div>
         </footer>

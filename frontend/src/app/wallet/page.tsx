@@ -360,6 +360,10 @@ export default function WalletPage() {
                                             >
                                                 {isProcessingManual ? 'Processing…' : (<>Request Manual Top Up <ArrowUpRight size={14} /></>)}
                                             </button>
+
+                                            <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--muted)' }}>
+                                                Payments powered by SSD GLOBAL TRAVELS
+                                            </div>
                                         </form>
                                     )}
                                 </div>

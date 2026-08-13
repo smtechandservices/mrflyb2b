@@ -247,6 +247,10 @@ export default function LoginPage() {
                             New agency? <Link href="/signup" style={{ color: 'var(--clay)' }}>Sign up</Link>
                         </p>
                     )}
+
+                    <p style={{ marginTop: 16, fontSize: 12, color: 'var(--muted)', textAlign: 'center' }}>
+                        Payments powered by SSD GLOBAL TRAVELS
+                    </p>
                 </div>
             </div>
         </div>
